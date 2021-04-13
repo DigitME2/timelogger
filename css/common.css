@@ -1,0 +1,172 @@
+body,input, label, span, div{
+	font-family: "Ariel", sans-serif;
+	font-size: 14px;
+}
+
+html, body {
+	margin-bottom: 0;
+	margin-top:0;
+}
+
+html{
+	height: 100%;
+	width: 100%;
+}
+
+
+body{
+	min-height: 100%;
+	min-width: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.pageContainer{
+	flex: 1 0 auto;
+}
+
+#commonFooter{
+	width:100%;
+	flex-shrink: 0;
+}
+
+table{
+    border-collapse: collapse;
+	table-layout:auto;
+	white-space: nowrap;
+}
+
+tr:nth-child(even):not(.highlight) {background-color: #f2f2f2;}
+
+td{
+    border:1px solid #8888;
+    text-align: center;
+    padding:5px;
+	max-width:400px;
+	overflow:hidden;
+}
+
+thead{
+    background-color: #be0f34;
+    color: white;
+}
+
+input{
+    padding:5px;
+}
+
+html{
+    font-family: sans-serif;
+    font-size:14px;
+}
+
+h1{
+    font-family: sans-serif;
+    font-size:22px;
+}
+
+.container{
+	width:90%;
+	margin:auto;
+	overflow:hidden;
+}
+
+#commonHeader{
+	position: sticky;
+	left: 0;
+	width: 100vw;
+}
+
+#pageHeader, #navbar, #pageFooter{
+	min-width:1224px;
+	white-space: nowrap;
+}
+
+#pageHeader{
+	background-color:#be0f34;
+	color:#fff;
+}
+
+#pageHeader a{
+	text-decoration:none;
+	color:#fff;	
+}
+
+#commonHeaderTitle{
+	display: inline-block;
+}
+
+#navbar{
+	background-color:#333;
+	color:#fff;
+}
+
+#navbar ul{
+	padding:0;
+	margin:0;
+	list-style:none;
+}
+
+#navbar li{
+	float:left;
+}
+
+#navbar .navActive{
+	padding-bottom: 5px;
+	border-bottom: 5px solid white;
+}
+
+
+#navbar a{
+	color:#fff;
+	text-decoration:none;
+	font-size:18px;
+	padding-left:10px;
+	padding-bottom: 10px;
+	padding-top: 10px;
+	display: block;
+}
+
+#navbar li a:hover:not(.navActive){
+	background-color:#111;
+}
+
+#navbar li:not(:last-child) a:after{
+	content: "";
+	border-right:1px solid #9b9b9b;
+	height: 19px;
+	display: inline;
+	margin-top: 10px;
+	padding-left:10px;
+}
+
+#navbar li:last-child a{
+	padding-right:10px;
+}
+
+#recources_label{	
+	float:left;
+	margin-left: 20px;
+	margin-top: 35px;
+	font-weight: bold;
+	color: #333;
+}
+
+.manualDownLoadLink{
+	float: left;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 35px;
+	text-decoration: none;
+	font-weight: 600;
+	color: #333;
+}
+
+
+.footerLogo{
+	margin-right: 5px;
+	margin-bottom: 5px;
+	float: right;
+}
+
+

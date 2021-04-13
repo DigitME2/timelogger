@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+    <head>
+        <script src="../scripts/client/jquery.js"></script>
+        <script src="../scripts/client/current_users.js"></script>
+        <script src="../scripts/client/generate_table_generic.js"></script>
+        <script>
+            $(document).ready(function(){
+                updateUserTable();
+                setInterval(function(){updateUserTable()}, 3000);
+            });
+        </script>
+		<script>
+		$(function(){
+			$("#commonHeader").load("header.html", function activePage(){
+					var pageName = window.location.pathname.split("/").pop().split(".")[0];
+					$("#" + pageName + "_nav_link").addClass("navActive");
+				});
+			$("#commonFooter").load("footer.html");
+		});
+		</script>
+		<script>
+			$(document).ready(function(){
+				$("#current_users_nav_link").addClass("navActive");
+			});
+		</script>
+        <link rel="stylesheet" href="../css/common.css" type="text/css">
+    </head>
+    <body>
+        <div class="pageContainer">
+            <div id ="commonHeader"></div>
+            <div class="pageMainBody">
+                <h1>Currently Clocked On Users</h1>
+                <div id="clockOnUserTableContainer">
+                    <span id="userTablePlaceholder">Loading...</span>
+                </div>
+            </div>
+        </div>
+		<div id ="commonFooter"></div>
+    </body>
+</html>

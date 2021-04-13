@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+    <head>
+        <script src="../scripts/client/jquery.js"></script>
+        <script src="../scripts/client/scanners.js"></script>
+        <script src="../scripts/client/generate_table_generic.js"></script>
+		<script>
+		$(function(){
+			$("#commonHeader").load("header.html", function activePage(){
+					var pageName = window.location.pathname.split("/").pop().split(".")[0];
+					$("#" + pageName + "_nav_link").addClass("navActive");
+				});
+			$("#commonFooter").load("footer.html");
+		});
+		</script>
+        <link rel="stylesheet" href="../css/common.css" type="text/css">
+        <link rel="stylesheet" href="../css/users.css" type="text/css">
+		<link rel="stylesheet" href="../css/scanners.css" type="text/css">
+    </head>
+    <body>
+        <div class="pageContainer">
+            <div id ="commonHeader"></div>
+            <div class="pageMainBody">
+				<div id="scannerListContainer">
+                	<h1>Stations</h1>
+					<div id="scannerNameTableContainer">
+					</div>
+				</div>
+				<div id="scannerRenameContainer">
+					<h1>Edit Stations</h1>
+					<div id="scannerRenameControls">
+						<label for="scannerCurrentName" class="col1">Add New Station</label>
+						<input type="checkbox" id="newStation" class="col2">
+						<label for="scannerCurrentName" class="col1">Current Station Name</label>
+						<select id="scannerCurrentName" class="col2">
+							<option value="noSelection">Select a Station...</option>
+						</select>
+						<br>
+						<label for="scannerNewName" class="col1">New Station Name</label>
+						<input id="scannerNewName" type="text" class="col2" pattern="^[A-Za-z0-9_ ]{1,14}$"/>
+						<span id="scannerNewNameCounter" class="col3">14/14</span>
+						<input id="renameScanner" onclick="renameScanner()" value="Submit" class="col2" type="button"/>
+						<span id="renameFeedback" class="col2"></span>
+					</div>
+				</div>
+            </div>
+        </div>
+		<div id ="commonFooter"></div>
+    </body>
+</html>

@@ -1,0 +1,109 @@
+
+#currentJobsDisplayControls{
+	display: grid;
+    grid-template-columns: 400px 400px 400px 400px;
+	align-items: start;
+}
+
+#sortingOptions{
+	width:400px;
+	grid-column: 1;
+	grid-row: 1;
+}
+
+#searchOptions{
+	width:400px;
+	grid-column: 2;
+	grid-row: 1/3;
+}
+
+#displayOptions{
+	left:800px; 
+	grid-column: 3;
+	grid-row: 1/3;
+}
+
+
+#tableControls{
+	grid-column: 1;
+	grid-row: 2;
+	left:5px;
+	align-self: end;
+}
+
+#tableKey{
+	grid-column: 4;
+	grid-row: 1/3;
+}
+
+#currentJobsTableContainer{
+	width:100%;
+}
+
+#currentJobsTable{
+	width:auto;
+    margin-bottom:10px;
+}
+
+#displayOptionsListContainer{
+	display: grid;
+    grid-template-columns: 300px 50px;
+	align-items: center;
+}
+
+.searchDateDiv{
+	display: grid;
+    grid-template-columns: 80px 150px;
+	align-items: center;
+}
+
+.searchDateCheckBox{
+	margin-bottom:7px;
+}
+
+#warningHighlightDaysCount{
+	width:40px
+}
+
+#currentJobsTitle{
+	margin-bottom:0px;
+}
+
+#updateJobsTableButton{
+	margin-top:7px;
+}
+
+.priority_None{
+	color: black;
+	background-color: white;
+}
+
+.priority_Low{
+	color: black;
+	background-color: rgb(139, 219, 112);
+}
+
+.priority_Medium{
+	color: black;
+	background-color: rgb(214, 214, 92);
+}
+
+.priority_High{
+	color: black;
+	background-color: rgb(214, 153, 92);
+}
+
+.priority_Urgent{
+	color: black;
+	background-color: rgb(209, 71, 71);
+}
+
+.row_late_risk{
+	color: black;
+	background-color: rgb(174, 204, 234);
+}
+
+.row_overdue{
+	color: white;
+	background-color: rgb(93, 153, 213);
+}

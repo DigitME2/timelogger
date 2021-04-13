@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+    <head>
+        <script src="../scripts/client/jquery.js"></script>
+        <script src="../scripts/client/time_sheet.js"></script>
+        <script src="../scripts/client/generate_table_generic.js"></script>
+		<script>
+		$(function(){
+			$("#commonHeader").load("header.html", function activePage(){
+					var pageName = window.location.pathname.split("/").pop().split(".")[0];
+					$("#" + pageName + "_nav_link").addClass("navActive");
+				});
+			$("#commonFooter").load("footer.html");
+		});
+		</script>
+        <link rel="stylesheet" href="../css/common.css" type="text/css">
+        <link rel="stylesheet" href="../css/time_sheet.css" type="text/css">
+    </head>
+    <body>
+        <div class="pageContainer">
+            <div id ="commonHeader"></div>
+            <div class="pageMainBody">
+                <h1>View Time Sheets</h1>
+				<div id="timeSheetControls">
+                    <span id="selectUserLabel">Select user:</span>
+                    <select class="timesheetControl" id="userIdSelector" disabled=true>
+                        <option>Select a user</option>
+                    </select>
+                    <span id="startDateLabel">Start Date:</span>
+                    <input class="timesheetControl" type="date" id="dateStartInput" disabled=true class="controls">
+                    <span id="endDateLabel">End Date:</span>
+                    <input class="timesheetControl" type="date" id="dateEndInput" disabled=true class="controls">
+                    <input id="fetchTimeSheetButton" type="button" onclick="getTimesheet()" value="Fetch Time sheet" class="controls">
+                    <a id="csvDownloadLink" href="" download type="text/css" class="control" hidden>Click here to download currently displayed timesheet as a CSV file</a>
+                </div>
+
+                <hr>
+
+                <div id="info">
+                    <span id="totalDuration"></span>
+					<br>
+					<span id="totalOvertime"></span>
+                </div>
+                <br>
+                <div id="timesheetContainer">
+                </div>
+            </div>
+        </div>
+		<div id ="commonFooter"></div>
+    </body>
+</html>

@@ -1,0 +1,29 @@
+#addUserControls{
+	display: grid;
+	grid-template-columns: 120px 210px 50px;
+	align-items:center;
+	grid-row-gap:3px;
+	grid-column-gap:5px;
+}
+
+#newUserNameLabel{
+	grid-column:1;
+}
+
+#newUserName{
+	grid-column:2;
+}
+
+#newUserNameCounter{
+	grid-column:3;
+}
+
+#newUserNameButton{
+  	grid-column:2/4;
+	max-width:130px;
+	justify-self: right;
+}
+
+#addUserResponseField{
+	grid-column:2/5;
+}

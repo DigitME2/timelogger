@@ -1,0 +1,73 @@
+#addJobArea{
+	display: grid;
+    grid-template-columns: 490px 530px 600px;
+	align-items: start;
+}
+
+#detailsInputArea{
+    grid-column:1;
+    display: grid;
+    grid-template-columns: 200px 200px 100px;
+	align-items: center;
+	grid-row-gap: 1px;
+}
+
+#routeManagementContainer{
+   grid-column:2;
+}
+
+#csvUploadContainer{
+	grid-column:3;
+	grid-row: 1/3;
+	display: table;
+}
+
+#saveJobControlsContainer{
+	grid-column:2;
+	grid-row:2;
+	margin-top:5px;
+}
+
+#csvTemplateDownLoadLink{
+	display: block;
+	text-decoration: none;
+	font-weight: 600;
+	color: #333;
+}
+
+#csvResults{
+	max-height: 190px;
+	overflow-y: scroll;
+	overflow-x: visible;
+}
+
+#textboxRouteDesc{
+	resize: vertical;
+	min-height: 172px;
+}
+
+#searchDivider{
+    width: 100%;
+}
+
+#searchResults{
+	margin-top:5px;
+}
+
+.jobDetailsLabel{
+    grid-column:1;
+}
+
+.jobDetailsInput{
+    grid-column:2;
+}
+
+.inputWidthCounter{
+    grid-column:3;
+    margin-left:5px
+}
+
+.csvJobAddFail{
+	color: black;
+	background-color: rgb(209, 71, 71);
+}

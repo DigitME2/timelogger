@@ -1,0 +1,30 @@
+#newStoppageReasonArea{
+	display: grid;
+	grid-template-columns: 165px 210px 50px;
+	align-items:center;
+	grid-row-gap:3px;	
+	grid-column-gap:7px;
+}
+}
+
+#newStoppageReasonLabel{
+	grid-column:1;
+}
+
+#newStoppageReason{
+	grid-column:2;
+}
+
+#newStoppageReasonCounter{
+	grid-column:3;
+}
+
+#newStoppageButton{
+  	grid-column:2/4;
+	max-width:130px;
+	justify-self: right;
+}
+
+#addStoppageReasonResponseField{
+	grid-column:2/5;
+}

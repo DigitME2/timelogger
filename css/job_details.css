@@ -1,0 +1,191 @@
+#pageMainBody{
+	display: grid;
+	align-items: left;
+	grid-template-columns: 600px 
+}
+
+#jobDetails{
+	display: grid;
+	grid-template-columns: 230px 200px  130px;
+	align-items: center;
+	grid-column:1;		
+	grid-row:1;
+	grid-row-gap: 1px;
+}
+
+#stoppagesContainer{
+	grid-column:2;	
+	grid-row:1;
+}
+
+#timeLogContainer{
+	grid-column:1/10;
+	grid-row:2;
+}
+
+.jobDetailLabel{
+    grid-column:1;
+	margin-top: 6px;
+}
+
+.jobDetail{
+    grid-column:2;
+}
+
+.inputWidthCounter{
+    grid-column:3;
+	margin-left:5px
+}
+
+#notesContainer{
+	grid-column: 1/2;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+#notesField{
+	height: 65px;
+	min-height: 35px;
+	max-height: 300px;
+	width: 550px;
+	resize:vertical;
+
+}
+
+#adminControls{
+	grid-column: 1/3;
+}
+
+#btnSaveChanges{
+	grid-column: 3;
+}
+
+#downloadLinkContainer{
+	grid-column: 1;
+}
+
+#saveChangesFeedback{
+	grid-column: 2/4;
+	justify-self:end;
+}
+
+.addStoppageInput{
+	width: 190px;
+}
+
+#stoppagesLogTableContainer{
+	max-height: 500px;
+	overflow-y: scroll;
+	overflow-x: visible;
+}
+
+#stoppagesLogTable td{
+	text-align: left;
+	word-wrap: break-word;
+	white-space: normal;
+}
+
+
+#workLogOptions{
+	display: grid;
+	grid-template-columns: 75px 150px 75px 150px 150px;
+	align-items:center;
+	grid-row-gap:3px;
+	grid-column-gap:8px;
+}
+
+#useDateRangeSelectArea{
+	grid-column:1/5;
+	grid-row:1;
+}
+
+#dateStartInputLabel{
+	grid-column:1;
+	grid-row:2;
+}
+
+#dateStartInput{
+	grid-column:2;
+	grid-row:2;
+}
+
+#dateEndInputLabel{
+	grid-column:3;
+	grid-row:2;
+}
+
+#dateEndInput{
+	grid-column:4;
+	grid-row:2;
+}
+
+#collapseRecordsSelectArea{
+	grid-column:5;
+	grid-row:1;
+}
+
+#updateJobsTable{
+	grid-column:5;
+	grid-row:2;
+}
+
+#timeLogWorkedTimeLabel{
+	grid-column:1/4;
+	grid-row:3;
+}
+
+#timeLogWorkedTime{
+	grid-column:4/6;
+	grid-row:3;
+}
+
+#timeLogOvertimeLabel{
+	grid-column:1/4;
+	grid-row:4;
+}
+
+#timeLogOvertime{
+	grid-column:4/6;
+	grid-row:4;
+}
+
+
+#csvDownloadLink{
+	grid-column:1/6;
+	grid-row:5;
+}
+
+#tableDisplay{
+	margin-top:5px;	
+	margin-bottom:10px;	
+}
+
+#addStoppageInputContainer{
+	display: inline-grid;	
+	grid-template-columns: auto auto auto;
+}
+
+#addStoppageStationDropDown{
+	grid-column: 1;
+	grid-row: 2;
+}
+
+#addStoppageReasonDropDown{
+	grid-column: 2;
+	grid-row: 2;
+}
+
+#stoppageDescription{
+	grid-column: 1/3;
+	grid-row: 3/5;
+	resize: vertical;
+	min-height: 40px;
+	max-height: 300px;
+	width: 380px;
+}
+
+#btnAddStoppage{
+	grid-column: 3;
+	grid-row: 4;
+	margin-left: 5px;
+}

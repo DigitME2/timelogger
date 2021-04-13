@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+    <head>
+        <link rel="stylesheet" href="../css/common.css" type="text/css">
+        <link rel="stylesheet" href="../css/routes.css" type="text/css">
+        <script src="../scripts/client/jquery.js"></script>
+        <script src="../scripts/client/routes.js"></script>
+		<script>
+			$(document).ready(function(){loadInitialRoutesData();});
+		</script>
+		<script>
+		$(function(){
+			$("#commonHeader").load("header.html", function activePage(){
+					var pageName = window.location.pathname.split("/").pop().split(".")[0];
+					$("#" + pageName + "_nav_link").addClass("navActive");
+				});
+			$("#commonFooter").load("footer.html");
+		});
+		</script>
+    </head>
+    <body>
+        <div class="pageContainer">
+            <div id ="commonHeader"></div>
+            <div class="pageMainBody">
+				<h1>Routes</h1>
+				<div id="routeControlsMainContainer">
+					<label class="control leftCol" for="nameSelect">Load Existing Route</label>
+					<select class="control rightCol" id="selectExistingRoute" onchange="loadRoute()">
+					</select>
+
+					<label class="control leftCol" for="textboxRouteName">Route Name</label>
+					<input type="text" id="textboxRouteName" class="control rightCol" pattern="^[A-Za-z0-9_ ]{1,50}$">
+
+					<label class="control leftCol" for="textboxRouteDesc">Route Description</label>
+					<textarea id="textboxRouteDesc" readonly class="control rightCol" cols="22" rows="10"></textarea>
+					<div class="leftCol" id="routeEditControlsContainer">
+						<label>Add station:</label>
+						<br>
+						<select id="selectStationNames">
+						</select>
+						<br>
+						<input type="button" id="btnAddStation" onclick="appendStationName()" value="Append to list"/>
+						<br>
+						<br>
+						<input type="button" id="btnRemoveStation" onclick="removeLastStationName()" value="Delete last stage"/>
+					</div>
+					<input type="button" class="control rightCol" id="btnSaveRoute" onclick="saveRoute()" value="Save this route"/>
+					<input type="button" class="control rightCol" id="btnDeleteRoute" onclick="deleteRoute()" value="Delete this route"/>
+					<span id="spanFeedback" class="rightCol"></span>
+				</div>
+			</div>
+		</div>
+		<div id ="commonFooter"></div>
+    </body>
+</html>

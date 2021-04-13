@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+    <head>
+        <script src="../scripts/client/jquery.js"></script>
+        <script src="../scripts/client/add_job.js"></script>
+		<script src="../scripts/client/generate_table_generic.js"></script>
+		<script src="../scripts/client/routes.js"></script>
+        <link rel="stylesheet" href="../css/common.css" type="text/css">
+		<link rel="stylesheet" href="../css/add_job.css" type="text/css">
+		<link rel="stylesheet" href="../css/routes.css" type="text/css">
+		<script>
+			$(function(){
+				$("#commonHeader").load("header.html", function activePage(){
+					var pageName = window.location.pathname.split("/").pop().split(".")[0];
+					$("#" + pageName + "_nav_link").addClass("navActive");
+				});
+				$("#commonFooter").load("footer.html");
+				$("#add_job_nav_link").addClass("navActive");
+			});
+		</script>
+    </head>
+    <body>
+		<div class="pageContainer">
+		    <div id ="commonHeader"></div>
+			<h1>Add New Jobs</h1>
+			<div id="addJobArea">
+				<div id="detailsInputArea">
+					<h3>Details</h3>
+					<label id="jobIdLabel" for="jobIdNumberInout" class="jobDetailsLabel">Job ID</label>
+					<input type="text" class="jobDetailsInput" id="jobIdNumberInput" pattern="^[a-zA-Z0-9_]{1,20}$" required/>
+					<span id="jobIdCounter" class="inputWidthCounter"></span>
+					
+					<label id="expectedHoursLabel" for="expectedHoursInput" class="jobDetailsLabel">Expected Time</label>
+					<input type="text" class="jobDetailsInput" id="expectedHoursInput" pattern="^\d+:[0-5][0-9]?$" placeholder="HH:MM">
+					
+					<label id="dueDateLabel" for="dueDate" class="jobDetailsLabel">Job Due Date</label>
+					<input type="date" class="jobDetailsInput" id="jobDueDateInput">
+					
+					<label id="descriptionLabel" for="decriptionInput" class="jobDetailsLabel" >Description</label>
+					<input type="text" class="jobDetailsInput" id="descriptionInput" pattern="^.{0,200}$"/>
+					<span id="descriptionCounter" class="inputWidthCounter"></span>
+					
+					<label id="chargeLabel" for="jobTotalCharge" class="jobDetailsLabel">Charge for Job (£)</label>
+					<input type="number" class="jobDetailsInput" step="0.01" id="jobTotalCharge" min="0"/>
+					
+					<label id="unitCountLabel" for="unitCount" class="jobDetailsLabel">Number of Units</label>
+					<input type="number" class="jobDetailsInput" step="1" id="unitCount" min="0"/>
+
+					<label id="productIdLabel" for="productIdDropDown" class="jobDetailsLabel">Product ID</label>
+					<select class="jobDetailsInput" id="productIdDropDown"></select>
+
+					<label for="priority" class="jobDetailsLabel">Priority</label>
+					<select id="priority"class="jobDetailsInput">
+						<option value=0>None</option>
+						<option value=1>Low</option>
+						<option value=2>Medium</option>
+						<option value=3>High</option>
+						<option value=4>Urgent</option>
+					</select>
+				</div>
+
+				<div id="routeManagementContainer">
+					<h3>Route</h3>
+					<div id="routeControlsMainContainer">
+							<label class="control leftCol" for="nameSelect">Load Existing Route</label>
+							<select class="control rightCol" id="selectExistingRoute" onchange="loadRoute()">
+							</select>
+
+							<label class="control leftCol" for="textboxRouteName">Route Name</label>
+							<input type="text" id="textboxRouteName" class="control rightCol" pattern="^[A-Za-z0-9_ ]{1,50}$">
+
+							<label class="control leftCol" for="textboxRouteDesc">Route Description</label>
+							<textarea id="textboxRouteDesc" readonly class="control rightCol" cols="22" rows="10"></textarea>
+							<div class="leftCol" id="routeEditControlsContainer">
+								<label>Add station:</label>
+								<br>
+								<select id="selectStationNames">
+								</select>
+								<br>
+								<input type="button" id="btnAddStation" onclick="appendStationName()" value="Append to list"/>
+								<br>
+								<br>
+								<input type="button" id="btnRemoveStation" onclick="removeLastStationName()" value="Delete last stage"/>
+							</div>
+						</div>
+				</div>				
+
+				<div id="saveJobControlsContainer">
+					<input type="button" id="saveBtn" onclick="handleNewJob()" value="Add Job Details"/>
+					<span id="saveJobResponseField"/>
+				</div>
+
+				<div id="csvUploadContainer">
+					<h2>Upload a CSV file</h2>
+					<form method="POST" enctype="multipart/form-data" id="fileUploadForm">
+						<a id="csvTemplateDownLoadLink" href="../Recources/job_csv_upload_template.csv" download>CSV Template</a>
+						<label for="jobCsvSelection">Select a CSV file to upload:</label>
+						<br>
+						<input type="file" id="jobCsvSelection" name="jobsCsv" accept=".csv"/>
+						<br>
+						<input type="submit" value="Upload File" id="btnUploadCsv"/>
+					</form>
+					<span id="csvResponseField"></span>
+					<div id="csvResults"></div>
+				</div>
+			</div>
+
+			<div id="searchJobArea">
+				<hr id="searchDivider">
+				<div id="searchContainer">
+					<div id="searchControls">
+						<h1>Search existing jobs</h1>
+						<input type="text" id="searchPhrase" class="searchControl"/>
+						<input type="button" id="searchBtn" class="searchControl" value="Search" onclick="searchJobs()"/>
+					</div>
+					<div id="searchResults"></div>
+				
+				</div>
+			</div>
+		</div>
+		<div id ="commonFooter"></div>
+    </body>
+</html>

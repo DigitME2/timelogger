@@ -1,0 +1,35 @@
+#routeControlsMainContainer{
+    display: grid;
+    grid-template-columns: 200px 300px;
+	align-items: center;
+	grid-row-gap: 1px;
+}
+
+.leftCol{
+    grid-column:1;
+}
+
+.rightCol{
+    grid-column:2;
+}
+
+#routeEditControlsContainer{
+	width:200px;
+}
+
+#btnAddStation,#selectStationNames,#btnRemoveStation{
+	width:180px;
+}
+
+#textboxRouteDesc{
+    grid-row: span 2
+}
+
+#btnSaveRoute{
+    grid-row: 5;
+}
+
+#textboxRouteDesc{
+	font-size: 12pt;
+	font-family: sans-serif;
+}

@@ -1,0 +1,14 @@
+.row_urgent{
+	background-color: red;
+	color:white;
+}
+
+.row_overdue{
+	background-color: orangered;
+	color:black;
+}
+
+.row_warning{
+	background-color: yellow;
+	color:black;
+}

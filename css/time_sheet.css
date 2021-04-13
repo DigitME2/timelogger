@@ -1,0 +1,40 @@
+#timeSheetControls{
+	display: grid;
+	grid-template-columns: 85px 150px 85px 150px;
+	align-items:center;
+	grid-row-gap:3px;
+	grid-column-gap:8px;
+}
+
+#selectUserLabel{
+	grid-column:1;
+}
+
+#startDateLabel{
+	grid-column:1;
+}
+
+#endDateLabel{
+	grid-column:3;
+}
+
+#userIdSelector{
+	grid-column:2;
+}
+
+#dateStartInput{
+	grid-column:2;
+}
+
+#dateEndInput{
+	grid-column:4;
+}
+
+#fetchTimeSheetButton{
+  	grid-column:4;
+	max-width:150px;
+}
+
+#csvDownloadLink{
+	grid-column:1/6;
+}

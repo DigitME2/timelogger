@@ -1,0 +1,34 @@
+:root{
+	--work-hours-number-columns-normal:3;
+	--work-hours-number-columns-lunch:5;
+	--work-hours-number-columns: var(--work-hours-number-sets-normal);
+}
+
+#timeSettingContainer{
+	margin-top:10px;
+    display: grid;
+    grid-template-columns: repeat(var(--work-hours-number-columns), 100px);
+	align-items: center;
+	grid-row-gap: 1px;
+}
+
+.timeDisplayStart, .timeDisplayEnd, .lunchtimeDisplayStart, .lunchtimeDisplayEnd{
+	width : 70px;
+    height: 16px;
+}
+
+#workHoursHeader{
+	margin-top:0px;
+}
+
+#saveButton{
+	margin-top:8px;
+}
+
+#allowMultipleClockOn{
+	margin-top:8px;
+}
+
+.headerLabel, .timeDisplayStart, .lunchtimeDisplayStart, .lunchtimeDisplayEnd, .timeDisplayEnd{
+	justify-self: center;
+}

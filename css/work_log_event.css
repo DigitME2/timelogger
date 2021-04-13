@@ -1,0 +1,36 @@
+#logEventDetails{
+	display: grid;
+	grid-template-columns: 170px 130px 130px;
+	grid-auto-rows: 37px;
+	align-items: center;
+}
+
+.logEventLabel{
+    grid-column:1;
+	margin-top: 6px;
+}
+
+.logEventInfo{
+    grid-column:2/4;
+}
+
+#quantityComplete{
+	width: 236px;
+}
+
+#btnSaveChanges{
+	grid-column:2;
+	margin-top:20px;
+	max-width:130px;
+}
+
+#btnDeleteEvent{
+	grid-column:3;
+	margin-top:20px;
+	max-width:130px;
+}
+
+#saveChangesFeedback{
+	margin-top:20px;
+	grid-column:2/5;
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+    <head>
+        <script src="../scripts/client/jquery.js"></script>
+        <script src="../scripts/client/users.js"></script>
+        <script src="../scripts/client/generate_table_generic.js"></script>
+		<script>
+		$(function(){
+			$("#commonHeader").load("header.html", function activePage(){
+					var pageName = window.location.pathname.split("/").pop().split(".")[0];
+					$("#" + pageName + "_nav_link").addClass("navActive");
+				});
+			$("#commonFooter").load("footer.html");
+		});
+		</script>
+        <link rel="stylesheet" href="../css/common.css" type="text/css">
+        <link rel="stylesheet" href="../css/users.css" type="text/css">
+    </head>
+    <body>
+        <div id ="commonHeader"></div>
+        <div class="pageContainer">
+            <div id="addUserArea">
+                <h1>Add New Users</h1>
+                <div id="addUserControls">
+                    <span id="newUserNameLabel">New user name</span>
+                    <input type="text" class="userDetailsInput" id="newUserName" pattern="^[A-Za-z0-9_ ]{1,50}$">
+                    <span id="newUserNameCounter"></span>
+                    <input id="newUserNameButton" type="button" value="Add user"  onclick="addNewUser()">
+					<span id="addUserResponseField"/>
+                </div>
+            </div>
+            
+            <hr>
+            
+            <div id="currentUsersDisplay">
+                <h1>Existing Users</h1>
+                <div id=currentUserDisplayControls>
+                    <input type="radio" id="sortByTimeAdded" name="tableOrdering" value="byTimeAdded" checked="true" onclick="updateUserTable()">
+                    <label for="sortByTimeAdded">Sort by when users were added</label>
+                    <input type="radio" id="sortAlphabetic" name="tableOrdering" value="byAlphabetic" onclick="updateUserTable()">
+                    <label for="sortAlphabetic">Sort alphabetically</label>
+                </div>
+                <div id=currentUserTableContainer>
+                    <span id="tablePlaceholder">Loading...</span>
+                </div>
+            </div>
+        </div>
+		<div id ="commonFooter"></div>
+    </body>
+</html>

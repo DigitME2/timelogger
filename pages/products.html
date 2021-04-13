@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+    <head>
+        <script src="../scripts/client/jquery.js"></script>
+        <script src="../scripts/client/products.js"></script>
+        <script src="../scripts/client/generate_table_generic.js"></script>
+		<script>
+		$(function(){
+			$("#commonHeader").load("header.html", function activePage(){
+					var pageName = window.location.pathname.split("/").pop().split(".")[0];
+					$("#" + pageName + "_nav_link").addClass("navActive");
+				});
+			$("#commonFooter").load("footer.html");
+		});
+		</script>
+        <link rel="stylesheet" href="../css/common.css" type="text/css">
+        <link rel="stylesheet" href="../css/products.css" type="text/css">
+    </head>
+    <body>
+		<div class="pageContainer">
+			<div id ="commonHeader"></div>
+			<h1>Add New Product</h1>
+			<div id="addProductControls">               
+				<span id="newProductIdLabel">New Product ID</span>
+				<input type="text" class="productInput" id="newProductId" pattern="^[a-zA-Z0-9_]{1,20}$">
+				<span id="newProductIdCounter"></span>
+				<br/>
+				<input id="newProductIdButton" type="button" value="Add Product"  onclick="addNewProduct()">
+				<span id="addProductResponseField"/>
+			</div>
+				
+				<hr>
+				
+			<div id="existingProductsDisplay">
+				<h1>Existing Products</h1>	
+
+				<div id=currentProductDisplayControls>
+					<div id="searchControls">
+						<input type="text" id="searchPhrase" class="searchControl"/>
+						<input type="button" id="searchBtn" class="searchControl" value="Search" onclick="searchProducts()"/>
+						<div id="searchResults"></div>
+					</div>
+				</div>
+
+				<div id=existingProductsContainer>
+				    <span id="tablePlaceholder">Loading...</span>
+				</div>
+			</div>
+		</div>
+		<div id ="commonFooter"></div>
+    </body>
+</html>
