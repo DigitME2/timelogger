@@ -5,3 +5,11 @@ services:
     ports:
         - "80:80"
         - "3306:3306"
+    volumes:
+      - type: volume
+        source: timelogger_db_vol
+        target: /opt/lampp/var/mysql
+
+volumes:
+  timelogger_db_vol:
+  
