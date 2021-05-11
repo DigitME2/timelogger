@@ -7,16 +7,6 @@ $(document).ready(function(){
 		$("#scannerNewNameCounter").html(nameCharsRemaining + "/14"); 
 	});
 	setInterval(function(){updateScannersTable();}, 60000)
-	
-	$("#newStation").prop("checked", false);
-	
-	$("#newStation").change(function(){
-	    if($(this).is(':checked')) {
-			$("#scannerCurrentName").prop("disabled", true);
-	    } else {
-			$("#scannerCurrentName").prop("disabled", false);
-	    }
-	});
 });
 
 // set function to call renameScanner when enter key pressed to submit
@@ -55,13 +45,10 @@ function updateScannersTable(){
                                 "headingName":"Last Seen",
                                 "dataName":"lastSeen"
                             },
-		                    {
-		                        "headingName":"Delete",
-		                        "functionToRun":deleteStation,
-		                        "functionParamDataName":"stationId",
-		                        "functionParamDataLabel":"stationId",
-		                        "functionButtonText":"Delete"
-		                    }
+							{
+                                "headingName":"Version",
+                                "dataName":"version"
+                            }
                         ]
                     };
 				var table = generateTable("activeScannersTable", tableData, tableStructure);
@@ -81,17 +68,12 @@ function updateScannersTable(){
 }
 
 function renameScanner(){
-	if ($('#newStation').is(":checked")){
-		scannerCurrentName = null;
-	}
-	else{
-		scannerCurrentName = $("#scannerCurrentName").val();
-		if(scannerCurrentName == "noSelection"){
-			console.log("No current scanner selected, Stopping.");
-			$("#renameFeedback").html("No current scanner selected, unable to rename!!");
-			setTimeout(function(){$("#renameFeedback").empty()},10000);
-			return;
-		}
+	scannerCurrentName = $("#scannerCurrentName").val();
+	if(scannerCurrentName == "noSelection"){
+		console.log("No current scanner selected, Stopping.");
+		$("#renameFeedback").html("No current scanner selected, unable to rename!!");
+		setTimeout(function(){$("#renameFeedback").empty()},10000);
+		return;
 	}
 	
 	scannerNewName = $("#scannerNewName").val();
@@ -127,53 +109,11 @@ function renameScanner(){
 				$("#renameFeedback").html("Error");
 			}
 			else{
-				clearInput();
-				$("#renameFeedback").html("Station renamed. Please reopen app for change to take effect.");
+				$("#scannerNewName").val("");
+				$("#scannerCurrentName").val("noSelection");
+				$("#renameFeedback").html("Station renamed. This may require a moment to take effect.");
 				setTimeout(function(){$("#renameFeedback").empty()},10000);
-				updateScannersTable();
 			}
         }
     });
-}
-
-
-
-function deleteStation(stationId){
-	if(stationId == "" || stationId == null){
-		console.log("No current scanner selected, Stopping.");
-		$("#renameFeedback").html("No current scanner selected!");
-		setTimeout(function(){$("#renameFeedback").empty()},10000);
-		return;
-	}
-	
-	$.ajax({
-        url:"../scripts/server/scanners.php",
-        type:"GET",
-        dataType:"text",
-        data:{
-            "request":"deleteStation",
-			"currentName":stationId
-        },
-        success:function(result){
-	    console.log(result);
-            resultJson = $.parseJSON(result);
-            if(resultJson["status"] != "success"){
-                console.log(resultJson["result"]);
-				$("#renameFeedback").html("Error");
-			}
-			else{
-				clearInput();
-				$("#renameFeedback").html("Station deleted. Please reopen app for change to take effect.");
-				setTimeout(function(){$("#renameFeedback").empty()},10000);
-				updateScannersTable();
-			}
-        }
-    });
-}
-
-function clearInput(){
-	$("#newStation").prop("checked", false);
-	$("#scannerCurrentName").prop("disabled", false);
-	$("#scannerNewName").val("");
-	$("#scannerCurrentName").val("noSelection");
 }

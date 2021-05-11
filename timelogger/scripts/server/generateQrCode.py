@@ -1,6 +1,5 @@
 import qrcode
 import sys
-import os
 
 if len(sys.argv) < 3:
     print("Usage: {} <data to encode> <path to save to>".format(sys.argv[0]))
@@ -9,10 +8,6 @@ if len(sys.argv) < 3:
 print("generating code")
 code = sys.argv[1]
 path = sys.argv[2]
-
-dir = os.path.dirname(path)
-if not os.path.exists(dir):
-    os.makedirs(dir)
 
 # note: uses the most robust error correction setting.
 # Seems valuable for a factory.
@@ -29,4 +24,3 @@ img = qr.make_image()
 
 img.save(path)
 print(path)
-sys.exit(100)

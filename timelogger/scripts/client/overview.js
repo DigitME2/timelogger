@@ -4,25 +4,78 @@ var updateRequestNumber = 0;
 $(document).ready(function(){
 	sortRadioChange();	
 
-	enableTimePeriod('Created')
-	enableTimePeriod('Due')
+	enableTimePeriod('Created');
+	enableTimePeriod('Due');
+
+	initDisplayOptions();
 	
     updateJobsData();
-    setInterval(function(){updateJobsData();}, 60000)
+    setInterval(function(){updateJobsData();}, 60000);
 });
+
+function initDisplayOptions(){
+	
+	if(localStorage.getItem("retainDisplayOptions") == "true"){
+		$('#warningHighlightDaysCount').val(localStorage.getItem("warningHighlightDaysCount"));
+		$('#showDeadlineWarningHighlight').prop("checked",localStorage.getItem("showDeadlineWarningHighlight") == "true");
+		$('#highlightPriority').prop("checked",localStorage.getItem("highlightPriority") == "true");
+		$('#showCustomerName').prop("checked",localStorage.getItem("showCustomerName") == "true");
+		$('#showProductId').prop("checked",localStorage.getItem("showProductId") == "true");
+		$('#showDescription').prop("checked",localStorage.getItem("showDescription") == "true");
+		$('#showNumberOfUnits').prop("checked",localStorage.getItem("showNumberOfUnits") == "true");
+		$('#showTotalParts').prop("checked",localStorage.getItem("showTotalParts") == "true");
+		$('#showCurrentStatus').prop("checked",localStorage.getItem("showCurrentStatus") == "true");
+		$('#showRouteStage').prop("checked",localStorage.getItem("showRouteStage") == "true");
+		$('#showJobCreated').prop("checked",localStorage.getItem("showJobCreated") == "true");
+		$('#showDueDate').prop("checked",localStorage.getItem("showDueDate") == "true");
+		$('#showExpectedDuration').prop("checked",localStorage.getItem("showExpectedDuration") == "true");
+		$('#showWorkedTime').prop("checked",localStorage.getItem("showWorkedTime") == "true");
+		$('#showOvertime').prop("checked",localStorage.getItem("showOvertime") == "true");
+		$('#showEfficiency').prop("checked",localStorage.getItem("showEfficiency") == "true");
+		$('#showStoppages').prop("checked",localStorage.getItem("showStoppages") == "true");
+		$('#showChargePerMinute').prop("checked",localStorage.getItem("showChargePerMinute") == "true");
+		$('#showTotalChargeToCustomer').prop("checked",localStorage.getItem("showTotalChargeToCustomer") == "true");
+		$('#showNotes').prop("checked",localStorage.getItem("showNotes") == "true");
+		$('#retainDisplayOptions').prop("checked",localStorage.getItem("retainDisplayOptions") == "true");
+	}
+	else{
+		$('#warningHighlightDaysCount').val(5);
+		$('#showDeadlineWarningHighlight').prop("checked", true);
+		$('#highlightPriority').prop("checked", true);
+		$('#showCustomerName').prop("checked", true);
+		$('#showProductId').prop("checked", true);
+		$('#showDescription').prop("checked", true);
+		$('#showNumberOfUnits').prop("checked", true);
+		$('#showTotalParts').prop("checked", true);
+		$('#showCurrentStatus').prop("checked", true);
+		$('#showRouteStage').prop("checked", true);
+		$('#showJobCreated').prop("checked", true);
+		$('#showDueDate').prop("checked", true);
+		$('#showExpectedDuration').prop("checked", true);
+		$('#showWorkedTime').prop("checked", true);
+		$('#showOvertime').prop("checked", true);
+		$('#showEfficiency').prop("checked", true);
+		$('#showStoppages').prop("checked", true);
+		$('#showChargePerMinute').prop("checked", true);
+		$('#showTotalChargeToCustomer').prop("checked", true);
+		$('#showNotes').prop("checked", true);
+		$('#retainDisplayOptions').prop("checked", false);		
+	}
+
+}
 
 function setDefaultDateRange(period, filterName)
 {
 
 	if (filterName == "Created")
 	{
-		var startDate = new Date(Date.now() - (period * 24 * 60 *60 *1000));
+		var startDate = new Date(Date.now() - (period * 24 * 60 *60 *1000)); // one week ago, in milliseconds
 		var endDate = new Date(Date.now());
 	}
 	else
 	{
-		var startDate = new Date(Date.now()); // one week ago, in milliseconds
-		var endDate = new Date(Date.now() + (period * 24 * 60 *60 *1000));
+		var startDate = new Date(Date.now()); 
+		var endDate = new Date(Date.now() + (period * 24 * 60 *60 *1000)); 
 	}
 	
 	var startDateString = startDate.getFullYear() + "-" + ("0"+(startDate.getMonth()+1)).slice(-2)  + "-" + ("0" + startDate.getDate()).slice(-2);
@@ -74,6 +127,36 @@ function updateBodySize(){
 	{
 		$("Body").width($("#currentJobsTable").width());
 	}
+}
+
+// update the display and then save the display options settings
+function onDisplayOptionsChange(){
+	updateTableDisplay()
+	
+	
+	localStorage.setItem("warningHighlightDaysCount", $('#warningHighlightDaysCount').val());
+	localStorage.setItem("showDeadlineWarningHighlight", $('#showDeadlineWarningHighlight').is(":checked"));
+	localStorage.setItem("highlightPriority", $("#highlightPriority").is(":checked"));
+	localStorage.setItem("showCustomerName", $("#showCustomerName").is(":checked"));
+	localStorage.setItem("showProductId", $("#showProductId").is(":checked"));
+	localStorage.setItem("showDescription", $("#showDescription").is(":checked"));
+	localStorage.setItem("showNumberOfUnits", $("#showNumberOfUnits").is(":checked"));
+	localStorage.setItem("showTotalParts", $("#showTotalParts").is(":checked"));
+	localStorage.setItem("showCurrentStatus", $("#showCurrentStatus").is(":checked"));
+	localStorage.setItem("showRouteStage", $("#showRouteStage").is(":checked"));
+	localStorage.setItem("showJobCreated", $("#showJobCreated").is(":checked"));
+	localStorage.setItem("showDueDate", $("#showDueDate").is(":checked"));
+	localStorage.setItem("showExpectedDuration", $("#showExpectedDuration").is(":checked"));
+	localStorage.setItem("showWorkedTime", $("#showWorkedTime").is(":checked"));
+	localStorage.setItem("showOvertime", $("#showOvertime").is(":checked"));
+	localStorage.setItem("showEfficiency", $("#showEfficiency").is(":checked"));
+	localStorage.setItem("showStoppages", $("#showStoppages").is(":checked"));
+	localStorage.setItem("showChargePerMinute", $("#showChargePerMinute").is(":checked"));
+	localStorage.setItem("showTotalChargeToCustomer", $("#showTotalChargeToCustomer").is(":checked"));
+	localStorage.setItem("showNotes", $("#showNotes").is(":checked"));
+	localStorage.setItem("retainDisplayOptions", $("#retainDisplayOptions").is(":checked"));
+	
+	console.log(localStorage);
 }
 
 function updateJobsData(){
@@ -193,7 +276,7 @@ function updateTableDisplay(){
 							}
 						}
 
-						if(("priority" in RowData) && $("#highlightPrioriy").is(":checked"))
+						if(("priority" in RowData) && $("#highlightPriority").is(":checked"))
 						{
 							switch(RowData.priority){
 								case 1:
@@ -232,6 +315,15 @@ function updateTableDisplay(){
 		);
 	}
 	
+	if($("#showCustomerName").is(":checked")){
+		tableStructure.columns.push(
+			{
+				"headingName":"Customer Name",
+				"dataName":"customerName"
+			}
+		);
+	}
+	
 	if($("#showDescription").is(":checked")){
 		tableStructure.columns.push(
 			{
@@ -246,6 +338,15 @@ function updateTableDisplay(){
 			{
 				"headingName":"Number of Units",
 				"dataName":"numberOfUnits"
+			}
+		);
+	}
+	
+	if($("#showTotalParts").is(":checked")){
+		tableStructure.columns.push(
+			{
+				"headingName":"Total Parts",
+				"dataName":"totalParts"
 			}
 		);
 	}
@@ -331,22 +432,24 @@ function updateTableDisplay(){
 		);
 	}
 	
-	if($("#showChargePerMinute").is(":checked")){
-		tableStructure.columns.push(
-			{
-				"headingName":"Value Per Minute",
-				"dataName":"chargePerMin"
-			}
-		);
-	}
-	
-	if($("#showTotalChargeToCustomer").is(":checked")){
-		tableStructure.columns.push(
-			{
-				"headingName":"Total Charge To Customer (£)",
-				"dataName":"totalCharge"
-			}
-		);
+	if($("#showChargePerMinute").is(":visible")){
+		if($("#showChargePerMinute").is(":checked")){
+			tableStructure.columns.push(
+				{
+					"headingName":"Value Per Minute",
+					"dataName":"chargePerMin"
+				}
+			);
+		}
+		
+		if($("#showTotalChargeToCustomer").is(":checked")){
+			tableStructure.columns.push(
+				{
+					"headingName":"Total Charge To Customer (£)",
+					"dataName":"totalCharge"
+				}
+			);
+		}
 	}
 
 	if($("#showQuantityComplete").is(":checked")){
@@ -363,6 +466,15 @@ function updateTableDisplay(){
 			{
 				"headingName":"Qty Outstanding",
 				"dataName":"stageOutstandingUnits"
+			}
+		);
+	}
+
+	if($("#showNotes").is(":checked")){
+		tableStructure.columns.push(
+			{
+				"headingName":"Notes",
+				"dataName":"notes"
 			}
 		);
 	}

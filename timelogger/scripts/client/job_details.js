@@ -6,8 +6,14 @@ $(document).ready(function(){
         $("#descriptionCounter").html(descCharsRemaining + "/200"); 
     });
     $("#description").trigger("keyup",null);
-
-
+    
+    $("#customerName").on('keyup', function(){
+        var customerName = $("#customerName").val();
+        
+        var custNameCharsRemaining = 50 - description.length;
+        $("#customerName").html(custNameCharsRemaining + "/50"); 
+    });
+    $("#customerName").trigger("keyup",null);
 });
 
 function setUpKeyPress(JobId){
@@ -115,12 +121,19 @@ function loadJobRecord(JobId){
 					$("#productId").html(record.productId);
 					$("#routeName").val(record.routeName);
 					$("#routeStage")[0].selectedIndex = record.routeCurrentStageIndex-1;
+					
 					$("#description").val(record.description);
-                    
                     var descCharsRemaining = 200 - record.description.length;
                     $("#descriptionCounter").html(descCharsRemaining + "/200");
                     
+                    $("#customerName").val(record.customerName);
+                    if(record.customerName != null){
+		                var custNameCharsRemaining = 50 - record.customerName.length;
+		                $("#customerNameCounter").html(custNameCharsRemaining + "/50");
+                    }
+                    
 					$("#numUnits").val(record.numberOfUnits);
+					$("#totalParts").val(record.totalParts);
 					
 					if(record.dueDate == "9999-12-31")
 						$("#dueDate").val("");
@@ -284,10 +297,26 @@ function saveRecord(JobId){
 		return;
 	}
 	
+	var totalParts = $("#totalParts").val()
+	if(totalParts < 0){
+		console.log("Total Parts invalid- negative. Stopping");
+		$("#saveChangesFeedback").empty().html("Total parts can not be negative.");
+		setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
+		return;
+	}
+	
 	description = $("#description").val();
 	if(description.length > 200){
 		console.log("Description length exceeds 200 characters. Stopping");
 		$("#saveChangesFeedback").empty().html("Description's length must not be greater than 200");
+		setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
+		return;
+	}
+	
+	customerName = $("#customerName").val();
+	if(customerName.length > 50){
+		console.log("customer Name length exceeds 50 characters. Stopping");
+		$("#saveChangesFeedback").empty().html("customer Name's length must not be greater than 50");
 		setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
 		return;
 	}
@@ -320,7 +349,9 @@ function saveRecord(JobId){
 			"notes":$("#notesField").val(),
 			"expectedDuration":duration,
 			"totalChargeToCustomer":jobTotalCharge,
-			"numberOfUnits":unitCount
+			"numberOfUnits":unitCount,
+			"totalParts":totalParts,
+			"customerName":customerName
         },
         success:function(result, inputJobId){
             console.log(result);
@@ -797,6 +828,14 @@ function duplicateJob(JobId){
 	if(unitCount < 0){
 		console.log("Unit Count invalid- negative. Stopping");
 		$("#saveChangesFeedback").empty().html("Unit Count can not be negative.");
+		setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
+		return;
+	}
+	
+	customerName = $("#customerName").val();
+	if(customerName.length > 50){
+		console.log("customer Name length exceeds 50 characters. Stopping");
+		$("#saveChangesFeedback").empty().html("customer Name's length must not be greater than 50");
 		setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
 		return;
 	}

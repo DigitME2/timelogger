@@ -133,11 +133,14 @@ function getOverviewData($DbConn, $TableOrdering = "createdNewestFirst", $HideCo
 			"dueDate"			=> $dueDate,
 			"stoppages"			=> $row["stoppages"],
 			"numberOfUnits"		=> $row["numberOfUnits"],
+			"totalParts"		=> $row["totalParts"],
 			"chargePerMin"		=> $chargePerMinStr,
 			"totalCharge"		=> $chargePounds,
 			"productId"			=> $productId,
-			"stageQuantityComplete" => $row["stageQuantityComplete"],
-			"stageOutstandingUnits" => $row["stageOutstandingUnits"]
+			//"stageQuantityComplete" => $row["stageQuantityComplete"],
+			//"stageOutstandingUnits" => $row["stageOutstandingUnits"]
+			"customerName"		=> $row["customerName"],
+			"notes"				=> $row["notes"]
 		);
     		
         array_push($fullSearchResults, $resultRow);
@@ -327,7 +330,9 @@ function main()
 					"stoppages",
 					"numberOfUnits",
 					"chargePerMin",
-					"totalCharge"
+					"totalCharge",
+					"customerName",
+					"notes"
                 );
                 $columnNames = array(
                     "Job ID",
@@ -345,7 +350,9 @@ function main()
 					"Stoppages",
 					"Number of Units",
 					"Charge Per Minute",
-					"Total Charge To Customer"
+					"Total Charge To Customer",
+					"Customer Name",
+					"Notes"
                 );
 
 				$fileName = "overview_data.csv";
@@ -361,7 +368,6 @@ function main()
             }
             else
             {   
-
 				$returnArray = array("overviewData"=>$overviewData, "updateRequestNumber"=>$updateRequestNumber);
                 sendResponseToClient("success", $returnArray);
             }

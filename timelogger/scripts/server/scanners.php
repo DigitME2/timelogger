@@ -6,7 +6,7 @@ $debug = false;
 
 function getConnectedClients($DbConn)
 {
-    $query = "SELECT stationId, lastSeen FROM connectedClients ORDER BY stationId ASC";
+    $query = "SELECT stationId, lastSeen, version FROM connectedClients WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, lastSeen)) < 60 ORDER BY stationId ASC";
     if(!($queryResult = $DbConn->query($query)))
             errorHandler("Error executing query: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
@@ -23,12 +23,11 @@ function getConnectedClients($DbConn)
 
 function startRenameClient($DbConn, $CurrentName, $NewName)
 {
-	$query = "UPDATE connectedClients SET connectedClients.stationId=? WHERE connectedClients.stationId=?";
-	
+	$query = "INSERT INTO clientNames (currentName, newName) VALUES (?,?)";
     if(!($stmt = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
-	if(!($stmt->bind_param('ss', $NewName, $CurrentName)))
+	if(!($stmt->bind_param('ss', $CurrentName, $NewName)))
 		errorHandler("Error executing statement: ($stmt->errno) $stmt->error, line " . __LINE__);
 		
     if(!($stmt->execute()))
@@ -36,38 +35,6 @@ function startRenameClient($DbConn, $CurrentName, $NewName)
     
 	$stmt->close();
     
-}
-
-function createStation($DbConn, $NewName)
-{
-	$query = "INSERT INTO connectedClients (stationId) VALUES (?)";	
-	
-    if(!($stmt = $DbConn->prepare($query)))
-        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-	if(!($stmt->bind_param('s', $NewName)))
-		errorHandler("Error executing statement: ($stmt->errno) $stmt->error, line " . __LINE__);
-		
-    if(!($stmt->execute()))
-        errorHandler("Error executing statement: ($stmt->errno) $stmt->error, line " . __LINE__);
-    
-	$stmt->close();
-}
-
-function deleteStation($DbConn, $CurrentName)
-{
-	$query = "DELETE FROM connectedClients WHERE connectedClients.stationId=?";	
-	
-    if(!($stmt = $DbConn->prepare($query)))
-        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-	if(!($stmt->bind_param('s', $CurrentName)))
-		errorHandler("Error executing statement: ($stmt->errno) $stmt->error, line " . __LINE__);
-		
-    if(!($stmt->execute()))
-        errorHandler("Error executing statement: ($stmt->errno) $stmt->error, line " . __LINE__);
-    
-	$stmt->close();
 }
 
 function main()
@@ -93,24 +60,13 @@ function main()
             break;
 			
 		case "startRenameClient":
+			printDebug("Recording new name for scanner client");
 			$currentName = $_GET["currentName"];
 			$newName = $_GET["newName"];
-			if($currentName == null){
-				printDebug("Creating new station");
-				createStation($dbConn, $newName);
-			}else{
-				printDebug("Recording new name for station");
-				startRenameClient($dbConn, $currentName, $newName);
-			}
+			startRenameClient($dbConn, $currentName, $newName);
 			sendResponseToClient("success");
 			break;
-			
-		case "deleteStation":
-            $currentName = $_GET["currentName"];
-			printDebug("Creating new station");
-			deleteStation($dbConn, $currentName);
-			sendResponseToClient("success");
-			break;
+            
         default:
             sendResponseToClient("error","Unknown command: $request");
     }

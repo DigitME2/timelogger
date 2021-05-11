@@ -1,1 +1,1 @@
-jobId,expectedDuration,description,routeName,dueDate,totalChargeToCustomer,unitCount,productId,priority
+jobId,expectedDuration,description,routeName,dueDate,totalChargeToCustomer,unitCount,totalParts,productId,priority,customerName

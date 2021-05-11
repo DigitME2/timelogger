@@ -23,24 +23,22 @@
             <div id ="commonHeader"></div>
             <div class="pageMainBody">
 				<div id="scannerListContainer">
-                	<h1>Stations</h1>
+                	<h1>Active Scanner Stations</h1>
 					<div id="scannerNameTableContainer">
 					</div>
 				</div>
 				<div id="scannerRenameContainer">
-					<h1>Edit Stations</h1>
+					<h1>Rename a Scanner Station</h1>
 					<div id="scannerRenameControls">
-						<label for="scannerCurrentName" class="col1">Add New Station</label>
-						<input type="checkbox" id="newStation" class="col2">
-						<label for="scannerCurrentName" class="col1">Current Station Name</label>
+						<label for="scannerCurrentName" class="col1">Current Scanner Name</label>
 						<select id="scannerCurrentName" class="col2">
-							<option value="noSelection">Select a Station...</option>
+							<option value="noSelection">Select a scanner...</option>
 						</select>
 						<br>
-						<label for="scannerNewName" class="col1">New Station Name</label>
+						<label for="scannerNewName" class="col1">New Scanner Name</label>
 						<input id="scannerNewName" type="text" class="col2" pattern="^[A-Za-z0-9_ ]{1,14}$"/>
 						<span id="scannerNewNameCounter" class="col3">14/14</span>
-						<input id="renameScanner" onclick="renameScanner()" value="Submit" class="col2" type="button"/>
+						<input id="renameScanner" onclick="renameScanner()" value="Rename" class="col2" type="button"/>
 						<span id="renameFeedback" class="col2"></span>
 					</div>
 				</div>

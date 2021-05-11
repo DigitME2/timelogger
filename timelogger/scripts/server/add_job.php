@@ -6,9 +6,9 @@
 require "db_params.php";
 require "common.php";
 
-$debug = true;
+$debug = false;
 
-function addJob($DbConn, $JobId, $Description, $ExpectedDuration, $RouteName, $DueDate, $TotalJobCharge, $NumberOfUnits, $productId, $priority)
+function addJob($DbConn, $JobId, $Description, $ExpectedDuration, $RouteName, $DueDate, $TotalJobCharge, $NumberOfUnits, $TotalParts, $productId, $priority, $customerName)
 {
     printDebug("Adding new job $JobId");
 	   
@@ -31,12 +31,12 @@ function addJob($DbConn, $JobId, $Description, $ExpectedDuration, $RouteName, $D
         return "Job ID already exists";
     }
     
-    $query = "INSERT INTO jobs (jobId, expectedDuration, description, routeName, dueDate, numberOfUnits, totalChargeToCustomer, productId, priority, currentStatus, recordAdded) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)";
+    $query = "INSERT INTO jobs (jobId, expectedDuration, description, routeName, dueDate, numberOfUnits, totalParts, totalChargeToCustomer, productId, priority, customerName, currentStatus, recordAdded) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)";
     
     if(!($statement = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
-    if(!($statement->bind_param('sssssssss', $JobId, $ExpectedDuration, $Description, $RouteName, $DueDate, $NumberOfUnits, $TotalJobCharge, $productId, $priority)))
+    if(!($statement->bind_param('sssssssssss', $JobId, $ExpectedDuration, $Description, $RouteName, $DueDate, $NumberOfUnits, $TotalParts, $TotalJobCharge, $productId, $priority, $customerName)))
         errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
     
     if(!$statement->execute())
@@ -102,6 +102,11 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 		$unitCount = $jobDetails["unitCount"];
 	else
 		$unitCount = 0;
+	
+	if(isset($jobDetails["totalParts"]) && $jobDetails["totalParts"] != "")
+		$totalParts = $jobDetails["totalParts"];
+	else
+		$totalParts = 0;
 
 	if(isset($jobDetails["productId"]) && $jobDetails["productId"] !== null)
 		$productId = $jobDetails["productId"];
@@ -113,6 +118,12 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 	else
 		$priority = 0;
 
+	if(isset($jobDetails["customerName"]) && $jobDetails["customerName"] !== null)
+		$customerName = $jobDetails["customerName"];
+	else
+		$customerName = '';		
+		
+
 	
 
 	if($result === "")
@@ -122,7 +133,11 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 		else
 			$routeValidateVal = $routeName;
 
-		$result = validateJobDetails($DbConn, $jobId, $description, $expectedDuration, $routeValidateVal, $dueDate, $charge, $unitCount, $productId, $priority);
+		$result = validateJobDetails(
+			$DbConn, $jobId, $description, $expectedDuration, $routeValidateVal, 
+			$dueDate, $charge, $unitCount, $totalParts, $productId, $priority, 
+			$customerName
+			);
 	}
 	
 	
@@ -139,7 +154,7 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 
 		//attempt to add job
 		try{
-			$result = addJob($DbConn, $jobId, $description, $expectedDuration, $routeName, $dueDate, $charge, $unitCount, $productId, $priority);
+			$result = addJob($DbConn, $jobId, $description, $expectedDuration, $routeName, $dueDate, $charge, $unitCount, $totalParts, $productId, $priority, $customerName);
 
 			if($result === "Added" && $productId != '')
 				setProductCurrentJob($DbConn, $jobId, $productId); //set this job as the current job for the product

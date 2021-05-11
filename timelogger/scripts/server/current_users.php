@@ -93,7 +93,7 @@ function clockOffUser($DbConn, $ref)
 		if(!$statement->execute())
 		    errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
 		
-		if(!($statement->bind_result($result, $timelogref)))
+		if(!($statement->bind_result($result)))
 		    errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
 		
 		$statement->fetch();

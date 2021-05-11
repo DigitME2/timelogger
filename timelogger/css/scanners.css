@@ -7,10 +7,6 @@
 	float:left;
 }
 
-#newStation{
-	justify-self: start;
-}
-
 #scannerRenameControls{
 	display: grid;
 	grid-template-columns: 200px 200px 100px;
@@ -30,4 +26,3 @@
 	grid-column: 3;
 	margin:5px;
 }
-

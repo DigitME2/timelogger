@@ -3,11 +3,14 @@ $(document).ready(function(){
         var jobID = $("#jobIdNumberInput").val();
         var expHours = $("#expectedHoursInput").val();
         var description = $("#descriptionInput").val();
+        var customerName = $("#customerNameInput").val();
         
         var jobCharsRemaining = 20 - jobID.length;
         var descCharsRemaining = 200 - description.length;
+        var custCharsRemaining = 50 - customerName.length;
         $("#jobIdCounter").html(jobCharsRemaining + "/20");
         $("#descriptionCounter").html(descCharsRemaining + "/200"); 
+        $("#customerNameCounter").html(custCharsRemaining + "/50"); 
     });
     $(".jobDetailsInput").trigger("keyup",null);
 	
@@ -92,20 +95,16 @@ function handleNewJob(){
     var dueDate = $("#jobDueDateInput").val();
 	var jobTotalCharge = $("#jobTotalCharge").val(); // get the value into pence
 	var unitCount = $("#unitCount").val();
+	var totalParts = $("#totalParts").val();
 	var productId = $("#productIdDropDown").val();
 	var priority = $("#priority").val();
+	var customerName = $("#customerNameInput").val();
 	
 	if(routeName == "")
 		routeName = null;
 	if(dueDate == "")
 		dueDate = "9999-12-31";
-	
-	/*if(jobID == ""){
-		console.log("No job ID entered. Stopping");
-		$("#saveJobResponseField").empty().html("Enter a job ID");
-		setTimeout(function(){$("#saveJobResponseField").empty();},10000);
-		return;
-	}*/
+
 	
 	regexp = /^[a-z0-9_]*$/i;
 	if(jobID != "" && (! regexp.test(jobID))){
@@ -199,8 +198,22 @@ function handleNewJob(){
 		return;
 	}
 
+	if(totalParts < 0){
+		console.log("Total Parts invalid- negative. Stopping");
+		$("#saveJobResponseField").empty().html("Total Parts can not be negative.");
+		setTimeout(function(){$("#saveJobResponseField").empty();},10000);
+		return;
+	}
+
 	if(productId == "noSelection" || productId == null){
 		productId = '';
+	}
+	
+	if(customerName.length > 50){
+		console.log("Customer name length exceeds 50 characters. Stopping");
+		$("#saveJobResponseField").empty().html("Customer name's length must not be greater than 200");
+		setTimeout(function(){$("#saveJobResponseField").empty();},10000);
+		return;
 	}
 	
 	$.ajax({
@@ -216,8 +229,10 @@ function handleNewJob(){
 			"routeName":routeName,
 			"totalChargeToCustomer":jobTotalCharge,
 			"unitCount":unitCount,
+			"totalParts":totalParts,
 			"productId":productId,
-			"priority":priority
+			"priority":priority,
+			"customerName":customerName
 		},
 		success:function(result){
 			console.log(result);
@@ -228,11 +243,11 @@ function handleNewJob(){
 				if(routeName != "")
 					saveRoute();
 
-				resultJobID = res["result"]["jobId"];
+				jobID = res["result"]["jobId"];
 
-				setCodeDownloadLink(resultJobID, res["result"]["qrCodePath"])
-				
-				clearInputs()
+				setCodeDownloadLink(jobID, res["result"]["qrCodePath"])
+
+                $("#jobIdNumberInput").empty().val(jobID);
 			}
 			else{
 				$("#saveJobResponseField").empty().html(res["result"]);
@@ -254,7 +269,9 @@ function clearInputs(){
     $("#textboxRouteDesc").val("");
     $("#jobIdCounter").html("20/20");
     $("#descriptionCounter").html("200/200");
+    $("#customerNameCounter").html("50/50");
 	$("#productIdDropDown").val("");
+	$("#customerNameInput").val("");
 }
 
 function retreiveAndSetCodeDownloadLink(JobID){
@@ -280,13 +297,8 @@ function retreiveAndSetCodeDownloadLink(JobID){
 
 function setCodeDownloadLink(JobID, qrCodePath)
 {
-	var link = $('<a/>').attr('href',qrCodePath).attr('download',JobID+".png").html("Download job QR code");
-	var jobDetails_path = "job_details_client.php?jobId=" + JobID
-	var jobLink = $('<a/>').attr('href',jobDetails_path).html(JobID);
-    $("#saveJobResponseField").empty().append("Created Job ");
-    $("#saveJobResponseField").append(jobLink);
-    $("#saveJobResponseField").append("- ");
-    $("#saveJobResponseField").append(link);
+	var link = $('<a/>').attr('href',qrCodePath).attr('download',JobID+".png").html("Click here to download job ref QR code");
+    $("#saveJobResponseField").empty().append(link);
 }
 
 function searchJobs(){

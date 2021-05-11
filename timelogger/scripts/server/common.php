@@ -65,7 +65,7 @@ function generateQrCode($DataToEncode, $GeneratedCodePath)
     $cmd = "python3 generateQrCode.py $DataToEncode $GeneratedCodePath";
     printDebug($cmd);
     $resultPath = exec($cmd);
-    printDebug("##Generated QR code <<$resultPath>>");
+    printDebug("Generated QR code $resultPath");
     return $resultPath;
 }
 
@@ -386,7 +386,7 @@ function checkStartsWithPrefix($id)
 }
 
 
-function validateJobDetails($DbConn, $JobId, $Description, $ExpectedDuration, $RouteName, $DueDate, $TotalJobCharge, $NumberOfUnits, $productId, $priority)
+function validateJobDetails($DbConn, $JobId, $Description, $ExpectedDuration, $RouteName, $DueDate, $TotalJobCharge, $NumberOfUnits, $TotalParts, $productId, $priority, $customerName)
 {
 	if(! preg_match('/^[a-z0-9_]+$/i', $JobId))
 		$validationMessage = "Job ID contains invalid chars";
@@ -411,12 +411,18 @@ function validateJobDetails($DbConn, $JobId, $Description, $ExpectedDuration, $R
 
 	elseif ($NumberOfUnits != "" && $NumberOfUnits !== 0 && ! preg_match('/^\d+$/', $NumberOfUnits))
 		$validationMessage = "Number of units invalid";
+	
+	elseif ($TotalParts != "" && $TotalParts !== 0 && ! preg_match('/^\d+$/', $TotalParts))
+		$validationMessage = "Total parts invalid";
 
 	elseif ($productId != '' && (productIdExists($DbConn, $productId) == false))
 		$validationMessage = "Product does not exist";
 
 	elseif (! preg_match('/^[0-4]$/', $priority))
 		$validationMessage = "Priority not 0-4";
+		
+	elseif (strlen($customerName) > 50)
+		$validationMessage = "Customer name more than 50 chars";
 
 	else
 		$validationMessage = "";

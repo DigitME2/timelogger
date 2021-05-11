@@ -27,9 +27,13 @@
 			<div id="addJobArea">
 				<div id="detailsInputArea">
 					<h3>Details</h3>
-					<label id="jobIdLabel" for="jobIdNumberInout" class="jobDetailsLabel">Job ID</label>
+					<label id="jobIdLabel" for="jobIdNumberInput" class="jobDetailsLabel">Job ID</label>
 					<input type="text" class="jobDetailsInput" id="jobIdNumberInput" pattern="^[a-zA-Z0-9_]{1,20}$" required/>
 					<span id="jobIdCounter" class="inputWidthCounter"></span>
+					
+					<label id="customerNameLabel" for="customerNameInput" class="jobDetailsLabel">Customer Name</label>
+					<input type="text" class="jobDetailsInput" id="customerNameInput">
+					<span id="customerNameCounter" class="inputWidthCounter"></span>
 					
 					<label id="expectedHoursLabel" for="expectedHoursInput" class="jobDetailsLabel">Expected Time</label>
 					<input type="text" class="jobDetailsInput" id="expectedHoursInput" pattern="^\d+:[0-5][0-9]?$" placeholder="HH:MM">
@@ -46,6 +50,9 @@
 					
 					<label id="unitCountLabel" for="unitCount" class="jobDetailsLabel">Number of Units</label>
 					<input type="number" class="jobDetailsInput" step="1" id="unitCount" min="0"/>
+					
+					<label id="totalPartsLabel" for="totalParts" class="jobDetailsLabel">Total Parts</label>
+					<input type="number" class="jobDetailsInput" step="1" id="totalParts" min="0"/>
 
 					<label id="productIdLabel" for="productIdDropDown" class="jobDetailsLabel">Product ID</label>
 					<select class="jobDetailsInput" id="productIdDropDown"></select>

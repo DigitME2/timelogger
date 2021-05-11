@@ -43,6 +43,7 @@ else
         <script src="../scripts/client/jquery.js"></script>
         <script src="../scripts/client/overview.js"></script>
         <script src="../scripts/client/generate_table_generic.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
         <link rel="stylesheet" href="../css/common.css" type="text/css">
         <link rel="stylesheet" href="../css/overview.css" type="text/css">
 		<script>
@@ -138,61 +139,67 @@ else
 							<h2>Display options</h2>
 							<div id="displayOptionsListContainer">
 								<label for="warningHighlightDaysCount">Close to due date count:</label>
-								<input id="warningHighlightDaysCount" type="number" value="5" onchange="updateTableDisplay()" min="0"/>
+								<input id="warningHighlightDaysCount" type="number" onchange="onDisplayOptionsChange()" min="0"/>
 
 								<label for="showDeadlineWarningHighlight">Highlight jobs with close/overdue deadline</label>
-								<input type="checkbox" id="showDeadlineWarningHighlight" checked onchange="updateTableDisplay()"/>
+								<input type="checkbox" id="showDeadlineWarningHighlight" onchange="onDisplayOptionsChange()"/>
 
-								<label for="highlightPrioriy">Highlight Priority</label>
-								<input type="checkbox" id="highlightPrioriy" checked=false onchange="updateTableDisplay()"/>
+								<label for="highlightPriority">Highlight Priority</label>
+								<input type="checkbox" id="highlightPriority"  onchange="onDisplayOptionsChange()"/>
+
+								<label for="showCustomerName">Show customer Name</label>
+								<input type="checkbox" id="showCustomerName" onchange="onDisplayOptionsChange()"/>
 
 								<label for="showProductId">Show product ID</label>
-								<input type="checkbox" id="showProductId" checked onchange="updateTableDisplay()"/>
+								<input type="checkbox" id="showProductId" onchange="onDisplayOptionsChange()"/>
 								
 								<label for="showDescription">Show description</label>
-								<input type="checkbox" id="showDescription" checked onchange="updateTableDisplay()"/>
+								<input type="checkbox" id="showDescription" onchange="onDisplayOptionsChange()"/>
 								
 								<label for="showNumberOfUnits">Show number of units</label>
-								<input type="checkbox" id="showNumberOfUnits" checked onchange="updateTableDisplay()"/>
+								<input type="checkbox" id="showNumberOfUnits" onchange="onDisplayOptionsChange()"/>
+								
+								<label for="showTotalParts">Show total parts</label>
+								<input type="checkbox" id="showTotalParts" onchange="onDisplayOptionsChange()"/>
 								
 								<label for="showCurrentStatus">Show current status</label>
-								<input type="checkbox" id="showCurrentStatus" checked onchange="updateTableDisplay()"/>
+								<input type="checkbox" id="showCurrentStatus" onchange="onDisplayOptionsChange()"/>
 								
 								<label for="showRouteStage">Show stage of production</label>
-								<input type="checkbox" id="showRouteStage" checked onchange="updateTableDisplay()"/>		
+								<input type="checkbox" id="showRouteStage" onchange="onDisplayOptionsChange()"/>		
 								
 								<label for="showJobCreated">Show job created timestamp</label>
-								<input type="checkbox" id="showJobCreated" checked onchange="updateTableDisplay()"/>
+								<input type="checkbox" id="showJobCreated" onchange="onDisplayOptionsChange()"/>
 
 								<label for="showDueDate">Show due date</label>
-								<input type="checkbox" id="showDueDate" checked onchange="updateTableDisplay()"/>
+								<input type="checkbox" id="showDueDate" onchange="onDisplayOptionsChange()"/>
 
 								<label for="showExpectedDuration">Show expected duration</label>
-								<input type="checkbox" id="showExpectedDuration" checked onchange="updateTableDisplay()"/>
+								<input type="checkbox" id="showExpectedDuration" onchange="onDisplayOptionsChange()"/>
 
 								<label for="showWorkedTime">Show total worked time</label>
-								<input type="checkbox" id="showWorkedTime" checked onchange="updateTableDisplay()"/>
+								<input type="checkbox" id="showWorkedTime" onchange="onDisplayOptionsChange()"/>
 
 								<label for="showOvertime">Show total overtime</label>
-								<input type="checkbox" id="showOvertime" checked onchange="updateTableDisplay()"/>
+								<input type="checkbox" id="showOvertime" onchange="onDisplayOptionsChange()"/>
 
 								<label for="showEfficiency">Show job efficiency</label>
-								<input type="checkbox" id="showEfficiency" checked onchange="updateTableDisplay()"/>
+								<input type="checkbox" id="showEfficiency" onchange="onDisplayOptionsChange()"/>
 
 								<label for="showStoppages">Show stoppages</label>
-								<input type="checkbox" id="showStoppages" checked onchange="updateTableDisplay()"/>
+								<input type="checkbox" id="showStoppages" onchange="onDisplayOptionsChange()"/>
 								
 								<label for="showChargePerMinute" <?php echo($hidenChargeDisplayElements); ?>>Show Charge Per Minute</label>
-								<input type="checkbox" id="showChargePerMinute" onchange="updateTableDisplay()" <?php echo($hidenChargeDisplayElements); ?> <?php echo($checkedChargeDisplayElements); ?>/>
+								<input type="checkbox" id="showChargePerMinute" onchange="onDisplayOptionsChange()" <?php echo($hidenChargeDisplayElements); ?> <?php echo($checkedChargeDisplayElements); ?>/>
 								
-								<label for="showTotalChargeToCustomer" <?php echo($hidenChargeDisplayElements); ?>>Show total charge to customer</label>
-								<input type="checkbox" id="showTotalChargeToCustomer" onchange="updateTableDisplay()" <?php echo($hidenChargeDisplayElements); ?> <?php echo($checkedChargeDisplayElements); ?>/>
-
-								<label for="showQuantityComplete" <?php echo($hidenQuantityDisplayElements); ?>>Show quantity complete at stage </label>
-								<input type="checkbox" id="showQuantityComplete" onchange="updateTableDisplay()" <?php echo($hidenQuantityDisplayElements); ?> <?php echo($checkedQuantityDisplayElements); ?>/>
-
-								<label for="showOutstandingUnits" <?php echo($hidenQuantityDisplayElements); ?>>Show Oustanding units at stage</label>
-								<input type="checkbox" id="showOutstandingUnits" onchange="updateTableDisplay()" <?php echo($hidenQuantityDisplayElements); ?> <?php echo($checkedQuantityDisplayElements); ?>/>
+								<label for="showTotalChargeToCustomer" <?php echo($hidenChargeDisplayElements); ?>>Show Total Charge To Customer</label>
+								<input type="checkbox" id="showTotalChargeToCustomer" onchange="onDisplayOptionsChange()" <?php echo($hidenChargeDisplayElements); ?> <?php echo($checkedChargeDisplayElements); ?>/>
+								
+								<label for="showNotes">Show Notes</label>
+								<input type="checkbox" id="showNotes" onchange="onDisplayOptionsChange()"/>
+								
+								<label for="showNotes">Retain Display Options</label>
+								<input type="checkbox" id="retainDisplayOptions" onchange="onDisplayOptionsChange()"/>
 
 							</div>
 						</div>

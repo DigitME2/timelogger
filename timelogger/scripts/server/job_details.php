@@ -240,8 +240,10 @@ function getJobRecord($DbConn, $JobId)
 		$dueDate,
 		$stoppages,
 		$numberOfUnits,
+		$totalParts,
 		$totalCharge,
-		$productId
+		$productId,
+		$customerName
 	)))
         errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
     
@@ -295,9 +297,11 @@ function getJobRecord($DbConn, $JobId)
 		"dueDate"				=> $dueDate,
 		"stoppages"				=> $stoppages,
 		"numberOfUnits"			=> $numberOfUnits,
+		"totalParts"			=> $totalParts,
 		"chargeToCustomer"		=> $totalCharge,
 		"chargePerMinute"		=> $chargePerMinStr,
-		"productId"				=> $productId
+		"productId"				=> $productId,
+		"customerName"			=> $customerName
     );
 	
 	return $jobRecord;
@@ -586,7 +590,9 @@ function saveRecordDetails($DbConn, $DetailsArray)
 	priority = ?,
 	dueDate = ?,
 	numberOfUnits = ?,
-	totalChargeToCustomer = ?
+	totalParts = ?,
+	totalChargeToCustomer = ?,
+	customerName = ?
 	WHERE jobId = ?
 	";
 	
@@ -601,7 +607,7 @@ function saveRecordDetails($DbConn, $DetailsArray)
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
     if(!($statement->bind_param(
-			'issssiisiis',
+			'issssiisiiiss',
 			$DetailsArray["expectedDuration"],
 			$DetailsArray["description"],
 			$DetailsArray["notes"],
@@ -611,7 +617,9 @@ function saveRecordDetails($DbConn, $DetailsArray)
 			$DetailsArray["priority"],
 			$DetailsArray["dueDate"],
 			$DetailsArray["numberOfUnits"],
+			$DetailsArray["totalParts"],
 			$DetailsArray["totalChargeToCustomer"],
+			$DetailsArray["customerName"],
 			$DetailsArray["jobId"]		
 		)))
         errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
@@ -638,7 +646,9 @@ function getSaveRecordDetailsParameters($DbConn)
 								"notes",
 								"expectedDuration",
 								"numberOfUnits",
-								"totalChargeToCustomer"
+								"totalParts",
+								"totalChargeToCustomer",
+								"customerName"
 							);
 
 	$jobDetails = array();
@@ -663,8 +673,10 @@ function getSaveRecordDetailsParameters($DbConn)
 									$jobDetails["dueDate"], 
 									$jobDetails["totalChargeToCustomer"], 
 									$jobDetails["numberOfUnits"], 
+								 	$jobDetails["totalParts"], 
 									null, 
-									$jobDetails["priority"]
+									$jobDetails["priority"],
+									$jobDetails["customerName"]
 									);
 	}
 

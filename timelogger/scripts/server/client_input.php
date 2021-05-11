@@ -125,7 +125,6 @@ function recordStoppage($DbConn, $StoppageReasonId, $JobId, $StationId, $JobStat
 
 function updateLastSeen($DbConn, $StationId, $version)
 {
-	//change to update instead of replace if using with app
     $query = "REPLACE INTO connectedClients (stationId, lastSeen, version) VALUES (?, CURRENT_TIMESTAMP, ?)";
     
     if(!($statement = $DbConn->prepare($query)))
@@ -236,9 +235,8 @@ function main()
 					$description = '';
 
 		        $result = recordStoppage($dbConn, $userId, $jobId, $stationId, $jobStatus, $description);
-		        	$unkownIdString = "Unknown";
-				if (subtr($result, 0, strlen(unkownIdString)) == unkownIdString){
-					sendResponseToClient("error", $result);
+				if ($result == "unknownId"){
+					sendResponseToClient("error", "Unknown ID");
 				}
 				else{
 		        	sendResponseToClient("success", $result);
@@ -247,11 +245,10 @@ function main()
 		        break;
       
         case "heartbeat":
-        	
+            $stationId = $_GET["stationId"];
+			$version = $_GET["version"];
+            updateLastSeen($dbConn, $stationId, $version);
             sendResponseToClient("success");
-// 			$stationId = $_GET["stationId"];
-// 			$version = $_GET["version"];
-//             updateLastSeen($dbConn, $stationId, $version);
             break;
 			
 		case "checkForNameUpdate":

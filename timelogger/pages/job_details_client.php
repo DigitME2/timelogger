@@ -65,12 +65,19 @@ else
 					<label for="routeStage" class="jobDetailLabel">Production Route Stage</label>
 					<select id="routeStage" class="jobDetail"></select>
 					
+					<label for="customerName" class="jobDetailLabel">Customer Name</label>
+					<input id="customerName" type="text" class="jobDetail" pattern="^.{0,50}$"/>
+					<span id="customerNameCounter" class="inputWidthCounter"></span>
+					
 					<label for="description" class="jobDetailLabel">Description</label>
 					<input id="description" type="text" class="jobDetail" pattern="^.{0,200}$"/>
 					<span id="descriptionCounter" class="inputWidthCounter"></span>
 					
 					<label for="numUnits" class="jobDetailLabel">Number of units</label>
 					<input id="numUnits" type="number" class="jobDetail" min="0"/>
+					
+					<label for="totalParts" class="jobDetailLabel">Total Parts</label>
+					<input id="totalParts" type="number" class="jobDetail" min="0"/>
 					
 					<label for="dueDate" class="jobDetailLabel">Due Date</label>
 					<input id="dueDate" type="date" class="jobDetail"/>

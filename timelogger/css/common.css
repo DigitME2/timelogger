@@ -152,10 +152,9 @@ h1{
 	color: #333;
 }
 
-.manualDownLoadLink{
+#manualDownLoadLink{
 	float: left;
 	margin-left: 5px;
-	margin-right: 5px;
 	margin-top: 35px;
 	text-decoration: none;
 	font-weight: 600;
