@@ -82,12 +82,23 @@ function loadRoute(){
 	}
 }
 
-function appendStationName(){
+function appendStationName(newStationName){
 	if($("#textboxRouteDesc").val().length > 0)
-		$("#textboxRouteDesc").val($("#textboxRouteDesc").val() + "\n" + $("#selectStationNames").val());
+		$("#textboxRouteDesc").val($("#textboxRouteDesc").val() + "\n" + newStationName);
 	else
-		$("#textboxRouteDesc").val($("#selectStationNames").val());
+		$("#textboxRouteDesc").val(newStationName);
 }
+
+function appendKnownStationName(){
+	// this function supports adding stations from the dropdown menu
+	appendStationName($("#selectStationNames").val());
+}
+
+function appendArbitraryStationName(){ 
+	// This function exists to allow adding stations which do not appear in the recently seen list
+	appendStationName($("#arbitraryStationName").val());
+}
+	
 
 function removeLastStationName(){
 	var routeParts = $("#textboxRouteDesc").val().split("\n");

@@ -137,8 +137,8 @@ function getOverviewData($DbConn, $TableOrdering = "createdNewestFirst", $HideCo
 			"chargePerMin"		=> $chargePerMinStr,
 			"totalCharge"		=> $chargePounds,
 			"productId"			=> $productId,
-			//"stageQuantityComplete" => $row["stageQuantityComplete"],
-			//"stageOutstandingUnits" => $row["stageOutstandingUnits"]
+			"stageQuantityComplete" => $row["stageQuantityComplete"],
+			"stageOutstandingUnits" => $row["stageOutstandingUnits"],
 			"customerName"		=> $row["customerName"],
 			"notes"				=> $row["notes"]
 		);

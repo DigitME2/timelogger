@@ -18,9 +18,6 @@ mysql -u root -e "CREATE DATABASE work_tracking" -S /opt/lampp/var/mysql/mysql.s
 mysql -u root -S /opt/lampp/var/mysql/mysql.sock work_tracking < work_tracking_db_setup.sql  && \
 mysql -u root -S /opt/lampp/var/mysql/mysql.sock mysql < user.sql
 
-#mysql -u root -S /opt/lampp/var/mysql/mysql.sock work_tracking < work_tracking_procedures.sql  && \   this line removed from above
-
-
 # Move the timelogger folder to the lampp directory
 RUN mv timelogger /opt/lampp/htdocs/
 
@@ -30,11 +27,6 @@ RUN mv index.php /opt/lampp/htdocs/index.php
 
 # this is a bodge, but it works. TODO: secure this
 RUN chmod -R 777 /opt/lampp/htdocs/timelogger/
-
-# add SQL stored procedures from setupfiles using seperate script
-# RUN /opt/lampp/xampp start && sleep 10
-# RUN ./add_sql_procedures.sh
-
 
 RUN chmod 755 start_job_tracking_server
 CMD [ "/bin/bash" , "docker-entrypoint.sh" ]

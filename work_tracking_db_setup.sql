@@ -726,7 +726,7 @@ BEGIN
 	
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetOverviewData` (IN `UseSearchKey` TINYINT(1), IN `SearchKey` VARCHAR(200), IN `HideCompletedJobs` TINYINT(1), IN `LimitDateCreatedRange` TINYINT(1), IN `DateCreatedStart` DATE, IN `DateCreatedEnd` DATE, IN `LimitDateDueRange` TINYINT(1), IN `DateDueStart` DATE, IN `DateDueEnd` DATE, IN `ShowOnlyUrgentJobs` TINYINT(1), IN `ShowOnlyNonurgentJobs` TINYINT(1), IN `OrderByCreatedAsc` TINYINT(1), IN `OrderByCreatedDesc` TINYINT(1), IN `OrderByDueAsc` TINYINT(1), IN `OrderByDueDesc` TINYINT(1), IN `OrerByJobId` TINYINT(1), IN `OrderBypriority` TINYINT(1), IN `SubOrderByPriority` TINYINT(1))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetOverviewData` (IN `UseSearchKey` TINYINT(1), IN `SearchKey` VARCHAR(200), IN `HideCompletedJobs` TINYINT(1), IN `LimitDateCreatedRange` TINYINT(1), IN `DateCreatedStart` DATE, IN `DateCreatedEnd` DATE, IN `LimitDateDueRange` TINYINT(1), IN `DateDueStart` DATE, IN `DateDueEnd` DATE, IN `ShowOnlyUrgentJobs` TINYINT(1), IN `ShowOnlyNonurgentJobs` TINYINT(1), IN `OrderByCreatedAsc` TINYINT(1), IN `OrderByCreatedDesc` TINYINT(1), IN `OrderByDueAsc` TINYINT(1), IN `OrderByDueDesc` TINYINT(1), IN `OrderByJobId` TINYINT(1), IN `OrderBypriority` TINYINT(1), IN `SubOrderByPriority` TINYINT(1))  BEGIN
 
 
     CREATE TEMPORARY TABLE openTimes (jobId VARCHAR(20), openDuration INT, openOvertimeDuration INT);
@@ -827,7 +827,30 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetOverviewData` (IN `UseSearchKey`
     -- duration, of which current overtime worked, efficiency (total time / expected,
     -- maximum of 1), expectedDuration
 	SET @finalSelectorQuery = 
-    "SELECT\r\n    jobs.jobId AS jobId,\r\n    description,\r\n    currentStatus,\r\n    recordAdded,\r\n    closedWorkedDuration + SUM(openDuration) AS totalWorkedDuration,\r\n    closedOvertimeDuration + SUM(openOvertimeDuration) AS totalOvertimeDuration,\r\n    LEAST((expectedDuration/(closedWorkedDuration + SUM(openDuration))),1) AS efficiency,\r\n    expectedDuration,\r\n\trouteCurrentStageName,\r\n\tpriority,\r\n\tdueDate,\r\n\tstoppages,\r\n\tnumberOfUnits,\r\n\ttotalParts,\r\n\ttotalChargeToCustomer,\r\n\tproductId,\r\n\tcustomerName,\r\n\tnotes\r\n    FROM jobs LEFT JOIN openTimes ON jobs.jobId = openTimes.jobId\r\n    WHERE jobs.jobId IN (SELECT jobId FROM selectedJobIds ORDER BY counter ASC)\r\n    GROUP BY jobs.jobId ";
+    "SELECT
+    jobs.jobId AS jobId,
+    description,
+    currentStatus,
+    recordAdded,
+    closedWorkedDuration + SUM(openDuration) AS totalWorkedDuration,
+    closedOvertimeDuration + SUM(openOvertimeDuration) AS totalOvertimeDuration,
+    LEAST((expectedDuration/(closedWorkedDuration + SUM(openDuration))),1) AS efficiency,
+    expectedDuration,
+    routeCurrentStageName,
+    priority,
+    dueDate,
+    stoppages,
+    numberOfUnits,
+    totalParts,
+   	totalChargeToCustomer,
+   	productId,
+   	stageQuantityComplete,
+   	stageOutstandingUnits,
+   	customerName,
+   	notes
+   	FROM jobs LEFT JOIN openTimes ON jobs.jobId = openTimes.jobId
+   	WHERE jobs.jobId IN (SELECT jobId FROM selectedJobIds ORDER BY counter ASC)
+   	GROUP BY jobs.jobId ";
 	
 	
 	-- ... and the ordering constraint...
@@ -839,7 +862,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetOverviewData` (IN `UseSearchKey`
 		SET @finalSelectorQuery = CONCAT(@finalSelectorQuery, " ORDER BY dueDate ASC ");
 	ELSEIF OrderByDueDesc IS TRUE THEN
 		SET @finalSelectorQuery = CONCAT(@finalSelectorQuery, " ORDER BY dueDate DESC ");
-	ELSEIF OrerByJobId IS TRUE THEN
+	ELSEIF OrderByJobId IS TRUE THEN
 		SET @finalSelectorQuery = CONCAT(@finalSelectorQuery, " ORDER BY jobs.jobId ASC ");
 	ELSEIF OrderBypriority IS TRUE THEN
 		SET @finalSelectorQuery = CONCAT(@finalSelectorQuery, " ORDER BY jobs.priority DESC ");
@@ -1356,6 +1379,8 @@ CREATE TABLE `jobs` (
   `jobIdIndex` int(15) NOT NULL,
   `productId` varchar(20) DEFAULT '',
   `priority` int(1) DEFAULT '0',
+  `stageQuantityComplete` int(11) DEFAULT NULL,
+  `stageOutstandingUnits` int(11) DEFAULT NULL,
   `totalParts` int(11) DEFAULT NULL,
   `customerName` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

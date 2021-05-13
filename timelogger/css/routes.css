@@ -17,8 +17,12 @@
 	width:200px;
 }
 
-#btnAddStation,#selectStationNames,#btnRemoveStation{
+#btnAddStation,#selectStationNames,#btnRemoveStation,#btnAppendArbitraryStationName{
 	width:180px;
+}
+
+#arbitraryStationName{
+	width:155px;
 }
 
 #textboxRouteDesc{

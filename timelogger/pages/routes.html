@@ -35,12 +35,18 @@
 					<label class="control leftCol" for="textboxRouteDesc">Route Description</label>
 					<textarea id="textboxRouteDesc" readonly class="control rightCol" cols="22" rows="10"></textarea>
 					<div class="leftCol" id="routeEditControlsContainer">
-						<label>Add station:</label>
+						<label>Add known station:</label>
 						<br>
 						<select id="selectStationNames">
 						</select>
 						<br>
-						<input type="button" id="btnAddStation" onclick="appendStationName()" value="Append to list"/>
+						<input type="button" id="btnAddStation" onclick="appendKnownStationName()" value="Append to list"/>
+						<br>
+						<br>
+						<label>Add arbitrary station:</label>
+						<input type="text" id="arbitraryStationName"/>
+						<br>
+						<input type="button" id="btnAppendArbitraryStationName" onclick="appendArbitraryStationName()" value="Append to list"/>
 						<br>
 						<br>
 						<input type="button" id="btnRemoveStation" onclick="removeLastStationName()" value="Delete last stage"/>
