@@ -4,7 +4,39 @@ function loadInitialRoutesData(){
 		type:"GET",
 		dataTtype:"text",
 		data:{
-			"request":"getInitialData"
+			"request":"getInitialRoutes"
+		},
+		success:function(result){
+			console.log(result);
+			var resultJson = $.parseJSON(result);
+			
+			if(resultJson.status != "success"){
+				$("#spanFeedback").empty().html(resultJson.result);
+			}
+			else
+			{
+				var routeNames = resultJson.result;
+				$("#selectExistingRoute").empty();
+				var placeHolder = $("<option>")
+						.text("Select a route...")
+						.attr("value", "");
+				$("#selectExistingRoute").append(placeHolder);
+				for(var i = 0; i < routeNames.length; i++){
+					var newOption = $("<option>")
+						.text(routeNames[i])
+						.attr("value", routeNames[i]);
+					$("#selectExistingRoute").append(newOption);
+				}
+			}
+		}
+	});
+
+	$.ajax({
+		url:"../scripts/server/scanners.php",
+		type:"GET",
+		dataTtype:"text",
+		data:{
+			"request":"getAllScannerNames"
 		},
 		success:function(result){
 			console.log(result);
@@ -22,19 +54,6 @@ function loadInitialRoutesData(){
 						.text(stationNames[i])
 						.attr("value", stationNames[i]);
 					$("#selectStationNames").append(newOption);
-				}
-				
-				var routeNames = resultJson.result.routeNames;
-				$("#selectExistingRoute").empty();
-				var placeHolder = $("<option>")
-						.text("Select a route...")
-						.attr("value", "");
-				$("#selectExistingRoute").append(placeHolder);
-				for(var i = 0; i < routeNames.length; i++){
-					var newOption = $("<option>")
-						.text(routeNames[i])
-						.attr("value", routeNames[i]);
-					$("#selectExistingRoute").append(newOption);
 				}
 			}
 		}
@@ -92,11 +111,6 @@ function appendStationName(newStationName){
 function appendKnownStationName(){
 	// this function supports adding stations from the dropdown menu
 	appendStationName($("#selectStationNames").val());
-}
-
-function appendArbitraryStationName(){ 
-	// This function exists to allow adding stations which do not appear in the recently seen list
-	appendStationName($("#arbitraryStationName").val());
 }
 	
 

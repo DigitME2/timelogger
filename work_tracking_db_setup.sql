@@ -1321,6 +1321,16 @@ CREATE TABLE `clientNames` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `extraScannerNames`
+--
+
+CREATE TABLE `extraScannerNames` (
+  `name` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `config`
 --
 

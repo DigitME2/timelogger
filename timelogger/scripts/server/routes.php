@@ -5,20 +5,8 @@ require "common.php";
 
 $Debug = true;
 
-function getInitialData($DbConn)
+function getInitialRoutes($DbConn)
 {
-	// fetch current list of clients
-	$query = "SELECT stationId FROM connectedClients WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, lastSeen)) < 3600 ORDER BY stationId ASC";
-    if(!($queryResult = $DbConn->query($query)))
-            errorHandler("Error executing query: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-    $stationNames = array();
-    for($i = 0; $i < $queryResult->num_rows; $i++)
-    {
-        $row = $queryResult->fetch_row();
-        array_push($stationNames,$row[0]);
-    }
-	
 	// fetch current list of route names
     $query = "SELECT routeName FROM routes ORDER BY routeName ASC";
     
@@ -32,12 +20,7 @@ function getInitialData($DbConn)
         array_push($routes,$row[0]);
     }
 	
-	$data = array(
-		"stationNames" => $stationNames,
-		"routeNames" => $routes
-		);
-	
-	return $data;
+	return $routes;
 }
 
 function getRouteDescription($DbConn, $RouteName)
@@ -138,7 +121,7 @@ function main()
 		// fetch the initialisation data for the routes page.
 		// feches a list of active stations and a list of route
 		// names, both organised alphabetically.
-		case "getInitialData":
+		case "getInitialRoutes":
 			$resultsArray = getInitialData($dbConn);
             sendResponseToClient("success",$resultsArray);            
             break;
