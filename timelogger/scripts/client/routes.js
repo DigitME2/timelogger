@@ -47,7 +47,7 @@ function loadInitialRoutesData(){
 			}
 			else
 			{
-				var stationNames = resultJson.result.stationNames;
+				var stationNames = resultJson.result;
 				$("#selectStationNames").empty();
 				for(var i = 0; i < stationNames.length; i++){
 					var newOption = $("<option>")

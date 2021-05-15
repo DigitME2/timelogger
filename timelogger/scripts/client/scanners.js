@@ -45,57 +45,73 @@ function loadExtraScannerNames(){
 				
 				// update the select box to show only currently active scanners
 				$("#extraScannerNames").empty().append('<option value="noSelection">Select a scanner...</option>');
-				for(var i = 0; i < tableData.length; i++){
+				for(var i = 0; i < extraNames.length; i++){
 					var newOption = $("<option>")
 						.text(extraNames[i])
 						.attr("value", extraNames[i]);
 					$("#extraScannerNames").append(newOption);
 				}
+				$("#extraScannerNames").val("noSelection");
             }
         }
     });
 }
 
 function addNewExtraScannerName(){
+	var newName = $("#newExtraScannerName").val();
 	$.ajax({
         url:"../scripts/server/scanners.php",
         type:"GET",
         dataType:"text",
         data:{
             "request":"addExtraScannerName",
-            "newName":$("#newExtraScannerName").val();
+            "newName":newName
         },
         success:function(result){
 	    console.log(result);
             resultJson = $.parseJSON(result);
-            if(resultJson["status"] != "success")
+            if(resultJson["status"] != "success"){
                 console.log(resultJson["result"]);
+                $("#extraScannerNameFeedback").empty().html("Error");
+				setTimeout(function(){$("#extraScannerNameFeedback").empty();},10000);
+			}
             else{
-				loadExtraScannerNames();			
+				loadExtraScannerNames();
+				$("#newExtraScannerName").val("");
+				$("#extraScannerNameFeedback").empty().html(newName + " added");
+				setTimeout(function(){$("#extraScannerNameFeedback").empty();},10000);
             }
         }
     });
 }
 
 function deleteExtraScannerName(){
-	$.ajax({
-        url:"../scripts/server/scanners.php",
-        type:"GET",
-        dataType:"text",
-        data:{
-            "request":"deleteExtraScannerName",
-            "name":$("#extraScannerNames").val();
-        },
-        success:function(result){
-	    console.log(result);
-            resultJson = $.parseJSON(result);
-            if(resultJson["status"] != "success")
-                console.log(resultJson["result"]);
-            else{
-				loadExtraScannerNames();			
-            }
-        }
-    });
+	var name = $("#extraScannerNames").val();
+	if(name != "noSelection"){
+		$.ajax({
+		    url:"../scripts/server/scanners.php",
+		    type:"GET",
+		    dataType:"text",
+		    data:{
+		        "request":"deleteExtraScannerName",
+		        "name":name
+		    },
+		    success:function(result){
+			console.log(result);
+		        resultJson = $.parseJSON(result);
+		        if(resultJson["status"] != "success"){
+		            console.log(resultJson["result"]);
+		            $("#extraScannerNameFeedback").empty().html("Error");
+					setTimeout(function(){$("#extraScannerNameFeedback").empty();},10000);
+		        }
+		        else{
+					loadExtraScannerNames();
+					$("#extraScannerNameFeedback").empty().html(name + " removed");
+					setTimeout(function(){$("#extraScannerNameFeedback").empty();},10000);
+		        }
+		    }
+		});
+	}
 }
 
 function updateScannersTable(){

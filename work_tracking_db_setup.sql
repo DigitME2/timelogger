@@ -1325,8 +1325,9 @@ CREATE TABLE `clientNames` (
 --
 
 CREATE TABLE `extraScannerNames` (
-  `name` varchar(50) DEFAULT NULL
+  `name` varchar(50) DEFAULT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 -- --------------------------------------------------------
 

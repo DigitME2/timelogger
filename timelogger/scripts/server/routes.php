@@ -122,7 +122,7 @@ function main()
 		// feches a list of active stations and a list of route
 		// names, both organised alphabetically.
 		case "getInitialRoutes":
-			$resultsArray = getInitialData($dbConn);
+			$resultsArray = getInitialRoutes($dbConn);
             sendResponseToClient("success",$resultsArray);            
             break;
             
