@@ -66,7 +66,7 @@ function getAllScannerNames($DbConn)
 	
 	for($i = 0; $i < count($connectedClients); $i++)
 	{
-		array_push($allNames, $connectedClients[0]);
+		array_push($allNames, $connectedClients[$i]["stationId"]);
 	}
 	
 	if((count($allNames) > 0) or (count($extraNames) > 0))
