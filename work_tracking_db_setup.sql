@@ -265,7 +265,7 @@ BEGIN
 	SELECT jobs.routeName into @ExistingRouteName FROM jobs WHERE jobs.jobId = JobId;
 
 	IF @ExistingRouteName != InputRouteName THEN
-		UPDATE timeLog SET routeCurrentStageIndex = -1 WHERE timeLog.jobId = JobId;
+		UPDATE timeLog SET routeStageIndex = -1 WHERE timeLog.jobId = JobId;
 	END IF;
 END$$
 
@@ -507,7 +507,7 @@ BEGIN
 				AND routeStages.stageName = StationId 
 				LIMIT 1;
 				
-				SELECT @stageIndex, @stageName;
+				-- SELECT @stageIndex, @stageName;
 
 				-- if station is current route stage or futher in route
 				IF @stageIndex IS NOT NULL THEN
@@ -558,7 +558,7 @@ BEGIN
 					END IF;
 				ELSE
 					-- if no possible change to current route stage index check if station included in route at at any point                                                                                                        
-					SELECT 'HERE';
+					-- SELECT 'HERE';
 					
 					SELECT stageIndex 
 					INTO @stageIndex
@@ -1501,7 +1501,8 @@ CREATE TABLE `timeLog` (
   `workedDuration` int(11) DEFAULT NULL,
   `overtimeDuration` int(11) DEFAULT NULL,
   `workStatus` varchar(20) NOT NULL,
-  `quantityComplete` int(11) DEFAULT NULL
+  `quantityComplete` int(11) DEFAULT NULL,
+  `routeStageIndex` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------

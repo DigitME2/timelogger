@@ -1,10 +1,15 @@
 FROM ubuntu:20.04
 
 RUN apt-get update
+RUN apt-get -y install software-properties-common
+RUN add-apt-repository universe
 RUN apt-get -y install python3-pip
 RUN pip3 install qrcode
 RUN pip3 install Image
-RUN apt-get -y install mariadb-client-core-10.3 iptables
+RUN pip3 install pymysql
+RUN pip3 install requests
+RUN apt-get -y install iptables
+RUN apt-get -y install mariadb-client-core-10.3
 
 #Copy all files
 COPY . /home/appdata
