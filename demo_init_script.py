@@ -36,12 +36,12 @@ jobs = [
 				"cost":90000, 
 				"priority":2,
 				"times":{
-					"Cutting":2,
-					"Welding":1,
+					"Cutting":18,
+					"Welding":12,
 					"Painting":0,
-					"Assembly":1,
-					"QC":1,
-					"Shipping":1
+					"Assembly":8.5,
+					"QC":4.25,
+					"Shipping":15
 				}
 			},
 			{
@@ -56,12 +56,12 @@ jobs = [
 				"cost":3000,
 				"priority":1,
 				"times":{
-					"Cutting":2,
-					"Welding":1,
-					"Painting":1,
-					"Assembly":0.5,
+					"Cutting":12,
+					"Welding":1.5,
+					"Painting":2.5,
+					"Assembly":1,
 					"QC":0.5,
-					"Shipping":0.5
+					"Shipping":2.25
 				}
 			},
 			{
@@ -76,12 +76,12 @@ jobs = [
 				"cost":65000, 
 				"priority":3,
 				"times":{
-					"Cutting":0.5,
-					"Welding":1,
+					"Cutting":1.5,
+					"Welding":2.5,
 					"Painting":0,
-					"Assembly":0.5,
+					"Assembly":1.25,
 					"QC":0.25,
-					"Shipping":0.5
+					"Shipping":2.5
 				}
 			},
 			{
@@ -97,11 +97,11 @@ jobs = [
 				"priority":2,
 				"times":{
 					"Cutting":1,
-					"Welding":1.5,
+					"Welding":6,
 					"Painting":3.5,
-					"Assembly":1,
+					"Assembly":2,
 					"QC":1,
-					"Shipping":3
+					"Shipping":2.75
 				}
 			},
 			{
@@ -117,10 +117,10 @@ jobs = [
 				"priority":2,
 				"times":{
 					"Cutting":2,
-					"Welding":3,
+					"Welding":5,
 					"Painting":0,
-					"Assembly":1,
-					"QC":0.25,
+					"Assembly":3.5,
+					"QC":2.25,
 					"Shipping":1
 				}
 			},
@@ -136,12 +136,12 @@ jobs = [
 				"cost":72000, 
 				"priority":3,
 				"times":{
-					"Cutting":2,
-					"Welding":6,
+					"Cutting":3,
+					"Welding":8.5,
 					"Painting":0,
 					"Assembly":0,
 					"QC":3,
-					"Shipping":2
+					"Shipping":3
 				}
 			},
 			{
@@ -156,10 +156,10 @@ jobs = [
 				"cost":83000, 
 				"priority":1,
 				"times":{
-					"Cutting":2,
-					"Welding":1,
-					"Painting":3,
-					"Assembly":6,
+					"Cutting":4,
+					"Welding":2,
+					"Painting":6,
+					"Assembly":11,
 					"QC":2,
 					"Shipping":3
 				}
@@ -179,7 +179,7 @@ jobs = [
 					"Cutting":2,
 					"Welding":1.5,
 					"Painting":0.5,
-					"Assembly":2,
+					"Assembly":6,
 					"QC":1.5,
 					"Shipping":1
 				}
@@ -196,12 +196,12 @@ jobs = [
 				"cost":10000, 
 				"priority":2,
 				"times":{
-					"Cutting":0.23,
-					"Welding":1,
-					"Painting":1,
-					"Assembly":0.5,
-					"QC":0.25,
-					"Shipping":0.5
+					"Cutting":1.5,
+					"Welding":2.5,
+					"Painting":1.25,
+					"Assembly":6.5,
+					"QC":10,
+					"Shipping":1.5
 				}
 			},
 			{
@@ -216,11 +216,11 @@ jobs = [
 				"cost":50000, 
 				"priority":4,
 				"times":{
-					"Cutting":2,
-					"Welding":1,
+					"Cutting":3,
+					"Welding":7,
 					"Painting":1,
 					"Assembly":8,
-					"QC":1,
+					"QC":2.5,
 					"Shipping":3
 				}
 			},
@@ -236,12 +236,12 @@ jobs = [
 				"cost":70000, 
 				"priority":3,
 				"times":{
-					"Cutting":0.5,
-					"Welding":4,
+					"Cutting":2.5,
+					"Welding":8,
 					"Painting":0,
-					"Assembly":1,
-					"QC":0.25,
-					"Shipping":1
+					"Assembly":10,
+					"QC":3,
+					"Shipping":2.5
 				}
 			},
 			{
@@ -256,12 +256,12 @@ jobs = [
 				"cost":20000, 
 				"priority":2,
 				"times":{
-					"Cutting":0.25,
-					"Welding":1,
-					"Painting":0.5,
-					"Assembly":2,
-					"QC":0.5,
-					"Shipping":0.5
+					"Cutting":0.75,
+					"Welding":2,
+					"Painting":8,
+					"Assembly":3,
+					"QC":1.75,
+					"Shipping":1.75
 				}
 			},
 			{
@@ -276,12 +276,12 @@ jobs = [
 				"cost":70000, 
 				"priority":4,
 				"times":{
-					"Cutting":0.5,
-					"Welding":0.5,
-					"Painting":0.5,
-					"Assembly":0.25,
-					"QC":0.25,
-					"Shipping":0.25				
+					"Cutting":2,
+					"Welding":2,
+					"Painting":2,
+					"Assembly":1,
+					"QC":1,
+					"Shipping":1
 				}
 			},
 			{
@@ -296,12 +296,12 @@ jobs = [
 				"cost":24000, 
 				"priority":4,
 				"times":{
-					"Cutting":2.5,
-					"Welding":6,
-					"Painting":1,
-					"Assembly":4,
-					"QC":2,
-					"Shipping":3
+					"Cutting":7.5,
+					"Welding":18,
+					"Painting":3,
+					"Assembly":12,
+					"QC":6,
+					"Shipping":9
 				}
 			},
 			{
@@ -316,12 +316,12 @@ jobs = [
 				"cost":22000, 
 				"priority":2,
 				"times":{
-					"Cutting":0.5,
-					"Welding":4,
+					"Cutting":2.5,
+					"Welding":20,
 					"Painting":0,
-					"Assembly":1,
-					"QC":0.25,
-					"Shipping":1
+					"Assembly":5,
+					"QC":1.25,
+					"Shipping":5
 				}
 			},
 			{
@@ -336,43 +336,63 @@ jobs = [
 				"cost":53000, 
 				"priority":3,
 				"times":{
-					"Cutting":0.5,
-					"Welding":4,
+					"Cutting":2.5,
+					"Welding":20,
 					"Painting":0,
-					"Assembly":1,
-					"QC":0.25,
-					"Shipping":1
+					"Assembly":5,
+					"QC":1.25,
+					"Shipping":5
 				}
 			},
 			{
-				"id":"WO33668", 
-				"custName":"BTB Construction", 	
-				"desc":"Bespoke metalwork parts",	
-				"numUnits":17,  
-				"totalParts":17,  
-				"creationOffset":-1,  
-				"dueOffset":14, 
-				"route":"Short Route",				
-				"cost":12000, 
+				"id":"WO33668",
+				"custName":"BTB Construction",
+				"desc":"Bespoke metalwork parts",
+				"numUnits":17,
+				"totalParts":17,
+				"creationOffset":-1,
+				"dueOffset":14,
+				"route":"Short Route",
+				"cost":12000,
+				"priority":1,
+				"times":{
+					"Cutting":3,
+					"Welding":6,
+					"Painting":0,
+					"Assembly":0,
+					"QC":3,
+					"Shipping":3
+				}
+			},
+			{
+				"id":"WO33669",
+				"custName":"Freeman Shipping",
+				"desc":"Mount",
+				"numUnits":1,
+				"totalParts":27,
+				"creationOffset":0,
+				"dueOffset":21,
+				"route":"Main Production Route",
+				"cost":6000,
 				"priority":1,
 				"times":{
 					"Cutting":1,
-					"Welding":2,
-					"Painting":0,
-					"Assembly":0,
+					"Welding":1,
+					"Painting":1.5,
+					"Assembly":2,
 					"QC":0.5,
 					"Shipping":0.5
 				}
 			}
 		]
-	
+
 extraStationNames = ["Cutting","Welding","Painting","Assembly","QC","Shipping"]
 productNames = ["Frame Assembly","Case Assembly"]
 stoppageReasons = ["Breakdown","Material unavailable","Lack of fuel"]
 productionRoutes = [
 		{"name":"Main Production Route","description": "Cutting,Welding,Painting,Assembly,QC,Shipping"},
 		{"name":"No Paint","description":"Cutting,Welding,Assembly,QC,Shipping"},
-		{"name":"short Route","description":"Cutting,Welding,QC,Shipping"}
+		{"name":"Short Route","description":"Cutting,Welding,QC,Shipping"}
 	]
 	
 workStartTime = "08:00"
@@ -380,11 +400,11 @@ workEndTime = "17:00"
 lunchStartTime = "12:00"
 lunchEndTime = "13:00"
 
-usersAtStations = {"Cutting":"user_0001","Welding":"user_0002","Painting":"user_0003","Assembly":"user_0004","QC":"user_0005","Shipping":"user_0006"}
+usersAtStations = {"Cutting":"user_0001", "Welding":"user_0002", "Painting":"user_0003", "Assembly":"user_0004", "QC":"user_0005", "Shipping":"user_0006"}
 
 random.seed(1) #random numbers make generation easier. Setting the seed means we get the same result each time
 
-conn = pymysql.connect(host=hostname, port=dbPort, user="server",password="gnlPdNTW1HhDuQGc",database="work_tracking")
+conn = pymysql.connect(host=hostname, port=dbPort, user="server", password="gnlPdNTW1HhDuQGc", database="work_tracking", autocommit=True)
 cursor = conn.cursor()
 
 # convert job times to seconds. This is more easily done here than in the above list
@@ -513,7 +533,7 @@ for i in range(stationNameCount):
 	currentWorkDateOffset = workDateInitialOffset
 	
 	while(currentWorkDateOffset < 0):
-		print("Working on day offset {}".format(currentWorkDateOffset))
+		#print("Working on day offset {}".format(currentWorkDateOffset))
 		cursor.execute("SELECT startTime FROM workHours WHERE DAYNAME(dayDate) = DAYNAME(CURRENT_DATE + INTERVAL {} DAY) LIMIT 1".format(currentWorkDateOffset))
 		dayStartSec = cursor.fetchone()[0].seconds;
 
@@ -539,19 +559,23 @@ for i in range(stationNameCount):
 			currentTime = timeSet["startTime"]
 			while timeSet['availableDuration'] > minTimeToStartJob:
 				# if a job is available today or earlier, and there's time to start before lunch/end of day, work on that job
-				if len(queues[stationName]) > 0 and queues[stationName][0]["canStartSecs"] <= currentTime and queues[stationName][0]["canStartOffset"] <= currentWorkDateOffset:
+				if len(queues[stationName]) > 0 and (
+						(queues[stationName][0]["canStartSecs"] <= currentTime and queues[stationName][0]["canStartOffset"] == currentWorkDateOffset) or
+						queues[stationName][0]["canStartOffset"] < currentWorkDateOffset):
 					job = queues[stationName][0]["job"]
 
 					# determine the index of the current station on the production route
 					for route in productionRoutes:
-						if (route["name"] == job["route"]):
+						if route["name"] == job["route"]:
 							routeParts = route["description"].split(",")
 							break
 
-					if(stationName in  routeParts):
+					if stationName in routeParts:
 						for routeIndex in range(len(routeParts)):
 							if (stationName == routeParts[routeIndex]):
 								break
+
+						routeIndex += 1 # the first station in a route is recorded as 1
 
 						startJiggle = random.randint(0, timeJiggleSec)
 						timeSet['availableDuration'] -= startJiggle
@@ -592,9 +616,10 @@ for i in range(stationNameCount):
 
 					# if the job is done, mark it as so in the database and put it on the queue for the next station
 					if job["times"][stationName] <= 0:
-						cursor.execute("SELECT MAX(ref) FROM timeLog LIMIT 1")
-						ref = cursor.fetchone()[0]
-						cursor.execute("UPDATE timeLog SET workStatus = 'stageComplete' WHERE ref = {}".format(ref))
+						if stationName in routeParts: #only update if the job actually visits this station
+							cursor.execute("SELECT MAX(ref) FROM timeLog LIMIT 1")
+							ref = cursor.fetchone()[0]
+							cursor.execute("UPDATE timeLog SET workStatus = 'stageComplete' WHERE ref = {}".format(ref))
 
 						# add to the next queue if this isn't the last station, otherwise mark job as complete
 						if stationName != extraStationNames[-1]:
@@ -609,6 +634,8 @@ for i in range(stationNameCount):
 				# check if a job is available later today, and if it is, jump to that time
 				elif len(queues[stationName]) > 0 and queues[stationName][0]["canStartOffset"] == currentWorkDateOffset and queues[stationName][0]["canStartSecs"] > currentTime and queues[stationName][0]["canStartSecs"] < (timeSet['availableDuration'] + currentTime):
 					currentTime = queues[stationName][0]["canStartSecs"]
+					timeSet['availableDuration'] -= (currentTime - timeSet["startTime"])
+
 
 				# no jobs available for this time period
 				else:
@@ -620,6 +647,8 @@ for i in range(stationNameCount):
 	
 print("Timelog generated")
 print("Updating jobs with worked times")	
+
+#conn.commit()
 
 for job in jobs:	
 	cursor.execute("SELECT SUM(workedDuration), SUM(overtimeDuration) FROM timeLog WHERE jobId='{}'".format(job['id']))

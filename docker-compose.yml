@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   timelogger_xampp:
-    image: DigitME2/timelogger
+    image: timelogger
     ports:
         - "80:80"
         - "3306:3306"
