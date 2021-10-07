@@ -567,7 +567,6 @@ function updateJobLogTable(JobId){
 function updateStoppagesLogTable(JobId){
     // generate table
     // drop old table and append new one
-
 	
     $.ajax({
         url:"../scripts/server/job_details.php",
@@ -674,12 +673,29 @@ function updateStoppagesLogTable(JobId){
 							.text("Admin")
 							.attr("value", "Admin");
 				$("#addStoppageStationDropDown").append(placeHolder);
-				for(var i = 0; i < clientList.length; i++){
-					var newOption = $("<option>")
-						.text(clientList[i])
-						.attr("value", clientList[i]);
-					$("#addStoppageStationDropDown").append(newOption);
-				}
+				
+				
+				// this has been tweaked to get the full list of available names.
+				// At some point this entire section of the system could do to be 
+				// reworked slightly
+				$.ajax({
+					url:"../scripts/server/scanners.php",
+					type:"GET",
+					dataType:"text",
+					data:{
+						"request":"getAllScannerNames"
+					},
+					success:function(result){
+						resultJson = $.parseJSON(result);
+						clientList = resultJson.result;
+						for(var i = 0; i < clientList.length; i++){
+							var newOption = $("<option>")
+								.text(clientList[i])
+								.attr("value", clientList[i]);
+							$("#addStoppageStationDropDown").append(newOption);
+						}
+					}
+				});
             }
         }
     });

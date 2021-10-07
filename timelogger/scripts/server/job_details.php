@@ -466,7 +466,7 @@ function getStoppagesLog($DbConn, $JobId)
 
     $statement->close();
 
-
+	
 	$query = "SELECT stoppageReasonId, stoppageReasonName FROM stoppageReasons ORDER BY stoppageReasonId DESC";
     
     if(!($statement = $DbConn->prepare($query)))
@@ -488,6 +488,7 @@ function getStoppagesLog($DbConn, $JobId)
         );
         array_push($stoppageReasons, $dataRow);
     }
+
 
 	$query = "SELECT stationId FROM connectedClients WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, lastSeen)) < 60 ORDER BY stationId ASC";
     if(!($queryResult = $DbConn->query($query)))
