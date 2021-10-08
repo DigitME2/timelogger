@@ -245,9 +245,12 @@ function main()
 		        break;
       
         case "heartbeat":
-            $stationId = $_GET["stationId"];
-			$version = $_GET["version"];
-            updateLastSeen($dbConn, $stationId, $version);
+        	if(isset($_GET["stationId"])
+        	{
+		        $stationId = $_GET["stationId"];
+				$version = $_GET["version"];
+		        updateLastSeen($dbConn, $stationId, $version);
+		    }
             sendResponseToClient("success");
             break;
 			
