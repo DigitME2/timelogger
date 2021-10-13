@@ -10,6 +10,7 @@ RUN pip3 install pymysql
 RUN pip3 install requests
 RUN apt-get -y install iptables
 RUN apt-get -y install mariadb-client-core-10.3
+RUN apt-get -y install nano
 
 #Copy all files
 COPY . /home/appdata
