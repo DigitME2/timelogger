@@ -91,10 +91,11 @@ else
 							<input type="time" id="sundayLunchtimeFinish" class="lunchtimeDisplayEnd" <?php echo($hidenLunchTimesElements); ?>>
                             <input type="time" id="sundayFinish" class="timeDisplayEnd">
                     </div>
-                    
+                    <!-- multiple clock on has been disabled, but left in case of future use
 					<input type="checkbox" id="allowMultipleClockOn">
 					<label for="allowMultipleClockOn">Allow users to clock onto multiple jobs simultaneously</label>
 					<br>
+					-->
 					
                     <input type="button" id="saveButton" value="Save" onclick="setWorkHours()">
                     <br>
