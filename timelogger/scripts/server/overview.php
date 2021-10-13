@@ -317,42 +317,40 @@ function main()
                 $dataNames = array(
                     "jobId",
 					"productId",
+					"customerName",
                     "description",
+					"numberOfUnits",
+					"totalParts",
                     "currentStatus",
+					"routeStageName",
                     "recordAdded",
+					"dueDate",
+                    "expectedTime",
                     "workedTime",
                     "overtime",
-                    "expectedTime",
                     "efficiency",
-					"routeStageName",
-					"priority",
-					"dueDate",
 					"stoppages",
-					"numberOfUnits",
-					"chargePerMin",
-					"totalCharge",
-					"customerName",
-					"notes"
+					"notes",
+					"priority"
                 );
                 $columnNames = array(
                     "Job ID",
 					"Product ID",
+					"Customer Name",
                     "Description",
+                    "Number of Units",
+                    "Total Parts",
                     "Current Status",
+                    "Route Stage Name",
                     "Record Added",
+                    "Due Date",
+                    "Expected Time",                    
                     "Worked Time",
                     "Overtime",
-                    "Expected Time",
                     "Efficiency",
-					"Route Stage Name",
-					"Priority",
-					"Due Date",
 					"Stoppages",
-					"Number of Units",
-					"Charge Per Minute",
-					"Total Charge To Customer",
-					"Customer Name",
-					"Notes"
+					"Notes",
+					"Priority"
                 );
 
 				$fileName = "overview_data.csv";

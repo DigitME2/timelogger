@@ -146,13 +146,13 @@ else
 
 								<label for="highlightPriority">Highlight Priority</label>
 								<input type="checkbox" id="highlightPriority"  onchange="onDisplayOptionsChange()"/>
+								
+								<label for="showProductId">Show product ID</label>
+								<input type="checkbox" id="showProductId" onchange="onDisplayOptionsChange()"/>
 
 								<label for="showCustomerName">Show customer Name</label>
 								<input type="checkbox" id="showCustomerName" onchange="onDisplayOptionsChange()"/>
 
-								<label for="showProductId">Show product ID</label>
-								<input type="checkbox" id="showProductId" onchange="onDisplayOptionsChange()"/>
-								
 								<label for="showDescription">Show description</label>
 								<input type="checkbox" id="showDescription" onchange="onDisplayOptionsChange()"/>
 								
@@ -198,7 +198,7 @@ else
 								<label for="showNotes">Show Notes</label>
 								<input type="checkbox" id="showNotes" onchange="onDisplayOptionsChange()"/>
 								
-								<label for="showNotes">Retain Display Options</label>
+								<label for="retainDisplayOptions">Retain Display Options</label>
 								<input type="checkbox" id="retainDisplayOptions" onchange="onDisplayOptionsChange()"/>
 
 							</div>
