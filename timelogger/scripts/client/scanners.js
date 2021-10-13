@@ -129,33 +129,76 @@ function updateScannersTable(){
                 console.log(resultJson["result"]);
             else{
                 var tableData = resultJson.result;
-				var tableStructure = {
-                        "rows":{},
-                        "columns":[
-                            {
-                                "headingName":"Scanner Station Name",
-                                "dataName":"stationId"
-                            },
-                            {
-                                "headingName":"Last Seen",
-                                "dataName":"lastSeen"
-                            },
-							{
-                                "headingName":"Version",
-                                "dataName":"version"
-                            }
-                        ]
-                    };
+                
+                var listContainsBoxes = false;
+                var listContainsApps = false;
+                
+                for(let i = 0; i < tableData.length; i++){
+                	if(tableData[i]['isApp'] == 1)
+                		listContainsApps = true;
+                	else
+                		listContainsBoxes = true;
+                }
+                
+                if(listContainsApps && listContainsBoxes)
+                {
+					var tableStructure = {
+		                    "rows":{},
+		                    "columns":[
+		                        {
+		                            "headingName":"Scanner Station Name",
+		                            "dataName":"stationId"
+		                        },
+		                        {
+		                            "headingName":"Last Seen",
+		                            "dataName":"lastSeen"
+		                        },
+								{
+		                            "headingName":"Version",
+		                            "dataName":"version"
+		                        },
+		                        {
+		                        	"headingName":"Is App?",
+		                        	"dataName":"isApp"
+		                        }
+		                    ]
+		                };
+				}
+				else
+				{
+					var tableStructure = {
+		                    "rows":{},
+		                    "columns":[
+		                        {
+		                            "headingName":"Scanner Station Name",
+		                            "dataName":"stationId"
+		                        },
+		                        {
+		                            "headingName":"Last Seen",
+		                            "dataName":"lastSeen"
+		                        },
+								{
+		                            "headingName":"Version",
+		                            "dataName":"version"
+		                        }
+		                    ]
+		                };
+				}
 				var table = generateTable("activeScannersTable", tableData, tableStructure);
 				$("#scannerNameTableContainer").empty().append(table);
 				
-				// update the select box to show only currently active scanners
-				$("#scannerCurrentName").empty().append('<option value="noSelection">Select a scanner...</option>');
-				for(var i = 0; i < tableData.length; i++){
-					var newOption = $("<option>")
-						.text(tableData[i].stationId)
-						.attr("value", tableData[i].stationId);
-					$("#scannerCurrentName").append(newOption);
+				if(listContainsBoxes){
+					$("#scannerRenameContainer").prop("hidden",false);
+					// update the select box to show only currently active scanners
+					$("#scannerCurrentName").empty().append('<option value="noSelection">Select a scanner...</option>');
+					for(var i = 0; i < tableData.length; i++){
+						if(tableData[i].isApp == "false"){
+							var newOption = $("<option>")
+								.text(tableData[i].stationId)
+								.attr("value", tableData[i].stationId);
+							$("#scannerCurrentName").append(newOption);
+						}
+					}
 				}
             }
         }

@@ -4,16 +4,24 @@ require "common.php";
 
 $debug = false;
 
-function getConnectedClients($DbConn)
+function getConnectedClients($DbConn, $includePlaceholderNames = true)
 {
-    $query = "SELECT stationId, lastSeen, version FROM connectedClients WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, lastSeen)) < 60 ORDER BY stationId ASC";
+	if($includePlaceholderNames)
+		$query = "SELECT stationId, lastSeen, version, isApp, nameType FROM connectedClients WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, lastSeen)) < 60 ORDER BY stationId ASC";
+	else
+		$query = "SELECT stationId, lastSeen, version, isApp FROM connectedClients WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, lastSeen)) < 60 AND nameType='location' ORDER BY stationId ASC";
+	
     if(!($queryResult = $DbConn->query($query)))
-            errorHandler("Error executing query: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+		errorHandler("Error executing query: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
     $clientList = array();
     for($i = 0; $i < $queryResult->num_rows; $i++)
     {
         $row = $queryResult->fetch_assoc();
+        if($row['isApp'] == "0")
+        	$row['isApp'] = "false";
+        else
+	        $row['isApp'] = "true";
         
         array_push($clientList,$row);
     }
@@ -59,7 +67,7 @@ function getExtraScannerNames($DbConn)
 
 function getAllScannerNames($DbConn)
 {
-	$connectedClients = getConnectedClients($DbConn);
+	$connectedClients = getConnectedClients($DbConn, false);
 	$extraNames = getExtraScannerNames($DbConn);
 	
 	$allNames = array();

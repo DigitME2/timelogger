@@ -1360,7 +1360,9 @@ INSERT INTO `config` (`paramName`, `paramValue`) VALUES
 CREATE TABLE `connectedClients` (
   `stationId` varchar(50) NOT NULL,
   `lastSeen` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `version` varchar(50) DEFAULT NULL
+  `version` varchar(50) DEFAULT NULL,
+  `isApp` tinyint(1) DEFAULT 0,
+  `nameType` varchar(20)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
