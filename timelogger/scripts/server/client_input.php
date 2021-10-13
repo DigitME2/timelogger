@@ -123,14 +123,14 @@ function recordStoppage($DbConn, $StoppageReasonId, $JobId, $StationId, $JobStat
     return $result;
 }
 
-function updateLastSeen($DbConn, $StationId, $version)
+function updateLastSeen($DbConn, $StationId, $version, $isApp, $nameType)
 {
-    $query = "REPLACE INTO connectedClients (stationId, lastSeen, version) VALUES (?, CURRENT_TIMESTAMP, ?)";
+    $query = "REPLACE INTO connectedClients (stationId, lastSeen, version, isApp, nameType) VALUES (?, CURRENT_TIMESTAMP, ?, ?, ?)";
     
     if(!($statement = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
-    if(!($statement->bind_param('ss', $StationId, $version)))
+    if(!($statement->bind_param('ssis', $StationId, $version, $isApp, $nameType)))
         errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
     
     if(!$statement->execute())
@@ -245,12 +245,22 @@ function main()
 		        break;
       
         case "heartbeat":
-        	if(isset($_GET["stationId"])
-        	{
-		        $stationId = $_GET["stationId"];
-				$version = $_GET["version"];
-		        updateLastSeen($dbConn, $stationId, $version);
-		    }
+    		$stationId = $_GET["stationId"];
+			$version = $_GET["version"];
+			
+			$isApp = 0;
+			if(isset($_GET["isApp"]))
+			{
+				if($_GET["isApp"] == "true")
+					$isApp = 1;
+			}
+				
+			if(isset($_GET["nameType"]))
+				$nameType = $_GET["nameType"];
+			else
+				$nameType = "location";
+				
+	        updateLastSeen($dbConn, $stationId, $version, $isApp, $nameType);
             sendResponseToClient("success");
             break;
 			
