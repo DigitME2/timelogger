@@ -9,6 +9,7 @@
 import pymysql
 import requests
 import random
+import time
 
 hostname = "localhost"
 dbPort = 3306
@@ -387,7 +388,7 @@ jobs = [
 		]
 
 extraStationNames = ["Cutting","Welding","Painting","Assembly","QC","Shipping"]
-productNames = ["Frame Assembly","Case Assembly"]
+productNames = ["Frame_Assembly","Case_Assembly"]
 stoppageReasons = ["Breakdown","Material unavailable","Lack of fuel"]
 productionRoutes = [
 		{"name":"Main Production Route","description": "Cutting,Welding,Painting,Assembly,QC,Shipping"},
@@ -465,6 +466,7 @@ for user in userNames:
 	params = {"request":"addUser","userName":user}
 	print("Create user {}".format(user))
 	requests.get("http://{}:{}/timelogger/scripts/server/users.php".format(hostname,serverPort),params=params)
+	time.sleep(1)
 	
 for reason in stoppageReasons:
 	params = {"request":"addStoppageReason","stoppageReason":reason}
