@@ -7,9 +7,9 @@ $debug = false;
 function getConnectedClients($DbConn, $includePlaceholderNames = true)
 {
 	if($includePlaceholderNames)
-		$query = "SELECT stationId, lastSeen, version, isApp, nameType FROM connectedClients WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, lastSeen)) < 60 ORDER BY stationId ASC";
+		$query = "SELECT stationId, lastSeen, version, isApp, nameType FROM connectedClients WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, lastSeen)) < 10 ORDER BY stationId ASC";
 	else
-		$query = "SELECT stationId, lastSeen, version, isApp FROM connectedClients WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, lastSeen)) < 60 AND nameType='location' ORDER BY stationId ASC";
+		$query = "SELECT stationId, lastSeen, version, isApp FROM connectedClients WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, lastSeen)) < 10 AND nameType='location' ORDER BY stationId ASC";
 	
     if(!($queryResult = $DbConn->query($query)))
 		errorHandler("Error executing query: ($DbConn->errno) $DbConn->error, line " . __LINE__);

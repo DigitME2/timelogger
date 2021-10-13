@@ -14,7 +14,7 @@ $(document).ready(function(){
 		$("#extraScannerNewNameCounter").html(nameCharsRemaining + "/14"); 
 	});
 	
-	setInterval(function(){updateScannersTable();}, 60000)
+	setInterval(function(){updateScannersTable();}, 10000)
 });
 
 // set function to call renameScanner when enter key pressed to submit
@@ -134,7 +134,7 @@ function updateScannersTable(){
                 var listContainsApps = false;
                 
                 for(let i = 0; i < tableData.length; i++){
-                	if(tableData[i]['isApp'] == 1)
+                	if(tableData[i]['isApp'] == "true")
                 		listContainsApps = true;
                 	else
                 		listContainsBoxes = true;

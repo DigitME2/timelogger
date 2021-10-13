@@ -7,8 +7,8 @@ Configuration for the barcode scanner client
 '''
 
 serverTrackingURL = "http://192.168.0.9/timelogger/scripts/server/client_input.php"
-heartbeatPeriod = 20
-serverTimeout = 6
+heartbeatPeriod = 5
+serverTimeout = 5
 multipleUserClock = False #IF true recomended to extend timeoutPeriod and stateDisplayPeriod
 multipleUseTimeOutError = False #If using multiple user, if true will trigger error after time out, if false will clock any users recognised up untill time out
 recordQuantity = False
