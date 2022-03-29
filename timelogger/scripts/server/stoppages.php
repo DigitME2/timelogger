@@ -42,7 +42,7 @@ function addStoppageReason($DbConn, $stoppageReason)
 }
 
 function getStoppageReasonTableData($DbConn, $OrderByName){
-    // returns an array of user data, ordered either userName or by order
+    // returns an array of stoppages data, ordered either name or by order
     // added, newest first.
     
     if($OrderByName == true)
