@@ -2,9 +2,12 @@ version: "3.8"
 services:
   timelogger_xampp:
     image: digitme2/timelogger
+    environment:
+        - TZ=Europe/London
+    restart: always
     ports:
-        - "80:80"
-        - "3306:3306"
+        - "8000:80"
+        - "3307:3306"
     volumes:
       - type: volume
         source: timelogger_db_vol
