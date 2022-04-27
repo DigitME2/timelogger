@@ -282,8 +282,6 @@ function main()
 			recordNumberCompleted($dbConn, $logRef, $numberCompleted);
 			sendResponseToClient("success");
             break;
-
-		case "recordNumberCompleted":
             
         default:
             sendResponseToClient("error","Unknown command: $request");
