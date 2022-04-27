@@ -6,8 +6,8 @@ services:
         - TZ=Europe/London
     restart: always
     ports:
-        - "8000:80"
-        - "3307:3306"
+        - "80:80"
+        - "3306:3306"
     volumes:
       - type: volume
         source: timelogger_db_vol
