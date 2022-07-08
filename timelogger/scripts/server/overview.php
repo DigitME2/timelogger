@@ -178,8 +178,8 @@ function getOverviewTable($dbConn)
 	else
 	{
 		printDebug("Not using date created range");
-		$dateCreatedStart = "";
-		$dateCreatedEnd = "";
+		$dateCreatedStart = "2000-01-01";
+		$dateCreatedEnd = "2002-01-01";
 	}
 
 
@@ -193,8 +193,8 @@ function getOverviewTable($dbConn)
 	else
 	{
 		printDebug("Not using date Due range");
-		$dateDueStart = "";
-		$dateDueEnd = "";
+		$dateDueStart = "2000-01-01";
+		$dateDueEnd = "2002-01-01";
 	}
 
 
