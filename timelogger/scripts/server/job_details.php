@@ -732,8 +732,8 @@ function main()
 				}
 				else
 				{
-					$startDate = "";
-					$endDate = "";
+					$startDate = "2022-01-01";
+					$endDate = "2022-06-06";
 				}
 
 				printDebug("Fetching records for job $jobId");
