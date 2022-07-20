@@ -1,0 +1,105 @@
+FROM ubuntu:20.04 && ubuntu 22.04
+
+##Warm-up
+#installing git & cloning PTT reposiratory
+
+sudo apt-get install git
+git clone "https://github.com/DigitME2/timelogger.git"
+sudo apt-get update && sudo apt-get upgrade
+
+##Lamp-Stack
+#installing & setting up apache2-server
+
+sudo apt update && sudo apt install apache2
+sudo ufw app list
+sudo ufw allow in "Apache full"
+sudo ufw enable
+sudo apt install OpenSSH-server
+sudo ufw allow OpenSSH
+sudo ufw status
+sudo service apache2 status
+
+#to view ip address
+ip addr show | grep inet | awk '{print $s ;}'| sed 's/\/.*$//'
+
+#ip address was from the third line ~ inet <ipaddress>. 
+
+#installing mysql-server
+sudo apt update && sudo apt install mysql-server
+sudo service mysql status
+
+#Setting up mysql with root user
+sudo mysql -u root
+
+mysql> DROP USER 'root'@'localhost';
+mysql> CREATE USER 'root'@'localhost' IDENTIFIED BY '';
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+mysql> FLUSH PRIVILEGES;
+mysql> SELECT User,Host FROM mysql.user;
+mysql> ctrl+z
+
+mysql -u root
+#this above command is to check the mysql running with root user without password.
+
+#Install PHP
+sudo apt update && sudo apt install php libapache2-mod-php php-mysql
+php -version
+#this above command is to check the php installed or not.
+
+#Copy & move Timelogger files to apache directory
+sudo cp -R /home/<user>/timelogger/timelogger /var/www/html
+#edit the <user> with the system user name.
+ 
+#remove & replace index page to apache directory
+sudo rm /var/www/html/index.html
+sudo cp /home/<user>/timelogger/index.php /var/www/html
+#edit the <user> with the system user name.
+
+#Installing PHP-Supporting files
+sudo apt install php-mbstring php-zip php-gd php-curl php-json
+
+#Installing PHP-MyAdmin
+sudo apt install phpmyadmin
+#Select Apache2() when it got highlighted by pressing space button and tab and press enter.
+#Select phpmyadmin user and choose any password. 
+
+#now restart apache2 & mysql
+sudo systemctl restart apache2
+sudo systemctl restart mysql
+
+#To login into phpMyAdmin without password
+cd /etc/phpmyadmin
+sudo nano config.inc.php
+#uncomment the line by removing '//' of "Allow users without password".
+
+#now restart apache2 & mysql
+sudo systemctl restart apache2
+sudo systemctl restart mysql
+
+#Setting up other requirements
+sudo apt-get -y install software-properties-common
+sudo add-apt-repository universe
+sudo apt-get -y install python3-pip
+sudo pip3 install qrcode
+sudo pip3 install Image
+sudo pip3 install pymysql
+sudo pip3 install requests
+sudo apt-get -y install iptables
+sudo apt-get -y install nano
+sudo apt-get install net-tools
+
+#Setting up the data base
+mysql -u root
+mysql> SET GLOBAL log_bin_trust_function_creators = 1;
+mysql> ctrl + z
+
+mysql -u root -e "CREATE DATABASE work_tracking" -S /var/run/mysqld/mysqld.sock  && 
+mysql -u root -S /var/run/mysqld/mysqld.sock work_tracking < work_tracking_db_setup.sql  && \
+mysql -u root -S /var/run/mysqld/mysqld.sock mysql < user.sql
+
+#Change timelogger and index.php permissions
+
+cd /var/www/html
+sudo chmod 777 -R timelogger
+sudo chmod 777 index.php
+ 
