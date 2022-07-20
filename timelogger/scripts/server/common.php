@@ -2,13 +2,13 @@
 
 // Various functions used throughout the server software.
 
-$JobQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedJobQrCodes/";
+$JobQrCodeDirAbs = "/var/www/html/timelogger/generatedJobQrCodes/";
 $JobQrCodeDirRelativeToPage = "../generatedJobQrCodes/";
 
-$ProductQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedProductQrCodes/";
+$ProductQrCodeDirAbs = "/var/www/html/timelogger/generatedProductQrCodes/";
 $ProductQrCodeDirRelativeToPage = "../generatedProductQrCodes/";
 
-$StoppageReasonQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedStoppageReasonQrCodes/";
+$StoppageReasonQrCodeDirAbs = "/var/www/html/timelogger/generatedStoppageReasonQrCodes/";
 $StoppageReasonQrCodeDirRelativeToPage = "../generatedStoppageReasonQrCodes/";
 
 $productIDCodePrefix = 'pdrt_';
