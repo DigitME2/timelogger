@@ -6,6 +6,7 @@ $(document).ready(function(){
 
 	enableTimePeriod('Created');
 	enableTimePeriod('Due');
+	enableTimePeriod('TimeWorked');
 
 	initDisplayOptions();
 	
@@ -108,6 +109,12 @@ function enableDueTimePeriod()
 
 }
 
+function enableforallTimePeriod()
+{
+
+
+}
+
 //detect enter key press and update table if enter pressed
 $(document).keypress(function(e) {
 	var keycode = (e.keycode ? e.keycode : e.which)
@@ -195,16 +202,41 @@ function updateJobsData(){
 
 	console.log(useDataDueRange)
 
+
+	var dateTimeWorkStartInput = $('#dateTimeWorkStartInput').val()
+	var dateTimeWorkEndInput = $('#dateTimeWorkEndInput').val()
+	var useDateTimeWorkedRange = $('#useDateTimeWorkedRange').is(':checked')
+	var excludeUnworkedJobs = $('#excludeUnworkedJobs').is(':checked')
+
+
+	if(dateTimeWorkStartInput == '' && dateTimeWorkEndInput == ''){
+		useDateTimeWorkedRange=false
+		excludeUnworkedJobs=false
+	}
+	
+	console.log(useDateTimeWorkedRange)
+	console.log(excludeUnworkedJobs)
+
+	var showPendingJobs = $('#showPendingJobs').is(':checked')
+	var showWorkInProgressJobs = $('#showWorkInProgressJobs').is(':checked')
+	var showCompletedJobs = $('#showCompletedJobs').is(':checked')
+
 	requestParameters = {
 			"request":"getOverviewData",
 			"tableOrdering":$('input[name="tableOrdering"]').filter(':checked').val(),
-			"hideCompletedJobs":$('#hideCompletedJobs').is(':checked'),
+			"showPendingJobs":showPendingJobs,
+			"showWorkInProgressJobs":showWorkInProgressJobs,
+			"showCompletedJobs":showCompletedJobs,
 			"useDateCreatedRange":useDateCreatedRange,
 			"dateCreatedStart":dateCreatedStart,
 			"dateCreatedEnd":dateCreatedEnd,
 			"useDateDueRange":useDataDueRange,
 			"dateDueStart":dateDueStartInput,
 			"dateDueEnd":dateDueEndInput,
+			"useDateTimeWorkedRange":useDateTimeWorkedRange,
+			"dateTimeWorkStart":dateTimeWorkStartInput,
+			"dateTimeWorkEnd":dateTimeWorkEndInput,
+			"excludeUnworkedJobs":excludeUnworkedJobs,
 			"useSearchKey":useSearchPhrase,
 			"searchKey":searchPhrase,
 			"showUrgentJobsFirst":$('#showUrgentJobsFirst').is(':checked'),

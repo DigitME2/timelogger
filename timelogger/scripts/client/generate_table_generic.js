@@ -121,8 +121,8 @@ function generateTable(TableId, DataToTabulate, TableStructure){
 			{
 		        row.data("linkUrl", url);
 		        row.on("click",function(){
-		            //window.location = $(this).data("linkUrl");
-					var win = window.open($(this).data("linkUrl"),"_blank");
+		            window.location = $(this).data("linkUrl");
+					//var win = window.open($(this).data("linkUrl"),"_blank");
 		        });
 			}
         }

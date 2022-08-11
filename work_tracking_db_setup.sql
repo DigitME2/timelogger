@@ -726,11 +726,12 @@ BEGIN
 	
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetOverviewData` (IN `UseSearchKey` TINYINT(1), IN `SearchKey` VARCHAR(200), IN `HideCompletedJobs` TINYINT(1), IN `LimitDateCreatedRange` TINYINT(1), IN `DateCreatedStart` DATE, IN `DateCreatedEnd` DATE, IN `LimitDateDueRange` TINYINT(1), IN `DateDueStart` DATE, IN `DateDueEnd` DATE, IN `ShowOnlyUrgentJobs` TINYINT(1), IN `ShowOnlyNonurgentJobs` TINYINT(1), IN `OrderByCreatedAsc` TINYINT(1), IN `OrderByCreatedDesc` TINYINT(1), IN `OrderByDueAsc` TINYINT(1), IN `OrderByDueDesc` TINYINT(1), IN `OrderByJobId` TINYINT(1), IN `OrderBypriority` TINYINT(1), IN `SubOrderByPriority` TINYINT(1))  BEGIN
-
-
+CREATE PROCEDURE `GetOverviewData` (IN `UseSearchKey` TINYINT(1), IN `SearchKey` VARCHAR(200), IN `ShowPendingJobs` TINYINT(1), IN `ShowWorkInProgressJobs` TINYINT(1), IN `ShowCompletedJobs` TINYINT(1), IN `LimitDateCreatedRange` TINYINT(1), IN `DateCreatedStart` DATE, IN `DateCreatedEnd` DATE, IN `LimitDateDueRange` TINYINT(1), IN `DateDueStart` DATE, IN `DateDueEnd` DATE, IN `LimitDateTimeWorkedRange` TINYINT(1), IN `DateTimeWorkStart` DATE, IN `DateTimeWorkEnd` DATE, IN `ExcludeUnworkedJobs` TINYINT(1), IN `ShowOnlyUrgentJobs` TINYINT(1), IN `ShowOnlyNonurgentJobs` TINYINT(1), IN `OrderByCreatedAsc` TINYINT(1), IN `OrderByCreatedDesc` TINYINT(1), IN `OrderByDueAsc` TINYINT(1), IN `OrderByDueDesc` TINYINT(1), IN `OrderByJobId` TINYINT(1), IN `OrderBypriority` TINYINT(1), IN `SubOrderByPriority` TINYINT(1)) MODIFIES SQL DATA 
+BEGIN
     CREATE TEMPORARY TABLE openTimes (jobId VARCHAR(20), openDuration INT, openOvertimeDuration INT);
     CREATE TEMPORARY TABLE selectedJobIds (counter INT PRIMARY KEY AUTO_INCREMENT, jobId VARCHAR(20));
+	CREATE TEMPORARY TABLE closedTimes (jobId VARCHAR(20), closedDuration INT, closedOvertimeDuration INT);
+
 
 	-- Construct a query to select the job IDs meeting the required selection criteria (completed or not, date range, etc)...
 	SET @selectionQuery = "INSERT INTO selectedJobIds (jobId) SELECT jobId FROM jobs ";
@@ -747,21 +748,43 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetOverviewData` (IN `UseSearchKey`
 		
 		-- this is set to " WHERE ", then changed to " AND " after the first condition is set.
 		SET @conditionPrecederTerm = " AND "; 
-	END IF;
+	END IF;		
 		
-		
-	IF HideCompletedJobs IS TRUE THEN
-		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus != 'complete'");
+	IF ShowPendingJobs IS TRUE AND ShowWorkInProgressJobs IS TRUE AND ShowCompletedJobs IS TRUE THEN
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'pending' OR currentStatus = 'workInProgress' OR currentStatus = 'complete'");
+		SET @conditionPrecederTerm = " AND "; 
+
+	ELSEIF ShowPendingJobs IS TRUE AND ShowWorkInProgressJobs IS TRUE AND ShowCompletedJobs IS FALSE THEN
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'pending' OR currentStatus = 'workInProgress'");
+		SET @conditionPrecederTerm = " AND "; 
+	
+	ELSEIF ShowPendingJobs IS TRUE AND ShowWorkInProgressJobs IS FALSE AND ShowCompletedJobs IS TRUE THEN
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'pending' OR currentStatus = 'complete'");
+		SET @conditionPrecederTerm = " AND "; 
+
+	ELSEIF ShowPendingJobs IS FALSE AND ShowWorkInProgressJobs IS TRUE AND ShowCompletedJobs IS TRUE THEN
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'workInProgress' OR currentStatus = 'complete'");
+		SET @conditionPrecederTerm = " AND ";
+
+	ELSEIF ShowPendingJobs IS TRUE AND ShowWorkInProgressJobs IS FALSE AND ShowCompletedJobs IS FALSE THEN
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'pending'");
+
+		SET @conditionPrecederTerm = " AND ";
+	
+	ELSEIF ShowPendingJobs IS FALSE AND ShowWorkInProgressJobs IS FALSE AND ShowCompletedJobs IS TRUE THEN
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'complete'");
+		SET @conditionPrecederTerm = " AND ";
+
+	ELSEIF ShowPendingJobs IS FALSE AND ShowWorkInProgressJobs IS TRUE AND ShowCompletedJobs IS FALSE THEN
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'workInProgress'");
 		SET @conditionPrecederTerm = " AND ";
 	END IF;
-		
-		
-	IF LimitDateCreatedRange IS TRUE THEN
-		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm,
-			 "DATE(recordAdded) >= '", DateCreatedStart, "' AND DATE(recordAdded) <= '", DateCreatedEnd, "' "
-		);
-		SET @conditionPrecederTerm = " AND ";
-	END IF;
+
+	-- IFLimitDateCreatedRange IS TRUE THEN
+	-- 	SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm,
+	-- 		 "DATE(recordAdded) >= '", DateCreatedStart, "' AND DATE(recordAdded) <= '", DateCreatedEnd, "' ");
+	-- 	SET @conditionPrecederTerm = " AND ";
+	-- END IF;
 		
 		
 	IF LimitDateDueRange IS TRUE THEN
@@ -796,14 +819,49 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetOverviewData` (IN `UseSearchKey`
 	-- Perform a few actions to produce a create a list of times for open records. This is required to get an accurate time
     -- if a job is currently being worked on.
     -- Get the relevant jobs
-    INSERT INTO openTimes(jobId, openDuration, openOvertimeDuration)
-    SELECT 
-    timeLog.jobId,
-    TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
-    CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
-    FROM timeLog
-    WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds);
-    
+
+	-- if displlay time in date range is false ...
+	IF LimitDateTimeWorkedRange IS FALSE THEN
+		INSERT INTO openTimes(jobId, openDuration, openOvertimeDuration)
+		SELECT 
+		timeLog.jobId,
+		TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
+		CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
+		FROM timeLog
+		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds);
+
+		INSERT INTO closedTimes(jobId, closedDuration, closedOvertimeDuration)
+		SELECT 
+		timeLog.jobId,
+		timeLog.workedDuration,
+		timeLog.overtimeDuration
+		FROM timeLog
+		WHERE clockOffTime IS NOT NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds);
+
+	ELSEIF LimitDateTimeWorkedRange IS TRUE THEN 
+		INSERT INTO openTimes(jobId, openDuration, openOvertimeDuration)
+		SELECT 
+		timeLog.jobId,
+		TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
+		CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
+		FROM timeLog
+		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd);
+
+		INSERT INTO closedTimes(jobId, closedDuration, closedOvertimeDuration)
+		SELECT 
+		timeLog.jobId,
+		timeLog.workedDuration,
+		timeLog.overtimeDuration
+		FROM timeLog
+		WHERE clockOffTime IS NOT NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd);
+	END IF;
+
+
+	--  ... else if true
+	--  same insert statements, plus AND tiemlog.recordDate >= startDate AND timelog.recordDAte <= endDate
+
+	-- 
+	    
     -- test
     -- SELECT * FROM openTimes;
     
@@ -814,9 +872,25 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetOverviewData` (IN `UseSearchKey`
     
     CREATE INDEX idx_openTimes_jobIds ON openTimes(jobId);
     
+	INSERT INTO closedTimes (jobId, closedDuration, closedOvertimeDuration)
+    SELECT jobId, 0, 0 FROM selectedJobIds;
     
-    -- test
-    -- SELECT * FROM openTimes;
+    CREATE INDEX idx_closedTimes_jobIds ON closedTimes(jobId);
+
+
+	IF LimitDateTimeWorkedRange IS TRUE AND ExcludeUnworkedJobs IS TRUE THEN
+		DELETE FROM selectedJobIds
+		WHERE selectedJobIds.jobId NOT IN (selectedJobIds FROM openTimes)
+		AND selectedJobIds.jobId NOT IN (selectedJobIds FROM closedTimes)
+	END IF;
+
+	-- ...appending the relevant selection options...
+	IF UseSearchKey IS TRUE THEN
+		SET @selectionQuery = CONCAT(@selectionQuery, " WHERE (description LIKE '", @searchPattern, "' OR jobId LIKE '", @searchPattern, "' OR customerName LIKE '", @searchPattern, "' or  productId LIKE '", @searchPattern, "')");
+		
+		-- this is set to " WHERE ", then changed to " AND " after the first condition is set.
+		SET @conditionPrecederTerm = " AND "; 
+	END IF;	
     
     
     
@@ -832,9 +906,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetOverviewData` (IN `UseSearchKey`
     description,
     currentStatus,
     recordAdded,
-    closedWorkedDuration + SUM(openDuration) AS totalWorkedDuration,
-    closedOvertimeDuration + SUM(openOvertimeDuration) AS totalOvertimeDuration,
-    LEAST((expectedDuration/(closedWorkedDuration + SUM(openDuration))),1) AS efficiency,
+    SUM(closedTimes.closedDuration) + SUM(openDuration) AS totalWorkedDuration,
+    SUM(closedTimes.closedOvertimeDuration) + SUM(openOvertimeDuration) AS totalOvertimeDuration,
+    LEAST((expectedDuration/(SUM(closedTimes.closedDuration) + SUM(openDuration))),1) AS efficiency,
     expectedDuration,
     routeCurrentStageName,
     priority,
@@ -849,6 +923,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetOverviewData` (IN `UseSearchKey`
    	customerName,
    	notes
    	FROM jobs LEFT JOIN openTimes ON jobs.jobId = openTimes.jobId
+	LEFT JOIN closedTimes ON jobs.jobId = closedTimes.jobId
    	WHERE jobs.jobId IN (SELECT jobId FROM selectedJobIds ORDER BY counter ASC)
    	GROUP BY jobs.jobId ";
 	
@@ -877,8 +952,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetOverviewData` (IN `UseSearchKey`
 	DEALLOCATE PREPARE jobSelectionStmt;
 	
     DROP TABLE openTimes;
+	DROP TABLE closedTimes;
     DROP TABLE selectedJobIds;
-END$$
+	END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetStoppagesLog` (IN `JobId` VARCHAR(20))  MODIFIES SQL DATA
 BEGIN

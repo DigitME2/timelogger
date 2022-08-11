@@ -96,7 +96,7 @@ else
 						
 						<div id="searchOptions">
 							<h2>Search jobs</h2>
-							<div id=dateCreatedRangeSelection">
+							<div id="dateCreatedRangeSelection">
 								<input type="checkbox" id="useDateCreatedRange" class="tableControl searchDateCheckBox" <?php echo($checkedDisplayCreatedWithin); ?> onchange="enableTimePeriod('Created', updateTable=true)">
 								<label for="useDateCreatedRange">Display jobs created within selected time period</label>
 								<br>
@@ -123,6 +123,22 @@ else
 									<input type="date" id="dateDueEndInput" class="tableControl" onchange="onTableDataOptionsChange()">
 								</div>
 							</div>
+							<br>
+							<div id=dateTimeWorkedRangeSelection>
+								<input type="checkbox" id="useDateTimeWorkedRange" class="tableControl searchDateCheckBox" <?php echo($checkedDisplayDueWithin); ?> onchange="enableTimePeriod('forall', updateTable=true)">
+								<label for="useDateTimeWorkedRange">Display time worked within selected time period</label>
+								<br>
+								<div class="searchDateDiv">
+									<label for="dateTimeWorkStartInput">Start date:</label>
+									<input type="date" id="dateTimeWorkStartInput" class="tableControl" onchange="onTableDataOptionsChange()">
+								</div>
+								<div class="searchDateDiv">
+									<label for="dateTimeWorkEndInput">End date:</label>
+									<input type="date" id="dateTimeWorkEndInput" class="tableControl" onchange="onTableDataOptionsChange()">
+								</div>
+								<input type="checkbox" id="excludeUnworkedJobs" class="tableControl" onchange="onTableDataOptionsChange()">
+								<label for="excludeUnworkedJobs">Exclude Jobs unworked in this selected time period</label>
+							</div>
 							<div id="searchText">
 								<!--<input type="checkbox" id="useSearchPhrase" class="tableControl">
 								<label for="useSearchPhrase">Display jobs containing the specified text</label>-->
@@ -131,8 +147,16 @@ else
 							</div>
 							<input type="checkbox" id="showOnlyUrgentJobs" class="tableControl" onchange="onTableDataOptionsChange()">
 							<label for="showOnlyUrgentJobs">Only show urgent jobs</label>
-							<input type="checkbox" id="hideCompletedJobs" <?php echo($defaultHideCompletedJobsChecked); ?> class="tableControl" onchange="onTableDataOptionsChange()">
-							<label for="hideCompletedJobs">Hide completed jobs</label>
+							<br>
+							<br>
+							<input type="checkbox" id="showPendingJobs" class="tableControl" onchange="onTableDataOptionsChange()">
+							<label for="showPendingJobs">Show Pending Jobs</label>
+							<br>
+							<input type="checkbox" id="showWorkInProgressJobs" class="tableControl" onchange="onTableDataOptionsChange()">
+							<label for="showWorkInProgressJobs">Show Work In Progress Jobs</label>
+							<br>
+							<input type="checkbox" id="showCompletedJobs" class="tableControl" onchange="onTableDataOptionsChange()">
+							<label for="showCompletedJobs">Show Completed Jobs</label>
 						</div>
 						
 						<div id="displayOptions">

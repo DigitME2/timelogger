@@ -4,7 +4,7 @@ require "common.php";
 
 $debug = false;
 
-function getOverviewData($DbConn, $TableOrdering = "createdNewestFirst", $HideCompletedJobs = false, $UseDateCreatedRange = false, $DateCreatedStart = "", $DateCreatedEnd = "", $UseDateDueRange = false, $DateDueStart = "", $DateDueEnd = "", $UseSearchKey = false, $SearchKey = "", $ShowOnlyUrgentJobs = false, $ShowOnlyNonurgentJobs = false, $subSortByPriority = false)
+function getOverviewData($DbConn, $TableOrdering = "createdNewestFirst", $showPendingJobs = true, $showWorkInProgressJobs = true, $showCompletedJobs = true, $UseDateCreatedRange = false, $DateCreatedStart = "", $DateCreatedEnd = "", $UseDateDueRange = false, $DateDueStart = "", $DateDueEnd = "", $useDateTimeWorkedRange = false, $dateTimeWorkStart = "", $dateTimeWorkEnd = "", $excludeUnworkedJobs = false, $UseSearchKey = false, $SearchKey = "", $ShowOnlyUrgentJobs = false, $ShowOnlyNonurgentJobs = false, $subSortByPriority = false)
 {
     // Calls a stored procedure to generate a table of data, suitable to use for the overview page of the
     // interface. See GetOverviewData in overview.sql for details.
@@ -24,7 +24,7 @@ function getOverviewData($DbConn, $TableOrdering = "createdNewestFirst", $HideCo
 			break;
 			
         case "createdOldestFirst":
-			printDebug("Selected ordering by created, oldest first");
+		printDebug("Selected ordering by created, oldest first");
 			$orderByCreatedTimestampAsc = true;
 			break;
 			
@@ -49,30 +49,37 @@ function getOverviewData($DbConn, $TableOrdering = "createdNewestFirst", $HideCo
 			break;
     }
 	
-	printDebug("HideCompletedJobs: $HideCompletedJobs");
+	printDebug("$showPendingJobs: $showPendingJobs");
+	printDebug("$showWorkInProgressJobs: $showWorkInProgressJobs");
+	printDebug("$showCompletedJobs: $showCompletedJobs");
 	printDebug("UseDateCreatedRange: $UseDateCreatedRange");
 	printDebug("DateCreatedStart: $DateCreatedStart");
 	printDebug("DateCreatedEnd: $DateCreatedEnd");
 	printDebug("UseDateDueRange: $UseDateDueRange");
 	printDebug("DateDueStart: $DateDueStart");
 	printDebug("DateDueEnd: $DateDueEnd");
+	printDebug("useDateTimeWorkedRange: $useDateTimeWorkedRange");
+	printDebug("dateTimeWorkStart: $dateTimeWorkStart");
+	printDebug("dateTimeWorkEnd: $dateTimeWorkEnd");
+	printDebug("excludeUnworkedJobs: $excludeUnworkedJobs");
 	printDebug("UseSearchKey: $UseSearchKey");
 	printDebug("SearchKey: $SearchKey");
 	printDebug("ShowOnlyUrgentJobs: $ShowOnlyUrgentJobs");
 	printDebug("ShowOnlyNonurgentJobs: $ShowOnlyNonurgentJobs");
 	printDebug("subSortByPriority: $subSortByPriority");
     
-    $query = "CALL GetOverviewData(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    $query = "CALL GetOverviewData(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     if(!($stmt = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
 	// note: this is different to every other parameter bind in the system because PHP threw an error,
 	// and I have no idea why. The command appears to work fine.
-	$stmt->bind_param('isiississiiiiiiiii', 
-					   $UseSearchKey, $SearchKey,
-					   $HideCompletedJobs,
+	$stmt->bind_param('isiiiissississiiiiiiiiii', 
+					   $UseSearchKey, $SearchKey, 
+					   $showPendingJobs, $showWorkInProgressJobs, $showCompletedJobs,
 					   $UseDateCreatedRange, $DateCreatedStart, $DateCreatedEnd,
 					   $UseDateDueRange, $DateDueStart, $DateDueEnd,
+					   $useDateTimeWorkedRange, $dateTimeWorkStart, $dateTimeWorkEnd, $excludeUnworkedJobs,
 					   $ShowOnlyUrgentJobs, $ShowOnlyNonurgentJobs,
 					   $orderByCreatedTimestampAsc,
 					   $orderByCreatedTimestampDesc,
@@ -159,10 +166,14 @@ function getOverviewTable($dbConn)
 
 	if(isset($_GET["tableOrdering"]))
 		$tableOrdering = $_GET["tableOrdering"];
-
-	$hideCompletedJobs = (isset($_GET["hideCompletedJobs"]) && $_GET["hideCompletedJobs"] == "true");
+	
+	$showPendingJobs = (isset($_GET["showPendingJobs"]) && $_GET["showPendingJobs"] == "true");
+	$showWorkInProgressJobs = (isset($_GET["showWorkInProgressJobs"]) && $_GET["showWorkInProgressJobs"] == "true");
+	$showCompletedJobs = (isset($_GET["showCompletedJobs"]) && $_GET["showCompletedJobs"] == "true");
 	$useDateCreatedRange = (isset($_GET["useDateCreatedRange"]) && $_GET["useDateCreatedRange"] == "true");
 	$useDateDueRange = (isset($_GET["useDateDueRange"]) && $_GET["useDateDueRange"] == "true");
+	$useDateTimeWorkedRange = (isset($_GET["useDateTimeWorkedRange"]) && $_GET["useDateTimeWorkedRange"] == "true");
+	$excludeUnworkedJobs = (isset($_GET["excludeUnworkedJobs"]) && $_GET["excludeUnworkedJobs"] == "true");
 	$useSearchKey = (isset($_GET["useSearchKey"]) && $_GET["useSearchKey"] == "true");
 	$showUrgentJobsFirst = (isset($_GET["showUrgentJobsFirst"]) && $_GET["showUrgentJobsFirst"] == "true");
 	$showOnlyUrgentJobs = (isset($_GET["showOnlyUrgentJobs"]) && $_GET["showOnlyUrgentJobs"] == "true");
@@ -197,6 +208,24 @@ function getOverviewTable($dbConn)
 		$dateDueEnd = "2002-01-01";
 	}
 
+	if($useDateTimeWorkedRange)
+	{
+		printDebug("Using Date Time Worked range");
+		$dateTimeWorkStart = $_GET["dateTimeWorkStart"];
+		$dateTimeWorkEnd = $_GET["dateTimeWorkEnd"];
+		printDebug("dateTimeWorkStart: $dateTimeWorkStart    dateTimeWorkEnd: $dateTimeWorkEnd");
+	}
+	else
+	{
+		printDebug("Not using date for range");
+		$dateTimeWorkStart = "2000-01-01";
+		$dateTimeWorkEnd = "2002-01-01";
+	}
+	
+	if($excludeUnworkedJobs)
+		printDebug("exclude all unworked jobs");
+	else
+		printDebug("Not excluding all unworked jobs");
 
 	if($useSearchKey)
 	{
@@ -234,9 +263,10 @@ function getOverviewTable($dbConn)
 		$urgentOverviewData = getOverviewData(
 			$dbConn, 
 			$tableOrdering,
-			$hideCompletedJobs,
+			$showPendingJobs, $showWorkInProgressJobs, $showCompletedJobs,
 			$useDateCreatedRange, $dateCreatedStart, $dateCreatedEnd,
 			$useDateDueRange, $dateDueStart, $dateDueEnd,
+			$useDateTimeWorkedRange, $dateTimeWorkStart, $dateTimeWorkEnd, $excludeUnworkedJobs,
 			$useSearchKey, $searchKey,
 			$showUrgent, $showNonurgent,
 			false
@@ -257,9 +287,10 @@ function getOverviewTable($dbConn)
 			$otherOverviewData = getOverviewData(
 				$dbConn, 
 				$tableOrdering,
-				$hideCompletedJobs,
+				$showPendingJobs, $showWorkInProgressJobs, $showCompletedJobs,
 				$useDateCreatedRange, $dateCreatedStart, $dateCreatedEnd,
 				$useDateDueRange, $dateDueStart, $dateDueEnd,
+				$useDateTimeWorkedRange, $dateTimeWorkStart, $dateTimeWorkEnd, $excludeUnworkedJobs,
 				$useSearchKey, $searchKey,
 				$showUrgent, $showNonurgent,
 				$subSortByPriority
@@ -275,9 +306,10 @@ function getOverviewTable($dbConn)
 		$overviewData = getOverviewData(
 			$dbConn, 
 			$tableOrdering,
-			$hideCompletedJobs,
+			$showPendingJobs, $showWorkInProgressJobs, $showCompletedJobs,
 			$useDateCreatedRange, $dateCreatedStart, $dateCreatedEnd,
 			$useDateDueRange, $dateDueStart, $dateDueEnd,
+			$useDateTimeWorkedRange, $dateTimeWorkStart, $dateTimeWorkEnd, $excludeUnworkedJobs,
 			$useSearchKey, $searchKey,
 			false, false,
 			$subSortByPriority
