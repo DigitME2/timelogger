@@ -1,6 +1,7 @@
 <?php
 
 // Various functions used throughout the server software.
+require_once "phpqrcode/qrlib.php";
 
 $JobQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedJobQrCodes/";
 $JobQrCodeDirRelativeToPage = "../generatedJobQrCodes/";
@@ -62,11 +63,8 @@ function initDbConn($ServerName, $UserName, $Password, $DbName)
 
 function generateQrCode($DataToEncode, $GeneratedCodePath)
 {
-    $cmd = "python3 generateQrCode.py $DataToEncode $GeneratedCodePath";
-    printDebug($cmd);
-    $resultPath = exec($cmd);
-    printDebug("Generated QR code $resultPath");
-    return $resultPath;
+    QRcode::png($DataToEncode, $GeneratedCodePath, 'L', 10, 10);
+    printDebug("Generated QR code $GeneratedCodePath");
 }
 
 
