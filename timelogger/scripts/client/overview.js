@@ -109,12 +109,6 @@ function enableDueTimePeriod()
 
 }
 
-function enableforallTimePeriod()
-{
-
-
-}
-
 //detect enter key press and update table if enter pressed
 $(document).keypress(function(e) {
 	var keycode = (e.keycode ? e.keycode : e.which)
@@ -202,12 +196,24 @@ function updateJobsData(){
 
 	console.log(useDataDueRange)
 
+	if($("#useDateTimeWorkedRange").is(':checked'))
+	{
+		$("#dateTimeWorkStartInput").prop("disabled",false)
+		$("#dateTimeWorkEndInput").prop("disabled",false)
+		$("#excludeUnworkedJobs").prop("disabled",false)
+	}
+	else
+	{
+		$("#dateTimeWorkStartInput").prop("disabled",true)
+		$("#dateTimeWorkEndInput").prop("disabled",true)
+		$("#excludeUnworkedJobs").prop("disabled",true)
+	}
 
 	var dateTimeWorkStartInput = $('#dateTimeWorkStartInput').val()
 	var dateTimeWorkEndInput = $('#dateTimeWorkEndInput').val()
-	var useDateTimeWorkedRange = $('#useDateTimeWorkedRange').is(':checked')
 	var excludeUnworkedJobs = $('#excludeUnworkedJobs').is(':checked')
-
+	var useDateTimeWorkedRange = $('#useDateTimeWorkedRange').is(':checked')
+	
 
 	if(dateTimeWorkStartInput == '' && dateTimeWorkEndInput == ''){
 		useDateTimeWorkedRange=false
