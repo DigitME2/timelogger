@@ -815,7 +815,7 @@ BEGIN
 
 	-- test
 	-- SELECT * FROM selectedJobIds;
-
+	-- SELECT LimitDateTimeWorkedRange;
 	-- Perform a few actions to produce a create a list of times for open records. This is required to get an accurate time
     -- if a job is currently being worked on.
     -- Get the relevant jobs
@@ -863,7 +863,17 @@ BEGIN
 	-- 
 	    
     -- test
-    -- SELECT * FROM openTimes;
+
+	-- SELECT * FROM openTimes;
+	-- SELECT * FROM closedTimes;
+	-- SELECT ExcludeUnworkedJobs;
+
+	IF LimitDateTimeWorkedRange IS TRUE AND ExcludeUnworkedJobs IS TRUE THEN
+		DELETE FROM selectedJobIds
+		WHERE selectedJobIds.jobId NOT IN (SELECT jobId FROM openTimes)
+		AND selectedJobIds.jobId NOT IN (SELECT jobId FROM closedTimes);
+	END IF;
+	-- SELECT * FROM selectedJobIds;
     
     -- Create dummy entries to simplify things a little later on. These are used to ensure that there
     -- is at least one entry for each job.
@@ -877,12 +887,6 @@ BEGIN
     
     CREATE INDEX idx_closedTimes_jobIds ON closedTimes(jobId);
 
-
-	IF LimitDateTimeWorkedRange IS TRUE AND ExcludeUnworkedJobs IS TRUE THEN
-		DELETE FROM selectedJobIds
-		WHERE selectedJobIds.jobId NOT IN (selectedJobIds FROM openTimes)
-		AND selectedJobIds.jobId NOT IN (selectedJobIds FROM closedTimes)
-	END IF;
 
 	-- ...appending the relevant selection options...
 	IF UseSearchKey IS TRUE THEN
@@ -954,7 +958,8 @@ BEGIN
     DROP TABLE openTimes;
 	DROP TABLE closedTimes;
     DROP TABLE selectedJobIds;
-	END$$
+	
+END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetStoppagesLog` (IN `JobId` VARCHAR(20))  MODIFIES SQL DATA
 BEGIN

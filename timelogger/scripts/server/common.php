@@ -63,7 +63,7 @@ function initDbConn($ServerName, $UserName, $Password, $DbName)
 
 function generateQrCode($DataToEncode, $GeneratedCodePath)
 {
-    QRcode::png($DataToEncode, $GeneratedCodePath, 'L', 10, 10);
+    QRcode::png($DataToEncode, $GeneratedCodePath, 'H', 15, 15);
     printDebug("Generated QR code $GeneratedCodePath");
 }
 
