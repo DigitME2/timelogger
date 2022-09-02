@@ -47,6 +47,7 @@ function getTimeSheet($DbConn, $UserId, $StartDate, $EndDate)
     {
         $row = $res->fetch_row();
         array_push($columnNames, $row[0]);
+        $blankTimesheetRow[$row[0]] = "";
     }
 	$res->free(); 
 	
@@ -57,32 +58,32 @@ function getTimeSheet($DbConn, $UserId, $StartDate, $EndDate)
 	//get the productIds from the DB
 	$DbConn->next_result();
 	$res = $DbConn->store_result();
-	$timesheetRow1 = array();
-	$timesheetRow1 = $blankTimesheetRow;
+	$productNamesRow = array();
+	$productNamesRow = $blankTimesheetRow;
 
 	for($i=0; $i < $res->num_rows; $i++)
 	{
 		$row = $res->fetch_row();
-		$timesheetRow1["recordDate"] = "Product IDs";
-		$timesheetRow1[$row[0]] = $row[1];
+		$productNamesRow["recordDate"] = "Product IDs";
+		$productNamesRow[$row[0]] = $row[1];
 	}
-	array_push($timesheet, $timesheetRow1);
+	array_push($timesheet, $productNamesRow);
 
 	$res->free();
 
 	// get the aggregate worked durations from the DB
 	$DbConn->next_result();
 	$res = $DbConn->store_result();
-	$timesheetRow2 = array();
-	$timesheetRow2 = $blankTimesheetRow;
+	$aggregateTimesRow = array();
+	$aggregateTimesRow = $blankTimesheetRow;
 
 	for($i=0; $i < $res->num_rows; $i++)
 	{
 		$row = $res->fetch_row();
-		$timesheetRow2["recordDate"] = "Aggregate Worked Time";
-		$timesheetRow2[$row[0]] = $row[1];
+		$aggregateTimesRow["recordDate"] = "Aggregate Worked Time";
+		$aggregateTimesRow[$row[0]] = $row[1];
 	}
-	array_push($timesheet, $timesheetRow2);
+	array_push($timesheet, $aggregateTimesRow);
 
 	$res->free();
 
