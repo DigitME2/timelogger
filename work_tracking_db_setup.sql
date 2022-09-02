@@ -1050,14 +1050,30 @@ BEGIN
 	
 	-- Create a list of unique IDs. This is returned as the first of two results sets.
     SELECT DISTINCT jobId FROM jobDurations ORDER BY jobId ASC;
-	
-    -- select the times from the table, ordered appropriately. This second result set is 
+
+     -- This is for getting Product Ids
+
+    SELECT 
+        jobDurations.jobId, 
+        jobs.productId
+    FROM jobDurations
+    LEFT JOIN jobs
+    ON jobDurations.jobId = jobs.jobId
+    GROUP BY jobId;
+
+	  -- This is for getting Aggregate Times 
+    SELECT jobId, SUM(duration) AS workedDuration, SUM(overtimeDuration) AS overtimeDuration FROM jobDurations GROUP BY jobId;
+
+    -- select the times from the table, ordered appropriately. This following result set is 
 	-- processed into the rows and columns of a time sheet in the PHP code that called 
 	-- this procedure.
 	SELECT recordDate, jobId, SUM(duration) AS workedDuration, SUM(overtimeDuration) AS overtimeDuration FROM jobDurations GROUP BY recordDate, jobId ORDER BY recordDate;
 	
 	SELECT @totalDuration, @totalOvertimeDuration;
-	
+
+
+
+    	
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetWorkedTimes` (IN `JobId` VARCHAR(20), IN `LimitDateRange` TINYINT(1), IN `StartDate` DATE, IN `EndDate` DATE)  MODIFIES SQL DATA
