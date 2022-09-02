@@ -1,6 +1,10 @@
 $(document).ready(function(){
     initUserList();
+
+  
 });
+
+
 
 function initUserList(){
     $.ajax({
@@ -97,7 +101,7 @@ function getTimesheet(){
         return;
     }
     
-    $(".controls").attr("disabled", true);
+    // $(".controls").attr("disabled", true);
 //     if(userId == "Select a user"){
 //     $("#timesheetContainer").empty().html("No user selected");
 //     return;
@@ -132,7 +136,8 @@ function getTimesheet(){
             var tableData = timesheetData["timesheet"];
             var columns = [{"headingName":"Record Date", "dataName":"recordDate"}];
             
-            for(var i = 1; i < timesheetData.columnNames.length; i++) columns.push({"headingName":timesheetData.columnNames[i],"dataName":timesheetData.columnNames[i]});
+            for(var i = 1; i < timesheetData.columnNames.length; i++) 
+                columns.push({"headingName":timesheetData.columnNames[i],"dataName":timesheetData.columnNames[i]});
                             
             var tableStructure = {
                 "rows":{
@@ -140,10 +145,28 @@ function getTimesheet(){
                 },
                 "columns":columns
             };
-            
+
+           
+
             var table = generateTable("currentUsersTable", tableData, tableStructure);
+
+            $("#hideProductId").change(function(){
+                console.log('hideProductId');
+                hideProductId('#currentUsersTable');
+            })
+        
+            $("#hideAggregate").change(function(){
+                console.log('hideAggregate');
+                hideAggregate('#currentUsersTable');
+            })
+
+
+
             $("#timesheetContainer").empty().append(table);
-            
+            $('#currentUsersTable').find('tbody').children('tr:nth-child(1)').css
+            ({"background-color":"#be0f34", "color":"white"}); //"#be0f34" - Column Red
+            $('#currentUsersTable').find('tbody').children('tr:nth-child(2)').css
+            ({"background-color":"#be0f34", "color":"white"}); //"#be0f34" - Column Red
             data ={
 				"request":"getTimesheetCSV",
 				"userId": userId,
@@ -158,3 +181,19 @@ function getTimesheet(){
         }
     });
 }
+
+function hideProductId(table_id){
+    if($("#hideProductId").prop("checked")){
+        $(table_id).find('tbody').children('tr:nth-child(1)').hide();
+    }else{
+        $(table_id).find('tbody').children('tr:nth-child(1)').show();
+    }
+}
+
+function hideAggregate(table_id){
+    if($("#hideAggregate").prop("checked")){
+        $(table_id).find('tbody').children('tr:nth-child(2)').hide();
+    }else{
+        $(table_id).find('tbody').children('tr:nth-child(2)').show();
+    }
+   }
