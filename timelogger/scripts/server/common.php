@@ -3,13 +3,13 @@
 // Various functions used throughout the server software.
 require_once "phpqrcode/qrlib.php";
 
-$JobQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedJobQrCodes/";
+$JobQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedJobQrCodes/";
 $JobQrCodeDirRelativeToPage = "../generatedJobQrCodes/";
 
-$ProductQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedProductQrCodes/";
+$ProductQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedProductQrCodes/";
 $ProductQrCodeDirRelativeToPage = "../generatedProductQrCodes/";
 
-$StoppageReasonQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedStoppageReasonQrCodes/";
+$StoppageReasonQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedStoppageReasonQrCodes/";
 $StoppageReasonQrCodeDirRelativeToPage = "../generatedStoppageReasonQrCodes/";
 
 $productIDCodePrefix = 'pdrt_';

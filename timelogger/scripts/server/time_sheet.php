@@ -40,27 +40,57 @@ function getTimeSheet($DbConn, $UserId, $StartDate, $EndDate)
     
     $timesheet = array();
 	$columnNames = array("recordDate");
-	
 	$blankTimesheetRow = array("recordDate"=>"");
 	
 	// process initial list of job names. This is required to send to the client or to make a csv file
     for($i = 0; $i < $res->num_rows; $i++)
     {
         $row = $res->fetch_row();
-    
         array_push($columnNames, $row[0]);
-		$blankTimesheetRow[$row[0]] = "";
     }
+	$res->free(); 
+	
+
+	//check box can be enabled and disabled for choosing whether the productId & aggregate worked time 
+	// to be displayed or not in the Timesheet.
+
+	//get the productIds from the DB
+	$DbConn->next_result();
+	$res = $DbConn->store_result();
+	$timesheetRow1 = array();
+	$timesheetRow1 = $blankTimesheetRow;
+
+	for($i=0; $i < $res->num_rows; $i++)
+	{
+		$row = $res->fetch_row();
+		$timesheetRow1["recordDate"] = "Product IDs";
+		$timesheetRow1[$row[0]] = $row[1];
+	}
+	array_push($timesheet, $timesheetRow1);
+
 	$res->free();
-	
-	
-	
+
+	// get the aggregate worked durations from the DB
+	$DbConn->next_result();
+	$res = $DbConn->store_result();
+	$timesheetRow2 = array();
+	$timesheetRow2 = $blankTimesheetRow;
+
+	for($i=0; $i < $res->num_rows; $i++)
+	{
+		$row = $res->fetch_row();
+		$timesheetRow2["recordDate"] = "Aggregate Worked Time";
+		$timesheetRow2[$row[0]] = $row[1];
+	}
+	array_push($timesheet, $timesheetRow2);
+
+	$res->free();
+
 	// get the worked durations from the DB
 	$DbConn->next_result();
 	$res = $DbConn->store_result();
 	
 	$row = $res->fetch_assoc();
-	
 	$rowCount = $startDateDt->diff($endDateDt)->days + 1;
 	
 	for($i = 0; $i < $rowCount; $i++)
@@ -68,13 +98,14 @@ function getTimeSheet($DbConn, $UserId, $StartDate, $EndDate)
 		$timesheetRow = $blankTimesheetRow;
 		$rowDate = date('Y-m-d', strtotime($StartDate . " + $i days"));
 		$timesheetRow["recordDate"] = $rowDate;
-		
+
 		while($row && ($row["recordDate"] == $timesheetRow["recordDate"]))
 		{
 			$timesheetRow[$row["jobId"]] = durationToTime($row["workedDuration"]);
 			$row = $res->fetch_assoc();
 		}
 		array_push($timesheet, $timesheetRow);
+
 	}
 	
 	$res->free();
@@ -182,3 +213,4 @@ function main()
 }
 
 main();
+
