@@ -14,9 +14,33 @@ $(document).ready(function(){
     setInterval(function(){updateJobsData();}, 60000);
 });
 
+
 function initDisplayOptions(){
 	
 	if(localStorage.getItem("retainDisplayOptions") == "true"){
+		if(localStorage.getItem("sorting")=="sortByCreatedNewest")
+			$("#sortByCreatedNewest").prop("checked", true);
+		else if(localStorage.getItem("sorting")=="sortByCreatedOldest")
+			$("#sortByCreatedOldest").prop("checked", true);
+		else if(localStorage.getItem("sorting")=="sortByDueSoonest")
+			$("#sortByDueSoonest").prop("checked", true);
+		else if(localStorage.getItem("sorting")=="sortByDueLatest")
+			$("#sortByDueLatest").prop("checked", true);
+		else if(localStorage.getItem("sorting")=="sortByPriority")
+			$("#sortByPriority").prop("checked", true);
+		else if(localStorage.getItem("sorting")=="showUrgentJobsFirst")
+			$("#showUrgentJobsFirst").prop("checked", true);
+		$('#showUrgentJobsFirstLabel').prop("checked",localStorage.getItem("showUrgentJobsFirstLabel") == "true");
+		$('#subSortByPriority').prop("checked",localStorage.getItem("subSortByPriority") == "true");
+		$('#subSortByPriorityLabel').prop("checked",localStorage.getItem("subSortByPriorityLabel") == "true");
+		$('#useDateCreatedRange').prop("checked",localStorage.getItem("useDateCreatedRange") == "true");
+		$('#useDateDueRange').prop("checked",localStorage.getItem("useDateDueRange") == "true");
+		$('#useDateTimeWorkedRange').prop("checked",localStorage.getItem("useDateTimeWorkedRange") == "true");
+		$('#excludeUnworkedJobs').prop("checked",localStorage.getItem("excludeUnworkedJobs") == "true");
+		$('#showOnlyUrgentJobs').prop("checked",localStorage.getItem("showOnlyUrgentJobs") == "true");
+		$('#showPendingJobs').prop("checked",localStorage.getItem("showPendingJobs") == "true");
+		$('#showWorkInProgressJobs').prop("checked",localStorage.getItem("showWorkInProgressJobs") == "true");
+		$('#showCompletedJobs').prop("checked",localStorage.getItem("showCompletedJobs") == "true");
 		$('#warningHighlightDaysCount').val(localStorage.getItem("warningHighlightDaysCount"));
 		$('#showDeadlineWarningHighlight').prop("checked",localStorage.getItem("showDeadlineWarningHighlight") == "true");
 		$('#highlightPriority').prop("checked",localStorage.getItem("highlightPriority") == "true");
@@ -40,6 +64,23 @@ function initDisplayOptions(){
 		$('#retainDisplayOptions').prop("checked",localStorage.getItem("retainDisplayOptions") == "true");
 	}
 	else{
+		$('#sortByCreatedNewest').prop("checked", true);
+		$('#sortByCreatedOldest').prop("checked", false);
+		$('#sortByDueSoonest').prop("checked", false);
+		$('#sortByDueLatest').prop("checked", false);
+		$('#sortByPriority').prop("checked", false);
+		$('#showUrgentJobsFirst').prop("checked", false);
+		$('#showUrgentJobsFirstLabel').prop("checked", false);
+		$('#subSortByPriority').prop("checked", false);
+		$('#subSortByPriorityLabel').prop("checked", false);
+		$('#useDateCreatedRange').prop("checked", true);
+		$('#useDateDueRange').prop("checked", false);
+		$('#useDateTimeWorkedRange').prop("checked", false);
+		$('#excludeUnworkedJobs').prop("checked", false);
+		$('#showOnlyUrgentJobs').prop("checked", false);
+		$('#showPendingJobs').prop("checked", true);
+		$('#showWorkInProgressJobs').prop("checked", true);
+		$('#showCompletedJobs').prop("checked", true);
 		$('#warningHighlightDaysCount').val(5);
 		$('#showDeadlineWarningHighlight').prop("checked", true);
 		$('#highlightPriority').prop("checked", true);
@@ -134,7 +175,29 @@ function updateBodySize(){
 function onDisplayOptionsChange(){
 	updateTableDisplay()
 	
-	
+	if($("#sortByCreatedNewest").is(":checked"))
+		localStorage.setItem("sorting", "sortByCreatedNewest");
+	else if($("#sortByCreatedOldest").is(":checked"))
+		localStorage.setItem("sorting", "sortByCreatedOldest");
+	else if($("#sortByDueSoonest").is(":checked"))
+		localStorage.setItem("sorting", "sortByDueSoonest");
+	else if($("#sortByDueLatest").is(":checked"))
+		localStorage.setItem("sorting", "sortByDueLatest");
+	else if($("#sortByPriority").is(":checked"))
+		localStorage.setItem("sorting", "sortByPriority");
+	else if($("#showUrgentJobsFirst").is(":checked"))
+		localStorage.setItem("sorting", "showUrgentJobsFirst");
+	localStorage.setItem("showUrgentJobsFirstLabel", $("#showUrgentJobsFirstLabel").is(":checked"));
+	localStorage.setItem("subSortByPriority", $("#subSortByPriority").is(":checked"));
+	localStorage.setItem("subSortByPriorityLabel", $("#subSortByPriorityLabel").is(":checked"));
+	localStorage.setItem("useDateCreatedRange", $("#useDateCreatedRange").is(":checked"));
+	localStorage.setItem("useDateDueRange", $("#useDateDueRange").is(":checked"));
+	localStorage.setItem("useDateTimeWorkedRange", $("#useDateTimeWorkedRange").is(":checked"));
+	localStorage.setItem("excludeUnworkedJobs", $("#excludeUnworkedJobs").is(":checked"));
+	localStorage.setItem("showOnlyUrgentJobs", $("#showOnlyUrgentJobs").is(":checked"));
+	localStorage.setItem("showPendingJobs", $("#showPendingJobs").is(":checked"));
+	localStorage.setItem("showWorkInProgressJobs", $("#showWorkInProgressJobs").is(":checked"));
+	localStorage.setItem("showCompletedJobs", $("#showCompletedJobs").is(":checked"));
 	localStorage.setItem("warningHighlightDaysCount", $('#warningHighlightDaysCount').val());
 	localStorage.setItem("showDeadlineWarningHighlight", $('#showDeadlineWarningHighlight').is(":checked"));
 	localStorage.setItem("highlightPriority", $("#highlightPriority").is(":checked"));

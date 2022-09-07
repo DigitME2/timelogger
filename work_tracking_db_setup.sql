@@ -120,12 +120,14 @@ BEGIN
 
 		-- get the duration data pre-calculated in jobs table
 		SELECT
-		closedWorkedDuration,
-		closedOvertimeDuration
+		SUM(workedDuration),
+		SUM(overtimeDuration)
 		INTO
 		@totalWorkedTime,
 		@totalOvertime
-		FROM jobs WHERE jobs.jobId= JobId;	
+		FROM timeLog WHERE
+		(NOT (clockOffTime IS NULL))
+		AND timeLog.jobId = JobId;	
 
     END IF;
 	

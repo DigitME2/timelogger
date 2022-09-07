@@ -151,18 +151,18 @@ else
 					<h2>Work Log</h2>
 					<div id="workLogOptions">
 						<div id="useDateRangeSelectArea">
-					        <input type="checkbox" id="useDateRange" class="tableControl" onchange="enableTimePeriod()">
+					        <input type="checkbox" id="useDateRange" class="tableControl" onchange="enableTimePeriod()" disabled>
 					        <label id="useDateRangeLabel" for="useDateRange">Display records between start and end dates</label>
 						</div>
 
-			            <label id="dateStartInputLabel" for="dateStartInput">Start date:</label>
+			            <label id="dateStartInputLabel" for="dateStartInput" disabled>Start date:</label>
 			            <input type="date" id="dateStartInput" class="tableControl">
-			            <label id="dateEndInputLabel" for="dateEndInput">End date:</label>
+			            <label id="dateEndInputLabel" for="dateEndInput" disabled>End date:</label>
 			            <input type="date" id="dateEndInput" class="tableControl">
 
-						<input type="button" id="updateJobsTable" class="tableControl" value="Update table" onclick=<?php echo('updateJobLogTable("' . $jobId . '")'); ?>>
+						<input type="button" id="updateJobsTable" class="tableControl" value="Update table" disabled onclick=<?php echo('updateJobLogTable("' . $jobId . '")'); ?>>
 						<div id="collapseRecordsSelectArea">
-							<input type="checkbox" id="collapseRecords" class="tableControl" onclick=<?php echo('updateJobLogTable("' . $jobId . '")'); ?> />
+							<input type="checkbox" id="collapseRecords" class="tableControl" disabled onclick=<?php echo('updateJobLogTable("' . $jobId . '")'); ?> />
 							<label id="collapseRecordsLabel" for="collapseRecords">Collapse Records</label>
 						</div>
 
