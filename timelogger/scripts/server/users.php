@@ -5,7 +5,7 @@ require "db_params.php";
 require "common.php";
 
 $Debug = false;
-$UserQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedUserQrCodes/";
+$UserQrCodeDirAbs = "/var/www/html/timelogger/generatedUserQrCodes/";
 $UserQrCodeDirRelativeToPage = "../generatedUserQrCodes/";
 
 function addUser($DbConn, $UserName)
