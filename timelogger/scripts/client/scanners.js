@@ -1,32 +1,88 @@
 $(document).ready(function(){
-	setUpKeyPress();// setup enter press submit
+	// setUpKeyPress();// setup enter press submit
 
 	updateScannersTable();
+	updateExtraScannersTable();
 	loadExtraScannerNames();
 	
 	$("#scannerNewName").on('keyup', function(){
-		var nameCharsRemaining = 14 - $("#scannerNewName").val().length;
-		$("#scannerNewNameCounter").html(nameCharsRemaining + "/14"); 
+		var nameCharsRemaining = 50 - $("#scannerNewName").val().length;
+		$("#scannerNewNameCounter").html(nameCharsRemaining + "/50"); 
 	});
-	
-	$("#newExtraScannerName").on('keyup', function(){
-		var nameCharsRemaining = 14 - $("#newExtraScannerName").val().length;
-		$("#extraScannerNewNameCounter").html(nameCharsRemaining + "/14"); 
-	});
-	
-	setInterval(function(){updateScannersTable();}, 10000)
-});
-
-// set function to call renameScanner when enter key pressed to submit
-function setUpKeyPress(){
 	$("#scannerNewName").keypress(function(e) {
 		var keycode = (e.keycode ? e.keycode : e.which);
 		if (keycode == 13){
 			renameScanner();
 		}
 	});
-}
+	$("#newExtraScannerName").on('keyup', function(){
+		var nameCharsRemaining = 50 - $("#newExtraScannerName").val().length;
+		$("#extraScannerNewNameCounter").html(nameCharsRemaining + "/50");
+	});
+	$("#newExtraScannerName").keypress(function(e) {
+		var keycode = (e.keycode ? e.keycode : e.which);
+		if (keycode == 13){
+			addNewExtraScannerName();
+		}
+	});
+	
+	setInterval(function(){updateScannersTable();}, 10000)
+});
 
+// set function to call renameScanner when enter key pressed to submit
+// function setUpKeyPress(){
+// 	$("#scannerNewName").keypress(function(e) {
+// 		var keycode = (e.keycode ? e.keycode : e.which);
+// 		if (keycode == 49){
+// 			renameScanner();
+// 		}
+// 	});
+// }
+
+function updateExtraScannersTable(){
+
+    $.ajax({
+        url:"../scripts/server/scanners.php",
+        type:"GET",
+        dataType:"text",
+        data:{
+            "request":"getExtraScannersTable"
+        },
+        success:function(result){
+            console.log(result);
+            resultJson = $.parseJSON(result);
+            
+            if(resultJson["status"] != "success"){
+                console.log("Failed to update table: " + resultJson["result"]);
+                $("#tablePlaceholder").html(resultJson["result"]);
+            }
+            else{
+                var tableData = resultJson["result"];
+                var tableStructure = {
+                    "rows":{
+                        "linksToPage":false
+                    },
+                    "columns":[
+                        {
+                            "headingName":"Scanner Location Name",
+                            "dataName":"scannerName"
+                        },
+                        {
+                            "headingName":"Delete Location Name",
+                            "functionToRun":deleteScanner,
+                            "functionParamDataName":"scannerName",
+                            "functionParamDataLabel":"scannerName",
+                            "functionButtonText":"Delete Location Name"
+                        }
+                    ]
+                };
+                
+                var table = generateTable("ExtraScannersTable", tableData, tableStructure);
+                $("#existingScannersContainer").empty().append(table);
+            }
+        }
+    });
+}
 function loadExtraScannerNames(){
 	$.ajax({
         url:"../scripts/server/scanners.php",
@@ -76,7 +132,7 @@ function addNewExtraScannerName(){
 				setTimeout(function(){$("#extraScannerNameFeedback").empty();},10000);
 			}
             else{
-				loadExtraScannerNames();
+				updateExtraScannersTable();
 				$("#newExtraScannerName").val("");
 				$("#extraScannerNameFeedback").empty().html(newName + " added");
 				setTimeout(function(){$("#extraScannerNameFeedback").empty();},10000);
@@ -254,4 +310,32 @@ function renameScanner(){
 			}
         }
     });
+}
+
+function onDeleteScannerClick(event){
+	deleteExtraScannerName(event.data.scannerName);
+}
+
+function deleteScanner(nameToDelete){
+	// find nearest element with a scanner name attached to it
+    // send a request to delete that scanner
+    // refresh the table
+
+    if(confirm("Are you sure you want to permantly delete '" + nameToDelete + "'?\nTheir logs will NOT be removed but will instead be shown as 'Scanner Location Deleted'.")){
+		console.log("Deleting Scanner Name " + nameToDelete);
+		
+		$.ajax({
+		    url:"../scripts/server/scanners.php",
+		    type:"GET",
+		    dataType:"text",
+		    data:{
+		        "request":"deleteExtraScannerName",
+		        "name":nameToDelete
+		    },
+		    success:function(result){
+			console.log(result);
+				updateExtraScannersTable();
+		    }
+		});
+	}
 }

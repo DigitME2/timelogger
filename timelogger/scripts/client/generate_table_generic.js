@@ -1,10 +1,7 @@
 /*
 Generic table generator, suitable for all pages in this interface.
-
 The generator requires the following:
-
 1.  The name of the table
-
 2.  A JSON object containing the data to tabulate. This is required to be
     an array of dictionaries, where each element of the array represents one
     row of the table, i.e.:
@@ -58,6 +55,18 @@ The generator requires the following:
 	A pointer to a function may be provided to specify the class of the table
 	row. This is intended to allow rows to be highlighted. This function must
 	accept a single parameter, typically a row of table data.
+
+    Added header link in column definitions. Each header element can be linked 
+    to each element page.
+    
+    Extended generate link cell function with if & else statements for 
+    generating plain link cells for the cell definitions and also to produce 
+    links for row contents of the respective headers. 
+
+    Example for the above two pharas: In Timesheet Page, Job IDs column 
+    is considered as header and Product IDs and Aggregate Worked Times and 
+    actual worked time on each recorddate (rows) will produce link for that
+    JobId element of the header. 
     
     The TableStructure variable used to define the table looks something like
     this:
@@ -146,6 +155,14 @@ function generateHeader(ColumnDefinitions){
     for(var i = 0; i < ColumnDefinitions.length; i++){
         var columnName = ColumnDefinitions[i].headingName;
         var headerElement = $('<td/>').html(columnName);
+
+        if("headerLink" in ColumnDefinitions[i])
+        {
+            headerElement.data("linkUrl", ColumnDefinitions[i]["headerLink"]);
+            headerElement.on("click", function(event){
+                window.location.href = $(this).data("linkUrl");
+            });      
+        }
         tableHeaderRow.append(headerElement);
     }
     
@@ -198,24 +215,36 @@ function generateLinkCell(DataRow, CellDefinition){
     else
         console.log("URL undefined. No link or linkDataName listed");
 
-	if(url != "")
+	if("generatePlainLinkCells" in CellDefinition && CellDefinition["generatePlainLinkCells"] && url != "")
+    {
+        tableCell = generatePlainCell(DataRow, CellDefinition);
+        tableCell.data("linkUrl", url);
+        tableCell.on("click", function(event){
+            window.location.href = $(this).data("linkUrl");
+        });
+    }
+    else if(url != "")
 	{    
 		if('linkParamLabel' in CellDefinition){
 		    url = url + "?" + CellDefinition['linkParamLabel'] + "=" + DataRow[CellDefinition['linkParamDataName']]
 		}
 		
-		anchor.attr("href",url).html(CellDefinition["linkText"]);
+		anchor.attr("href",url);
+        if("linkText" in CellDefinition)
+            anchor.html(CellDefinition["linkText"]);
+        else 
+            anchor.html(DataRow[CellDefinition["dataName"]]);
 		tableCell.append(anchor);
 	}
 	else
 	{
 		tableCell = generatePlainCell(DataRow, {"dataName":""})
-	}
 
-	tableCell.on("click", function(event){
-		event.cancelBubble=true;if(event.stopPropagation) event.stopPropagation();
-	});
-    
+
+        tableCell.on("click", function(event){
+            event.cancelBubble=true;if(event.stopPropagation) event.stopPropagation();
+	    });
+    }    
     return tableCell;
 }
         

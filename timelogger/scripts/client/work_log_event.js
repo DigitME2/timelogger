@@ -102,7 +102,7 @@ function loadWorkLogRecord(workLogRef){
 						$("#jobId").html(record.jobId);
 						$("#stationId").val(record.stationId);
 						$("#userName").html(record.userName);
-						$("#date").html(record.recordDate);
+						$("#recordDate").val(record.recordDate);
 						$("#startTime").val(record.clockOnTime);
 						$("#endTime").val(record.clockOffTime);
 						
@@ -156,6 +156,7 @@ function saveRecord(workLogRef){
 				"request":"saveRecordDetails",
 				"workLogRef": workLogRef,
 				"jobId": $("#jobId").val(),
+				"recordDate": $("#recordDate").val(),
 				"stationId": $("#stationId").val(),
 				"clockOnTime": $("#startTime").val(),
 				"clockOffTime": $("#endTime").val(),

@@ -51,8 +51,8 @@ else
 					<label for="userName" class="logEventLabel">UserName</label>
 					<span id="userName" class="logEventInfo"></span>
 
-					<label for="date" class="logEventLabel">Date</label>
-					<span id="date" class="logEventInfo"></span>
+					<label for="recordDate" class="logEventLabel">Date</label>
+					<input id="recordDate" type="date" step=1 class="logEventInfo"/>
 
 					<label for="startTime" class="logEventLabel">Start Time</label>
 					<input id="startTime" type="time" step=1 class="logEventInfo"/>

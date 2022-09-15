@@ -116,9 +116,9 @@ function getWorkLogRecord($DbConn, $workLogRef)
 		"jobId"					=> $jobId,
 		"stationId"				=> $stationId,
 		"userName"				=> $userName,
+		"recordDate"			=> $recordDate,
 		"clockOnTime"			=> $clockOnTime,
 		"clockOffTime"			=> $clockOffTime,
-		"recordDate"			=> $recordDate,
 		"workedDuration"		=> $workedDuration,
 		"overtimeDuration"		=> $overtimeDuration,
 		"workStatus"			=> $workStatus,
@@ -141,15 +141,16 @@ function saveRecordDetails($DbConn, $DetailsArray)
 		return "Unable to Save: Clock off time after clock on time";
 	}
 					
-	$query = "CALL changeWorkLogRecord(?,?,?,?,?,?);";
+	$query = "CALL changeWorkLogRecord(?,?,?,?,?,?,?);";
 
 	if(!($statement = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
     if(!($statement->bind_param(
-			'ssssss',
+			'sssssss',
 			$DetailsArray["workLogRef"],
 			$DetailsArray["stationId"],
+			$DetailsArray["recordDate"],
 			$DetailsArray["clockOnTime"],
 			$DetailsArray["clockOffTime"],
 			$DetailsArray["workStatus"],
@@ -257,7 +258,8 @@ function main()
 				$recordDetails = array(
 					"workLogRef"	=> $_REQUEST["workLogRef"],
 					"jobId"			=> $_REQUEST["jobId"],
-					"stationId" 	=> $_REQUEST["stationId"],				
+					"stationId" 	=> $_REQUEST["stationId"],	
+					"recordDate"    => $_REQUEST["recordDate"],			
 					"clockOnTime"	=> $_REQUEST["clockOnTime"],						
 					"clockOffTime"	=> $_REQUEST["clockOffTime"],				
 					"workStatus"	=> $_REQUEST["workStatus"],

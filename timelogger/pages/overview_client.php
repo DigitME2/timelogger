@@ -1,5 +1,6 @@
 <?php 
 require "client_config.php";
+require "../scripts/server/systemConfig.php";
 
 if($showChargeDisplayElements)
 {
@@ -221,9 +222,13 @@ else
 								
 								<label for="showNotes">Show Notes</label>
 								<input type="checkbox" id="showNotes" onchange="onDisplayOptionsChange()"/>
+
+								<label for="showQuantityComplete" <?php if(showQuantityComplete()==false){ echo("hidden"); } ?> >Show Quantity Completed</label>
+								<input type="checkbox" id="showQuantityComplete" onchange="onDisplayOptionsChange()" <?php if(showQuantityComplete()==false){ echo("hidden"); } ?>/>
 								
 								<label for="retainDisplayOptions">Retain Display Options</label>
 								<input type="checkbox" id="retainDisplayOptions" onchange="onDisplayOptionsChange()"/>
+
 
 							</div>
 						</div>

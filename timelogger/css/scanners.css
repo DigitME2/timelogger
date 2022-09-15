@@ -20,9 +20,10 @@
 
 #extraScannerNameControls{
 	display: grid;
-	grid-template-columns: 200px 200px 60px;
+	grid-template-columns: 300px 200px 60px;
 	align-items: center;
 	grid-row-gap: 2px;
+	grid-column-gap: 10px;
 }
 
 .col1{

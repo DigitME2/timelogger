@@ -134,10 +134,10 @@ function getTimesheet(){
             $("#totalOvertime").html("Total overtime (HH:MM): " + timesheetData.totalOvertime);
             
             var tableData = timesheetData["timesheet"];
-            var columns = [{"headingName":"Record Date", "dataName":"recordDate"}];
+            var columns = [{"headingName":"Job IDs", "dataName":"recordDate"}];
             
             for(var i = 1; i < timesheetData.columnNames.length; i++) 
-                columns.push({"headingName":timesheetData.columnNames[i],"dataName":timesheetData.columnNames[i]});
+                columns.push({"headingName":timesheetData.columnNames[i],"dataName":timesheetData.columnNames[i], "link":"job_details_client.php?jobId=" + timesheetData.columnNames[i], "generatePlainLinkCells": true, "headerLink": "job_details_client.php?jobId=" + timesheetData.columnNames[i]});
                             
             var tableStructure = {
                 "rows":{
@@ -146,7 +146,6 @@ function getTimesheet(){
                 "columns":columns
             };
 
-           
 
             var table = generateTable("currentUsersTable", tableData, tableStructure);
 

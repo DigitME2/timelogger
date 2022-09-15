@@ -9,6 +9,8 @@ $(document).ready(function(){
 	enableTimePeriod('TimeWorked');
 
 	initDisplayOptions();
+	onDisplayOptionsChange();
+	updateTableDisplay();
 	
     updateJobsData();
     setInterval(function(){updateJobsData();}, 60000);
@@ -16,6 +18,7 @@ $(document).ready(function(){
 
 
 function initDisplayOptions(){
+	onDisplayOptionsChange();
 	
 	if(localStorage.getItem("retainDisplayOptions") == "true"){
 		if(localStorage.getItem("sorting")=="sortByCreatedNewest")
@@ -61,6 +64,7 @@ function initDisplayOptions(){
 		$('#showChargePerMinute').prop("checked",localStorage.getItem("showChargePerMinute") == "true");
 		$('#showTotalChargeToCustomer').prop("checked",localStorage.getItem("showTotalChargeToCustomer") == "true");
 		$('#showNotes').prop("checked",localStorage.getItem("showNotes") == "true");
+		$('#showQuantityComplete').prop("checked",localStorage.getItem("showQuantityComplete") == "true");
 		$('#retainDisplayOptions').prop("checked",localStorage.getItem("retainDisplayOptions") == "true");
 	}
 	else{
@@ -101,6 +105,7 @@ function initDisplayOptions(){
 		$('#showChargePerMinute').prop("checked", true);
 		$('#showTotalChargeToCustomer').prop("checked", true);
 		$('#showNotes').prop("checked", true);
+		$('#showQuantityComplete').prop("checked", true);
 		$('#retainDisplayOptions').prop("checked", false);		
 	}
 
@@ -173,7 +178,7 @@ function updateBodySize(){
 
 // update the display and then save the display options settings
 function onDisplayOptionsChange(){
-	updateTableDisplay()
+	updateTableDisplay();
 	
 	if($("#sortByCreatedNewest").is(":checked"))
 		localStorage.setItem("sorting", "sortByCreatedNewest");
@@ -218,12 +223,14 @@ function onDisplayOptionsChange(){
 	localStorage.setItem("showChargePerMinute", $("#showChargePerMinute").is(":checked"));
 	localStorage.setItem("showTotalChargeToCustomer", $("#showTotalChargeToCustomer").is(":checked"));
 	localStorage.setItem("showNotes", $("#showNotes").is(":checked"));
+	localStorage.setItem("showQuantityComplete", $("#showQuantityComplete").is(":checked"));
 	localStorage.setItem("retainDisplayOptions", $("#retainDisplayOptions").is(":checked"));
 	
 	console.log(localStorage);
 }
 
 function updateJobsData(){
+	onDisplayOptionsChange();
 	// get user data, ordered by selected option
     // generate table
     // drop old table and append new one
@@ -527,7 +534,7 @@ function updateTableDisplay(){
 	if($("#showStoppages").is(":checked")){
 		tableStructure.columns.push(
 			{
-				"headingName":"Stoppages",
+				"headingName":"Problems",
 				"dataName":"stoppages"
 			}
 		);
@@ -553,15 +560,6 @@ function updateTableDisplay(){
 		}
 	}
 
-	if($("#showQuantityComplete").is(":checked")){
-		tableStructure.columns.push(
-			{
-				"headingName":"Qty Complete",
-				"dataName":"stageQuantityComplete"
-			}
-		);
-	}
-
 	if($("#showOutstandingUnits").is(":checked")){
 		tableStructure.columns.push(
 			{
@@ -578,6 +576,17 @@ function updateTableDisplay(){
 				"dataName":"notes"
 			}
 		);
+	}
+	
+	if(!$("#showQuantityComplete").is(":hidden")){
+		if($("#showQuantityComplete").is(":checked")){
+			tableStructure.columns.push(
+				{
+					"headingName":"Quantity Completed",
+					"dataName":"quantityComplete"
+				}
+			);
+		}
 	}
 	
 	var table = generateTable("currentJobsTable", TableData, tableStructure);
@@ -623,5 +632,6 @@ function sortRadioChange(){
 }
 
 function onTableDataOptionsChange(){
+	updateTableDisplay()
 	onUpdateTableButtonClick();
 }

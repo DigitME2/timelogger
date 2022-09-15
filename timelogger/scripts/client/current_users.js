@@ -19,7 +19,10 @@ function updateUserTable(){
                             
                 var tableStructure = {
                     "rows":{
-                        "linksToPage":false
+                            "linksToPage":true,
+                            "link":"job_details_client.php",
+                            "linkParamLabel":"jobId",
+                            "linkParamDataName":"jobId",
                     },
                     "columns":[
                         {

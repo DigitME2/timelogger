@@ -1,6 +1,7 @@
 <?php
 require "db_params.php";
 require "common.php";
+require "systemconfig.php";
 
 $debug = false;
 
@@ -147,7 +148,8 @@ function getOverviewData($DbConn, $TableOrdering = "createdNewestFirst", $showPe
 			"stageQuantityComplete" => $row["stageQuantityComplete"],
 			"stageOutstandingUnits" => $row["stageOutstandingUnits"],
 			"customerName"		=> $row["customerName"],
-			"notes"				=> $row["notes"]
+			"notes"				=> $row["notes"],
+			"quantityComplete" => $row["quantityComplete"]
 		);
     		
         array_push($fullSearchResults, $resultRow);
@@ -365,6 +367,9 @@ function main()
 					"notes",
 					"priority"
                 );
+				if(showQuantityComplete()){
+					array_push($dataNames, "quantityComplete");
+				}
                 $columnNames = array(
                     "Job ID",
 					"Product ID",
@@ -384,6 +389,9 @@ function main()
 					"Notes",
 					"Priority"
                 );
+				if(showQuantityComplete()){
+					array_push($columnNames, "Quantity Completed");
+				}
 
 				$fileName = "overview_data.csv";
 

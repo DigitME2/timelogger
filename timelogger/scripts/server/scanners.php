@@ -65,6 +65,26 @@ function getExtraScannerNames($DbConn)
     return $names;
 }
 
+function getExtraScannersTable($DbConn)
+{
+	$query = "SELECT name FROM extraScannerNames ORDER BY name ASC";
+	if(!($queryResult = $DbConn->query($query)))
+		errorHandler("Error executing query: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+
+	$scannerNames = array();
+	if($queryResult->num_rows > 0)
+    {
+		for($i = 0; $i < $queryResult->num_rows; $i++)
+		{
+		    $row = $queryResult->fetch_assoc();
+			$dataRow = array("scannerName"  =>$row["name"]);
+			array_push($scannerNames, $dataRow);
+		}
+	}
+    
+	return $scannerNames;
+}
+
 function getAllScannerNames($DbConn)
 {
 	$connectedClients = getConnectedClients($DbConn, false);
@@ -143,6 +163,12 @@ function main()
         	$extraScannerNames = getExtraScannerNames($dbConn);
         	sendResponseToClient("success",$extraScannerNames);
         	break;
+		
+		case "getExtraScannersTable":
+			printDebug("Fetching extra scanner names");
+			$extraScannersTable = getExtraScannersTable($dbConn);
+			sendResponseToClient("success",$extraScannersTable);
+			break;
         	
         case "getAllScannerNames":
         	printDebug("Fetching all scanner names");

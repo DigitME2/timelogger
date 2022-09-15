@@ -81,7 +81,7 @@ function getTimeSheet($DbConn, $UserId, $StartDate, $EndDate)
 	{
 		$row = $res->fetch_row();
 		$aggregateTimesRow["recordDate"] = "Aggregate Worked Time";
-		$aggregateTimesRow[$row[0]] = $row[1];
+		$aggregateTimesRow[$row[0]] = durationToTime($row[1]);
 	}
 	array_push($timesheet, $aggregateTimesRow);
 

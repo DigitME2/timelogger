@@ -6,14 +6,14 @@ CREATE PROCEDURE `GetOverviewData` (IN `UseSearchKey` TINYINT(1), IN `SearchKey`
 BEGIN
     CREATE TEMPORARY TABLE openTimes (jobId VARCHAR(20), openDuration INT, openOvertimeDuration INT);
     CREATE TEMPORARY TABLE selectedJobIds (counter INT PRIMARY KEY AUTO_INCREMENT, jobId VARCHAR(20));
-	CREATE TEMPORARY TABLE closedTimes (jobId VARCHAR(20), closedDuration INT, closedOvertimeDuration INT);
+	CREATE TEMPORARY TABLE closedRecords (jobId VARCHAR(20), closedDuration INT, closedOvertimeDuration INT, quantityComplete INT);
 
 
 	-- Construct a query to select the job IDs meeting the required selection criteria (completed or not, date range, etc)...
 	SET @selectionQuery = "INSERT INTO selectedJobIds (jobId) SELECT jobId FROM jobs ";
 	
 	IF UseSearchKey THEN
-		SET @searchPattern = CONCAT("%", SearchKey, "%");
+		SET @searchPattern = CONCAT("%", SearchKey, "%"); 
 	END IF;
 	
 	SET @conditionPrecederTerm = " WHERE "; 
@@ -96,7 +96,7 @@ BEGIN
     -- if a job is currently being worked on.
     -- Get the relevant jobs
 
-	-- if displlay time in date range is false ...
+	-- if display time in date range is false ...
 	IF LimitDateTimeWorkedRange IS FALSE THEN
 		INSERT INTO openTimes(jobId, openDuration, openOvertimeDuration)
 		SELECT 
@@ -106,13 +106,16 @@ BEGIN
 		FROM timeLog
 		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds);
 
-		INSERT INTO closedTimes(jobId, closedDuration, closedOvertimeDuration)
+		INSERT INTO closedRecords(jobId, closedDuration, closedOvertimeDuration, quantityComplete)
 		SELECT 
 		timeLog.jobId,
 		timeLog.workedDuration,
-		timeLog.overtimeDuration
+		timeLog.overtimeDuration,
+		timeLog.quantityComplete
 		FROM timeLog
 		WHERE clockOffTime IS NOT NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds);
+		-- timelog.quantitycomplete add to the above tble
+		-- remove the below
 
 	ELSEIF LimitDateTimeWorkedRange IS TRUE THEN 
 		INSERT INTO openTimes(jobId, openDuration, openOvertimeDuration)
@@ -123,16 +126,16 @@ BEGIN
 		FROM timeLog
 		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd);
 
-		INSERT INTO closedTimes(jobId, closedDuration, closedOvertimeDuration)
+		INSERT INTO closedRecords(jobId, closedDuration, closedOvertimeDuration, quantityComplete)
 		SELECT 
 		timeLog.jobId,
 		timeLog.workedDuration,
-		timeLog.overtimeDuration
+		timeLog.overtimeDuration,
+		timeLog.quantityComplete
 		FROM timeLog
 		WHERE clockOffTime IS NOT NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd);
+
 	END IF;
-
-
 	--  ... else if true
 	--  same insert statements, plus AND tiemlog.recordDate >= startDate AND timelog.recordDAte <= endDate
 
@@ -140,14 +143,16 @@ BEGIN
 	    
     -- test
 
-	-- SELECT * FROM openTimes;
-	-- SELECT * FROM closedTimes;
-	-- SELECT ExcludeUnworkedJobs;
+
+	--  SELECT * FROM openTimes;
+	--  SELECT * FROM closedRecords;
+	--  SELECT * FROM recordQuantityComplete;
+	-- -- SELECT ExcludeUnworkedJobs;
 
 	IF LimitDateTimeWorkedRange IS TRUE AND ExcludeUnworkedJobs IS TRUE THEN
 		DELETE FROM selectedJobIds
 		WHERE selectedJobIds.jobId NOT IN (SELECT jobId FROM openTimes)
-		AND selectedJobIds.jobId NOT IN (SELECT jobId FROM closedTimes);
+		AND selectedJobIds.jobId NOT IN (SELECT jobId FROM closedRecords);
 	END IF;
 	-- SELECT * FROM selectedJobIds;
     
@@ -158,11 +163,10 @@ BEGIN
     
     CREATE INDEX idx_openTimes_jobIds ON openTimes(jobId);
     
-	INSERT INTO closedTimes (jobId, closedDuration, closedOvertimeDuration)
-    SELECT jobId, 0, 0 FROM selectedJobIds;
+	INSERT INTO closedRecords (jobId, closedDuration, closedOvertimeDuration, quantityComplete)
+    SELECT jobId, 0, 0, 0 FROM selectedJobIds;
     
-    CREATE INDEX idx_closedTimes_jobIds ON closedTimes(jobId);
-
+    CREATE INDEX idx_closedRecords_jobIds ON closedRecords(jobId);
 
 	-- ...appending the relevant selection options...
 	IF UseSearchKey IS TRUE THEN
@@ -177,18 +181,16 @@ BEGIN
     -- Create and run the final query to select the data from the timeLog and combine
     -- it with the calculated durations for jobs that are still open. Efficiency is
     -- also calculated here, to minimise post processing required in PHP or JS.
-    -- Selects jobId, description, currentStatus, timestamp, current total worked
-    -- duration, of which current overtime worked, efficiency (total time / expected,
-    -- maximum of 1), expectedDuration
 	SET @finalSelectorQuery = 
     "SELECT
     jobs.jobId AS jobId,
     description,
     currentStatus,
     recordAdded,
-    SUM(closedTimes.closedDuration) + SUM(openDuration) AS totalWorkedDuration,
-    SUM(closedTimes.closedOvertimeDuration) + SUM(openOvertimeDuration) AS totalOvertimeDuration,
-    LEAST((expectedDuration/(SUM(closedTimes.closedDuration) + SUM(openDuration))),1) AS efficiency,
+    SUM(closedRecords.closedDuration) + SUM(openDuration) AS totalWorkedDuration,
+    SUM(closedRecords.closedOvertimeDuration) + SUM(openOvertimeDuration) AS totalOvertimeDuration,
+	SUM(closedRecords.quantityComplete) AS quantityComplete,
+    LEAST((expectedDuration/(SUM(closedRecords.closedDuration) + SUM(openDuration))),1) AS efficiency,
     expectedDuration,
     routeCurrentStageName,
     priority,
@@ -203,9 +205,11 @@ BEGIN
    	customerName,
    	notes
    	FROM jobs LEFT JOIN openTimes ON jobs.jobId = openTimes.jobId
-	LEFT JOIN closedTimes ON jobs.jobId = closedTimes.jobId
+	LEFT JOIN closedRecords ON jobs.jobId = closedRecords.jobId
    	WHERE jobs.jobId IN (SELECT jobId FROM selectedJobIds ORDER BY counter ASC)
    	GROUP BY jobs.jobId ";
+
+
 	
 	
 	-- ... and the ordering constraint...
@@ -232,7 +236,7 @@ BEGIN
 	DEALLOCATE PREPARE jobSelectionStmt;
 	
     DROP TABLE openTimes;
-	DROP TABLE closedTimes;
+	DROP TABLE closedRecords;
     DROP TABLE selectedJobIds;
 	END$$
 
