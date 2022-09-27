@@ -141,15 +141,16 @@ function saveRecordDetails($DbConn, $DetailsArray)
 		return "Unable to Save: Clock off time after clock on time";
 	}
 					
-	$query = "CALL changeWorkLogRecord(?,?,?,?,?,?,?);";
+	$query = "CALL changeWorkLogRecord(?,?,?,?,?,?,?,?);";
 
 	if(!($statement = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
     if(!($statement->bind_param(
-			'sssssss',
+			'ssssssss',
 			$DetailsArray["workLogRef"],
 			$DetailsArray["stationId"],
+			$DetailsArray["userId"],
 			$DetailsArray["recordDate"],
 			$DetailsArray["clockOnTime"],
 			$DetailsArray["clockOffTime"],
@@ -170,6 +171,31 @@ function saveRecordDetails($DbConn, $DetailsArray)
 		return "Unable to Save: ".$returnVal[0];
 
 	return "Save Complete";
+}
+
+function addEmptyWorkLog($DbConn, $jobId)
+{			
+	global $debug;
+					
+	$query = "CALL addWorkLogRecord(?);";
+
+	if(!($statement = $DbConn->prepare($query)))
+        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+    
+    if(!($statement->bind_param(
+			's',
+			$jobId
+		)))
+        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    if(!$statement->execute())
+        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+
+	$res = $statement->get_result();
+
+	$row = $res->fetch_row();
+
+	return $row[0];
 }
 
 function insertBreak($DbConn, $DetailsArray)
@@ -243,6 +269,15 @@ function main()
 				sendResponseToClient("success");
 				break;
 
+			case "addEmptyWorkLog":
+				$jobId = $_GET["jobId"];
+				printDebug("Adding new blank record details");
+				$workLogRef = addEmptyWorkLog($dbConn, $jobId);
+				
+				printDebug("Done");
+				sendResponseToClient("success", $workLogRef);
+				break;
+
 			default:
 				sendResponseToClient("error", "Unknown command: $request");
 		}
@@ -258,6 +293,7 @@ function main()
 				$recordDetails = array(
 					"workLogRef"	=> $_REQUEST["workLogRef"],
 					"jobId"			=> $_REQUEST["jobId"],
+					"userId"		=> $_REQUEST["userId"],
 					"stationId" 	=> $_REQUEST["stationId"],	
 					"recordDate"    => $_REQUEST["recordDate"],			
 					"clockOnTime"	=> $_REQUEST["clockOnTime"],						
@@ -282,6 +318,9 @@ function main()
 				
 
 				break;
+
+			
+
 
 			case "insertBreak":
 				$recordDetails = array(

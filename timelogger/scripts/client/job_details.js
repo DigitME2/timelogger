@@ -1,7 +1,6 @@
 $(document).ready(function(){
     $("#description").on('keyup', function(){
         var description = $("#description").val();
-        
         var descCharsRemaining = 200 - description.length;
         $("#descriptionCounter").html(descCharsRemaining + "/200"); 
     });
@@ -9,7 +8,6 @@ $(document).ready(function(){
     
     $("#customerName").on('keyup', function(){
         var customerName = $("#customerName").val();
-        
         var custNameCharsRemaining = 50 - description.length;
         $("#customerName").html(custNameCharsRemaining + "/50"); 
     });
@@ -169,7 +167,7 @@ function loadJobRecord(JobId){
 
 					var qrCodeLink = $("<a/>").attr("href",record.qrCodePath).html("Download job QR code").attr("download", "");
 					$("#downloadLinkContainer").empty().append(qrCodeLink);
-
+					
 					$("#notesField").val(record.notes);
 					$("#stoppagesField").val(record.stoppages);
 
@@ -387,6 +385,24 @@ function saveRecord(JobId){
 	});
 }
 
+function addWorkLog(){
+	var jobId = $('#jobId').val();
+	$.ajax({
+		url:"../scripts/server/work_log_event.php",
+		type:"GET",
+		dataType:"text",
+		data:{
+			"request":"addEmptyWorkLog",
+			"jobId":jobId
+		},
+		success:function(result){
+			console.log(result);
+			resultJson = $.parseJSON(result);
+			window.location.href = 'work_log_event_client.php?workLogRef=' + resultJson['result'];
+		}
+	});
+}
+
 function updateJobLogTable(JobId){
     // get user data, ordered by selected option
     // generate table
@@ -419,147 +435,170 @@ function updateJobLogTable(JobId){
 				$("#timeLogOvertime").html(resultJson.result.overtime);
                 var tableData = resultJson.result.timeLogTableData;
                 
-                if($('#collapseRecords').is(':checked')){
-                    var tableStructure = {
-                        "rows":
-							{
-								"linksToPage":false
-                        },
-                        "columns":[
-                            {
-                                "headingName":"Station Name",
-                                "dataName":"stationId"
-                            },
-                            {
-                                "headingName":"Record Start Date",
-                                "dataName":"recordStartDate"
-                            },
-                            {
-                                "headingName":"Record End Date",
-                                "dataName":"recordEndDate"
-                            },
-                            {
-                                "headingName":"Total Duration until now (HH:MM)",
-                                "dataName":"workedTime"
-                            },
-                            {
-                                "headingName":"Overtime (HH:MM)",
-                                "dataName":"overtime"
-                            },
-                            {
-                                "headingName":"Last Status at Station",
-                                "dataName":"workStatus"
-                            }
-                        ]
-                    };
-                }
-                else{ 
-                    // full records
-                    var tableStructure = {
-                        "rows":{
-                            "linksToPage":true,
-							"link":"work_log_event_client.php",
-							"linkParamLabel":"workLogRef",
-							"linkParamDataName":"ref"
-                        },
-                        "columns":[
-                            {
-                                "headingName":"Station Name",
-                                "dataName":"stationId"
-                            },
-                            {
-                                "headingName":"User Name",
-                                "dataName":"userName"
-                            },
-                            {
-                                "headingName":"Record Date",
-                                "dataName":"recordDate"
-                            },
-                            {
-                                "headingName":"Start Time",
-                                "dataName":"clockOnTime"
-                            },
-                            {
-                                "headingName":"Finish Time",
-                                "dataName":"clockOffTime"
-                            },
-                            {
-                                "headingName":"Duration (HH:MM)",
-                                "dataName":"workedTime"
-                            },
-                            {
-                                "headingName":"Overtime (HH:MM)",
-                                "dataName":"overtime"
-                            },
-                            {
-                                "headingName":"Job Status at Station",
-                                "dataName":"workStatus"
-                            }
-                        ]
-                    };
-                }
+				if(tableData.length > 0){
+					if($('#collapseRecords').is(':checked')){
+						var tableStructure = {
+							"rows":
+								{
+									"linksToPage":false
+							},
+							"columns":[
+								{
+									"headingName":"Station Name",
+									"dataName":"stationId"
+								},
+								{
+									"headingName":"Record Start Date",
+									"dataName":"recordStartDate"
+								},
+								{
+									"headingName":"Record End Date",
+									"dataName":"recordEndDate"
+								},
+								{
+									"headingName":"Total Duration until now (HH:MM)",
+									"dataName":"workedTime"
+								},
+								{
+									"headingName":"Overtime (HH:MM)",
+									"dataName":"overtime"
+								},
+								{
+									"headingName":"Last Status at Station",
+									"dataName":"workStatus"
+								}
+							]
+						};
+					}
+					else{ 
+						// full records
+						var tableStructure = {
+							"rows":{
+								"linksToPage":true,
+								"link":"work_log_event_client.php",
+								"linkParamLabel":"workLogRef",
+								"linkParamDataName":"ref"
+							},
+							"columns":[
+								{
+									"headingName":"Station Name",
+									"dataName":"stationId"
+								},
+								{
+									"headingName":"User Name",
+									"dataName":"userName"
+								},
+								{
+									"headingName":"Record Date",
+									"dataName":"recordDate"
+								},
+								{
+									"headingName":"Start Time",
+									"dataName":"clockOnTime"
+								},
+								{
+									"headingName":"Finish Time",
+									"dataName":"clockOffTime"
+								},
+								{
+									"headingName":"Duration (HH:MM)",
+									"dataName":"workedTime"
+								},
+								{
+									"headingName":"Overtime (HH:MM)",
+									"dataName":"overtime"
+								},
+								{
+									"headingName":"Job Status at Station",
+									"dataName":"workStatus"
+								}
+							]
+						};
+					}
 
-				if(includeQuantity == true)
-				{
-					tableStructure["columns"].push(
-						{
-							"headingName":"Quantity",
-                            "dataName":"quantityComplete"
-						});
-
-					var notNull = function(element){
-						//checks whether an element is null
-						return element["outstanding"] != null;
-					};
-
-					if($('#collapseRecords').is(':checked') 
-							&& !$('#useDateRange').is(':checked') 
-							&& tableData.some(notNull)){
+					if(includeQuantity == true)
+					{
 						tableStructure["columns"].push(
 							{
-								"headingName":"Outstanding",
-		                        "dataName":"outstanding"
+								"headingName":"Quantity",
+								"dataName":"quantityComplete"
 							});
+
+						var notNull = function(element){
+							//checks whether an element is null
+							return element["outstanding"] != null;
+						};
+
+						if($('#collapseRecords').is(':checked') 
+								&& !$('#useDateRange').is(':checked') 
+								&& tableData.some(notNull)){
+							tableStructure["columns"].push(
+								{
+									"headingName":"Outstanding",
+									"dataName":"outstanding"
+								});
+						}
+					}
+
+					if($('#collapseRecords').is(':checked')){
+						var positive = function(element){
+							//checks whether an element is negative
+							console.log(element["routeStageIndex"]);
+							return element["routeStageIndex"] > 0;
+						};
+
+						if (tableData.some(positive)) {
+							tableStructure["columns"].push(
+								{
+									"headingName":"Route Index",
+									"dataName":"routeStageIndex"
+								}
+							);
+						}					
+					}
+					
+					if (((!$('#collapseRecords').is(':checked')) && ("clockOnTime" in tableData[0])) 
+							|| (($('#collapseRecords').is(':checked')) && ("recordStartDate" in tableData[0])) 
+							|| (tableData.length == 0)){
+
+						var table = generateTable("recordsTable", tableData, tableStructure);
+						$("#recordsTableContainer").empty().append(table);
+						
+						// update CSV URL
+						urlParams = {
+							"request":"getTimeLogCSV",
+							"collapseRecords":$('#collapseRecords').is(':checked'),
+							"jobId":JobId,
+							"useDateRange":$('#useDateRange').is(':checked'),
+							"startDate":startDate,
+							"endDate":endDate
+						};
+						var csvUrl = "../scripts/server/job_details.php?" + $.param(urlParams);
+						$("#csvDownloadLink").attr("href",csvUrl);
+						$("#timeLogWorkedTimeLabel").prop("hidden", false);
+						$("#timeLogOvertimeLabel").prop("hidden", false);
+						$("#csvDownloadLink").prop("hidden", false);
+						$("#timeLogWorkedTime").prop("hidden", false);
+						$("#timeLogOvertime").prop("hidden", false);
 					}
 				}
+				else{
+					$("#timeLogWorkedTimeLabel").prop("hidden", true);
+					$("#timeLogOvertimeLabel").prop("hidden", true);
+					$("#csvDownloadLink").prop("hidden", true);
+					$("#timeLogWorkedTime").prop("hidden", true);
+					$("#timeLogOvertime").prop("hidden", true);
+					if ($("#useDateRange").is(":checked")){
+						var messageSpan = $("<span id='noWorkMessage'>").html('! There is no work record found for this job within the selected date range !');
+						$("#recordsTableContainer").empty().append(messageSpan);
+					} 
+					else {
+						var messageSpan = $("<span id='noWorkMessage'>").html('! There is no work record for this job !');
+						$("#recordsTableContainer").empty().append(messageSpan);
+					}
 
-				if($('#collapseRecords').is(':checked')){
-					var positive = function(element){
-						//checks whether an element is negative
-						console.log(element["routeStageIndex"]);
-						return element["routeStageIndex"] > 0;
-					};
-
-					if (tableData.some(positive)) {
-						tableStructure["columns"].push(
-                            {
-                                "headingName":"Route Index",
-                                "dataName":"routeStageIndex"
-                            }
-						);
-					}					
 				}
-                
-                if (((!$('#collapseRecords').is(':checked')) && ("clockOnTime" in tableData[0])) 
-						|| (($('#collapseRecords').is(':checked')) && ("recordStartDate" in tableData[0])) 
-						|| (tableData.length == 0)){
-
-		            var table = generateTable("recordsTable", tableData, tableStructure);
-		            $("#recordsTableContainer").empty().append(table);
-		            
-		            // update CSV URL
-		            urlParams = {
-		                "request":"getTimeLogCSV",
-						"collapseRecords":$('#collapseRecords').is(':checked'),
-						"jobId":JobId,
-						"useDateRange":$('#useDateRange').is(':checked'),
-						"startDate":startDate,
-						"endDate":endDate
-		            };
-		            var csvUrl = "../scripts/server/job_details.php?" + $.param(urlParams);
-		            $("#csvDownloadLink").attr("href",csvUrl);
-				}
-            }
+          	}
         }
     });
 }
@@ -567,7 +606,6 @@ function updateJobLogTable(JobId){
 function updateStoppagesLogTable(JobId){
     // generate table
     // drop old table and append new one
-	
     $.ajax({
         url:"../scripts/server/job_details.php",
         type:"GET",

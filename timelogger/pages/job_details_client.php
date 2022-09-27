@@ -147,32 +147,39 @@ else
 					<br>
 				</div>
 
+				<div id="addWorkLogContainer">
+					<h2>Add New Work Log</h2>
+					<input type="button" id="addWorkLog" value="Add New Work Log" onclick="addWorkLog();">
+				</div>
+
 		        <div id="timeLogContainer">
 					<h2>Work Log</h2>
 					<div id="workLogOptions">
 						<div id="useDateRangeSelectArea">
-					        <input type="checkbox" id="useDateRange" class="tableControl" onchange="enableTimePeriod()" disabled>
+					        <input type="checkbox" id="useDateRange" class="tableControl" onchange="enableTimePeriod()" >
 					        <label id="useDateRangeLabel" for="useDateRange">Display records between start and end dates</label>
 						</div>
 
-			            <label id="dateStartInputLabel" for="dateStartInput" disabled>Start date:</label>
+			            <label id="dateStartInputLabel" for="dateStartInput" >Start date:</label>
 			            <input type="date" id="dateStartInput" class="tableControl">
-			            <label id="dateEndInputLabel" for="dateEndInput" disabled>End date:</label>
+			            <label id="dateEndInputLabel" for="dateEndInput" >End date:</label>
 			            <input type="date" id="dateEndInput" class="tableControl">
 
-						<input type="button" id="updateJobsTable" class="tableControl" value="Update table" disabled onclick=<?php echo('updateJobLogTable("' . $jobId . '")'); ?>>
+						<input type="button" id="updateJobsTable" class="tableControl" value="Update table"  onclick=<?php echo('updateJobLogTable("' . $jobId . '")'); ?>>
 						<div id="collapseRecordsSelectArea">
-							<input type="checkbox" id="collapseRecords" class="tableControl" disabled onclick=<?php echo('updateJobLogTable("' . $jobId . '")'); ?> />
+							<input type="checkbox" id="collapseRecords" class="tableControl"  onclick=<?php echo('updateJobLogTable("' . $jobId . '")'); ?> />
 							<label id="collapseRecordsLabel" for="collapseRecords">Collapse Records</label>
 						</div>
 
-						<label id="timeLogWorkedTimeLabel" for="timeLogWorkedTime">Worked time in the selected date range</label>
+						<label id="timeLogWorkedTimeLabel" for="timeLogWorkedTime" hidden>Worked time in the selected date range</label>
 						<span id="timeLogWorkedTime"></span>
-						<label id="timeLogOvertimeLabel" for="timeLogOvertime">Overtime in the selected date range</label>
+						<label id="timeLogOvertimeLabel" for="timeLogOvertime" hidden>Overtime in the selected date range</label>
 						<span id="timeLogOvertime"></span>
 
-			            <a id="csvDownloadLink" href="" download type="text/plain" class="tableControl" >Click here to download the currently displayed table as CSV</a>
-					</div>
+			            <a id="csvDownloadLink" href="" download type="text/plain" class="tableControl" hidden>Click here to download the currently displayed table as CSV</a>
+
+						</div>
+
 					<div id=tableDisplay>
 		            	<div id=recordsTableContainer></div>
 		            </div>

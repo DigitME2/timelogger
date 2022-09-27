@@ -145,7 +145,7 @@ BEGIN
 	SELECT @totalWorkedTime, @totalOvertime INTO WorkedTimeSec, OvertimeSec;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `changeWorkLogRecord` (IN `workLogRef` VARCHAR(20), IN `station` VARCHAR(50), in `recordDate` DATE, IN `clockOnTime` TIME, IN `clockOffTime` TIME, IN `workStatus` VARCHAR(20), IN `quantityComplete` INT(11))  MODIFIES SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `changeWorkLogRecord` (IN `workLogRef` VARCHAR(20), IN `station` VARCHAR(50), IN `userId` VARCHAR(20), IN `recordDate` DATE, IN `clockOnTime` TIME, IN `clockOffTime` TIME, IN `workStatus` VARCHAR(20), IN `quantityComplete` INT(11))  MODIFIES SQL DATA
 BEGIN
 	
 	DECLARE orgDuration INT DEFAULT 0;
@@ -189,6 +189,7 @@ BEGIN
 		workedDuration = newDuration,
 		overtimeDuration = newOvertime,
 		recordDate = recordDate,
+		userId = userId,
 		stationId = station,
 		workStatus = workStatus,
 		quantityComplete = quantityComplete
@@ -207,6 +208,14 @@ BEGIN
 			SELECT "Start Time in future" as result;
 		END IF;
 	END IF;
+	
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addWorkLogRecord` (IN `JobId` VARCHAR(20))  MODIFIES SQL DATA
+BEGIN
+	
+	INSERT INTO `timeLog` (`jobId`, `workStatus`) VALUES (JobId, 'workInProgress');
+    SELECT ref FROM timeLog WHERE jobId = JobId ORDER BY ref DESC LIMIT 1; 
 	
 END$$
 
@@ -1081,7 +1090,7 @@ END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetWorkedTimes` (IN `JobId` VARCHAR(20), IN `LimitDateRange` TINYINT(1), IN `StartDate` DATE, IN `EndDate` DATE)  MODIFIES SQL DATA
 BEGIN
-	CALL CalcWorkedTimes(JobId, 0, "", "", @totalWorkedTime, @totalOvertime);
+	CALL CalcWorkedTimes(JobId, LimitDateRange, StartDate, EndDate, @totalWorkedTime, @totalOvertime);
 	SELECT @totalWorkedTime, @totalOvertime;
 END$$
 

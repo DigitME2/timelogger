@@ -189,3 +189,18 @@
 	grid-row: 4;
 	margin-left: 5px;
 }
+
+#noWorkMessage{
+	padding: 15px;
+	background-color: blue;
+	color: white;
+	font-size:15px;
+	margin-top: 10px;
+	float: left;
+}
+
+#addWorkLogContainer{
+	grid-column: 1/6;
+	grid-row: 4/6;
+	float: left;
+}

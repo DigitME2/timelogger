@@ -1,5 +1,7 @@
 $(document).ready(function(){
-    
+
+
+
 });
 
 function setUpKeyPress(workLogRef){
@@ -19,120 +21,189 @@ function setUpKeyPress(workLogRef){
 	});
 }
 
+function beginLoad(workLogRef){
+	var scannerNamesLoaded = false;
+	var userNamesLoaded = false;
+
+	$.ajax({
+		url:"../scripts/server/scanners.php",
+		type:"GET",
+		dataType:"text",
+		data:{
+			"request":"getAllScannerNames"
+		},
+		success:function(result){
+			console.log(result);
+			resultJson = $.parseJSON(result);
+			if(resultJson["status"] != "success")
+				console.log(resultJson["result"]);
+			else{
+				scannerNamesLoaded = true;
+				var scannerNames = resultJson.result;
+
+				$("#stationId").empty();
+				for(var i = 0; i < scannerNames.length; i++){
+					var newOption = $("<option>")
+						.text(scannerNames[i])
+						.attr("value", scannerNames[i]);
+					$("#stationId").append(newOption);
+				
+				}
+				if(scannerNamesLoaded && userNamesLoaded){
+					loadWorkLogRecord(workLogRef)
+				}
+
+			}
+		}
+	});
+	
+	$.ajax({
+		url:"../scripts/server/users.php",
+		type:"GET",
+		dataType:"text",
+		data:{
+			"request":"getUserTableData",
+			"tableOrdering": "byAlphabetic"
+		},
+		success:function(result){
+			console.log(result);
+			resultJson = $.parseJSON(result);
+			if(resultJson["status"] != "success")
+				console.log(resultJson["result"]);
+			else{
+				userNamesLoaded = true;
+				var users = resultJson.result;
+
+				$("#userslist").empty();
+				for(var i = 0; i < users.length; i++){
+					var newOption = $("<option>")
+						.html(users[i]["userName"])
+						.attr("value", users[i]["userId"]);
+					$("#userslist").append(newOption);
+
+				}
+
+				if(scannerNamesLoaded && userNamesLoaded){
+					loadWorkLogRecord(workLogRef)
+				}
+			}
+		}
+	});
+	
+}
+
 function loadWorkLogRecord(workLogRef){
 	//load the active scanner and information about the work log event and populate page
 	disableControls(true);
 	$.ajax({
-        url:"../scripts/server/scanners.php",
-        type:"GET",
-        dataType:"text",
-        data:{
-            "request":"getConnectedClients"
-        },
-        success:function(result){
+		url:"../scripts/server/work_log_event.php",
+		type:"GET",
+		dataType:"text",
+		data:{
+			"request":"getWorkLogRecord",
+			"workLogRef":workLogRef
+		},
+		success:function(result){
 			console.log(result);
-		    resultJson = $.parseJSON(result);
-		    if(resultJson["status"] != "success")
-		        console.log(resultJson["result"]);
-		    else{
-
-				var activeScanners = resultJson.result;
-
-				$("#stationId").empty();
-				for(var i = 0; i < activeScanners.length; i++){
-					var newOption = $("<option>")
-						.text(activeScanners[i].stationId)
-						.attr("value", activeScanners[i].stationId);
-					$("#stationId").append(newOption);
-				}
-
-				$.ajax({
-					url:"../scripts/server/work_log_event.php",
-					type:"GET",
-					dataType:"text",
-					data:{
-						"request":"getWorkLogRecord",
-						"workLogRef":workLogRef
-					},
-					success:function(result){
-						console.log(result);
-						resultJson = $.parseJSON(result);
-						
-						if(resultJson["status"] != "success"){
-							console.log("Failed to fetch event record: " + resultJson["result"]);
-							$("#saveChangesFeedback").html("Failed to fetch event record");
-							disableControls(true);
-							return;
-						}
-
-						var record = resultJson.result;
-
-						//Check if a record was returned
-						if(record.userName == null){
-							disableControls(true);
-							$("#btnSaveChanges").attr("disabled", true);
-							$("#btnDeleteEvent").attr("disabled", true);
-							$("#btnInsertBreak").attr("disabled", true);
-							$("#quantityComplete").attr("disabled", true);
-							$("#saveChangesFeedback").html("RECORD NOT FOUND");
-							console.log("Record not found. stopping");
-							return;
-						}
-
-						var stationIds = document.getElementById('stationId').options;			
-						var idPresentFlag = false;
-
-						for (i =0; 	i < stationIds.length; i++)
-						{
-							if(stationIds[i].text === record.stationId)
-								idPresentFlag = true;
-						}
-						
-						if(idPresentFlag === false)
-						{
-							var newStationOption = $("<option>")
-									.text(record.stationId)
-									.attr("value", record.stationId);
-							$("#stationId").append(newStationOption);
-						}
-
-						disableControls(false);
-					
-						//Populate Page
-						$("#jobId").html(record.jobId);
-						$("#stationId").val(record.stationId);
-						$("#userName").html(record.userName);
-						$("#recordDate").val(record.recordDate);
-						$("#startTime").val(record.clockOnTime);
-						$("#endTime").val(record.clockOffTime);
-						
-						if(record.clockOffTime == null)
-						{
-							$("#endTime").attr("disabled", true);
-							$("#status").attr("disabled", true);
-							$("#quantityComplete").attr("disabled", true);
-						}else
-						{
-							$("#endTime").attr("disabled", false);
-							$("#status").attr("disabled", false);
-							$("#quantityComplete").attr("disabled", false);
-						}
-
-						$("#stationId").attr("disabled", true);//Disable ability to edit station Id due to stage index timelog issue
-
-						$("#duration").html(record.workedDuration);
-						$("#overtime").html(record.overtimeDuration);
-						$("#status").val(record.workStatus);
-						$("#quantityComplete").val(record.quantityComplete);
-
-						updateEventTable(record);	
-
-						
-					}
-				});
+			resultJson = $.parseJSON(result);
+			
+			if(resultJson["status"] != "success"){
+				console.log("Failed to fetch event record: " + resultJson["result"]);
+				$("#saveChangesFeedback").html("Failed to fetch event record");
+				disableControls(true);
+				return;
 			}
+
+			var record = resultJson.result;
+
+			//Check if a record was returned
+			if(record.jobId == null){
+				disableControls(true);
+				$("#btnSaveChanges").attr("disabled", true);
+				$("#btnDeleteEvent").attr("disabled", true);
+				$("#btnInsertBreak").attr("disabled", true);
+				$("#quantityComplete").attr("disabled", true);
+				$("#saveChangesFeedback").html("RECORD NOT FOUND");
+				console.log("Record not found. stopping");
+				return;
+			}
+
+			var options = $("#stationId").children();
+			if (record.userName !== null){
+				for (var i = 0; i < options.length; i++ ){
+					var currentOption = $(options[i]);
+					console.log(currentOption.val());
+					console.log(record.stationId);
+					if (currentOption.val() == record.stationId)
+					{
+						console.log(record.stationId);
+						currentOption.prop("selected", true);
+						break;
+					}
+				}	
+			}
+			var options = $("#userslist").children();
+			if (record.userName !== null){
+				for (var i = 0; i < options.length; i++ ){
+					var currentOption = $(options[i]);
+					console.log(currentOption.html());
+					console.log(record.userName[0]);
+					if (currentOption.html() == record.userName[0])
+					{
+						console.log(record.userName[0]);
+						currentOption.prop("selected", true);
+						break;
+					}
+				}
+			}
+			disableControls(false);
+		
+			//Populate Page
+			$("#jobId").html(record.jobId);
+			$("#recordDate").val(record.recordDate);
+			$("#startTime").val(record.clockOnTime);
+			$("#endTime").val(record.clockOffTime);
+			$("#endTime").attr("disabled", false);
+			$("#stationId").attr("disabled", false);
+			$("#status").attr("disabled", false);
+			$("#quantityComplete").attr("disabled", false);
+			$("#duration").html(record.workedDuration);
+			$("#overtime").html(record.overtimeDuration);
+			$("#status").val(record.workStatus);
+			$("#quantityComplete").val(record.quantityComplete);
+
+			$("#btnSaveChanges").attr("disabled", true);
+			
+			if(inputsFormValidRecord()){
+				enableControls();
+			}
+
+			// $("#stationId").attr("disabled", true);//Disable ability to edit station Id due to stage index timelog issue
+			updateEventTable(record);	
+
+			
 		}
-	});
+	});	
+}
+
+function enableControls(){
+	if (inputsFormValidRecord() == true){
+		$("#btnSaveChanges").attr("disabled", false);
+	}
+	else{
+		console.log("Please fill all the entries!")
+	}
+}
+
+function inputsFormValidRecord(){	
+	if (($("#recordDate").val() !== "") && ($("#startTime").val() !== "") && ($("#endTime").val() !== "")) {
+		console.log(true);
+		return true;
+	}
+	else{
+		console.log(false);
+		return false;
+	}
 }
 
 function saveRecord(workLogRef){
@@ -156,6 +227,7 @@ function saveRecord(workLogRef){
 				"request":"saveRecordDetails",
 				"workLogRef": workLogRef,
 				"jobId": $("#jobId").val(),
+				"userId":$("#userslist").val(),
 				"recordDate": $("#recordDate").val(),
 				"stationId": $("#stationId").val(),
 				"clockOnTime": $("#startTime").val(),

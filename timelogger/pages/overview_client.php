@@ -13,16 +13,16 @@ else
 	$checkedChargeDisplayElements="";
 }
 
-if($defaultDateRangeName=="Due")
-{
-	$checkedDisplayCreatedWithin="";
-	$checkedDisplayDueWithin="checked";
-}
-else
-{
-	$checkedDisplayCreatedWithin="checked";
-	$checkedDisplayDueWithin="";
-}
+// if($defaultDateRangeName=="Due")
+// {
+// 	$checkedDisplayCreatedWithin="";
+// 	$checkedDisplayDueWithin="checked";
+// }
+// else
+// {
+// 	$checkedDisplayCreatedWithin="checked";
+// 	$checkedDisplayDueWithin="";
+// }
 
 if($showQuantityDisplayElements)
 {
@@ -69,16 +69,16 @@ else
                     <div id="currentJobsDisplayControls" class="controls">
 						<div id="sortingOptions">
 							<h2>Sorting options</h2>
-							<input type="radio" id="sortByCreatedNewest" name="tableOrdering" value="createdNewestFirst" checked="true" class="tableControl" onchange="sortRadioChange(); onTableDataOptionsChange()">
+							<input type="radio" id="sortByCreatedNewest" name="tableOrdering" value="createdNewestFirst" class="tableControl" onchange="sortRadioChange(); onTableDataOptionsChange()">
 							<label for="sortByCreatedNewest">Sort by when jobs were added (newest first)</label>
 							<br>
 							<input type="radio" id="sortByCreatedOldest" name="tableOrdering" value="createdOldestFirst" class="tableControl" onchange="sortRadioChange(); onTableDataOptionsChange()">
 							<label for="sortByCreatedOldest">Sort by when jobs were added (oldest first)</label>
 							<br>
-							<input type="radio" id="sortByDueSoonest" name="tableOrdering" value="dueSoonestFirst" checked="true" class="tableControl" onchange="sortRadioChange(); onTableDataOptionsChange()">
+							<input type="radio" id="sortByDueSoonest" name="tableOrdering" value="dueSoonestFirst" class="tableControl" onchange="sortRadioChange(); onTableDataOptionsChange()">
 							<label for="sortByDueSoonest">Sort by when jobs are due (soonest first)</label>
 							<br>
-							<input type="radio" id="sortByDueLatest" name="tableOrdering" value="dueLatestFirst" checked="true" class="tableControl" onchange="sortRadioChange(); onTableDataOptionsChange()">
+							<input type="radio" id="sortByDueLatest" name="tableOrdering" value="dueLatestFirst" class="tableControl" onchange="sortRadioChange(); onTableDataOptionsChange()">
 							<label for="sortByDueLatest">Sort by when jobs are due (latest first)</label>
 							<br>
 							<input type="radio" id="sortAlphabetic" name="tableOrdering" value="alphabetic" class="tableControl" onchange="sortRadioChange(); onTableDataOptionsChange()">
@@ -98,7 +98,7 @@ else
 						<div id="searchOptions">
 							<h2>Search jobs</h2>
 							<div id="dateCreatedRangeSelection">
-								<input type="checkbox" id="useDateCreatedRange" class="tableControl searchDateCheckBox" <?php echo($checkedDisplayCreatedWithin); ?> onchange="enableTimePeriod('Created', updateTable=true)">
+								<input type="checkbox" id="useDateCreatedRange" class="tableControl searchDateCheckBox" onchange="enableTimePeriod('Created', updateTable=true)">
 								<label for="useDateCreatedRange">Display jobs created within selected time period</label>
 								<br>
 								<div class="searchDateDiv">
@@ -112,7 +112,7 @@ else
 							</div>
 							<br>
 							<div id=dateDueRangeSelection>
-								<input type="checkbox" id="useDateDueRange" class="tableControl searchDateCheckBox" <?php echo($checkedDisplayDueWithin); ?> onchange="enableTimePeriod('Due', updateTable=true)">
+								<input type="checkbox" id="useDateDueRange" class="tableControl searchDateCheckBox" onchange="enableTimePeriod('Due', updateTable=true)">
 								<label for="useDateDueRange">Display jobs due within selected time period</label>
 								<br>
 								<div class="searchDateDiv">
@@ -126,7 +126,7 @@ else
 							</div>
 							<br>
 							<div id=dateTimeWorkedRangeSelection>
-								<input type="checkbox" id="useDateTimeWorkedRange" class="tableControl searchDateCheckBox" <?php echo($checkedDisplayDueWithin); ?> onchange="enableTimePeriod('forall', updateTable=true)">
+								<input type="checkbox" id="useDateTimeWorkedRange" class="tableControl searchDateCheckBox" onchange="enableTimePeriod('TimeWork', updateTable=true)">
 								<label for="useDateTimeWorkedRange">Display time worked within selected time period</label>
 								<br>
 								<div class="searchDateDiv">

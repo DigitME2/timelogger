@@ -23,8 +23,8 @@ else
 			var includeQuantity = <?php echo("'$showQuantityDisplayElements'"); ?>;
 
             $(document).ready(function(){
-                loadWorkLogRecord(<?php echo("'$workLogRef'"); ?>);
 				setUpKeyPress(<?php echo("'$workLogRef'"); ?>);
+				beginLoad(<?php echo("'$workLogRef'"); ?>);
             });
         </script>
         <link rel="stylesheet" href="../css/common.css" type="text/css">
@@ -46,28 +46,28 @@ else
 					<span id="jobId" class="logEventInfo"></span>
 
 					<label for="stationId" class="logEventLabel">Station</label>
-					<select id="stationId" class="logEventInfo" disabled></select>
+					<select id="stationId" class="logEventInfo" oninput="enableControls()"></select>
 
-					<label for="userName" class="logEventLabel">UserName</label>
-					<span id="userName" class="logEventInfo"></span>
+					<label for="userslist" class="logEventLabel">UserName</label>
+					<select id="userslist" class="logEventInfo" oninput="enableControls()"></select>
 
 					<label for="recordDate" class="logEventLabel">Date</label>
-					<input id="recordDate" type="date" step=1 class="logEventInfo"/>
+					<input id="recordDate" type="date" step=1 class="logEventInfo" oninput="enableControls()"/>
 
 					<label for="startTime" class="logEventLabel">Start Time</label>
-					<input id="startTime" type="time" step=1 class="logEventInfo"/>
+					<input id="startTime" type="time" step=1 class="logEventInfo" oninput="enableControls()"/>
 
 					<label for="endTime" class="logEventLabel">End Time</label>
-					<input id="endTime" type="time" step=1 class="logEventInfo"/>
+					<input id="endTime" type="time" step=1 class="logEventInfo" oninput="enableControls()"/>
 
 					<label for="duration" class="logEventLabel">Duration(HH:MM)</label>
-					<span id="duration" class="logEventInfo"></span>
+					<span id="duration" class="logEventInfo" oninput="enableControls()"></span>
 
 					<label for="overtime" class="logEventLabel">Overtime(HH:MM)</label>
-					<span id="overtime" class="logEventInfo"></span>
+					<span id="overtime" class="logEventInfo" oninput="enableControls()"></span>
 
 					<label for="status" class="logEventLabel">Job Status at Station</label>
-					<select id="status" class="logEventInfo">
+					<select id="status" class="logEventInfo" oninput="enableControls()">
 						<option value='pending'>Pending</option>
 						<option value='workInProgress'>Work in Progress</option>
 						<option value='stageComplete'>Stage Complete</option>
@@ -76,7 +76,7 @@ else
 					</select>
 
 					<label for="quantityComplete" class="logEventLabel" <?php echo($hidenQuantityDisplayElements); ?> >Quantity Complete</label>
-					<input type="number" max="999999999" id="quantityComplete" class="logEventInfo" <?php echo($hidenQuantityDisplayElements); ?> ></input>
+					<input type="number" max="999999999" id="quantityComplete" class="logEventInfo" oninput="enableControls()" <?php echo($hidenQuantityDisplayElements); ?> ></input>
 
 					<input id="btnSaveChanges" type="button" value="Save Changes" class="controlButton" onclick=<?php echo('saveRecord("' . $workLogRef . '")'); ?> />
 					<input id="btnDeleteEvent" type="button" value="Delete"  class="controlButton" onclick=<?php echo('deleteEvent("' . $workLogRef . '")'); ?> />
