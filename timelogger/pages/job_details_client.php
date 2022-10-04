@@ -1,4 +1,19 @@
-<?php 
+<?php
+
+//  Copyright 2022 DigitME2
+
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+
+//      http://www.apache.org/licenses/LICENSE-2.0
+
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+
 require "client_config.php";
 $jobId = $_GET["jobId"]; 
 
@@ -147,11 +162,6 @@ else
 					<br>
 				</div>
 
-				<div id="addWorkLogContainer">
-					<h2>Add New Work Log</h2>
-					<input type="button" id="addWorkLog" value="Add New Work Log" onclick="addWorkLog();">
-				</div>
-
 		        <div id="timeLogContainer">
 					<h2>Work Log</h2>
 					<div id="workLogOptions">
@@ -177,7 +187,10 @@ else
 						<span id="timeLogOvertime"></span>
 
 			            <a id="csvDownloadLink" href="" download type="text/plain" class="tableControl" hidden>Click here to download the currently displayed table as CSV</a>
-
+						
+						<span id=addWorkLogLabel><h2>Add New Work Log Record</h2></span>
+						<input type="button" id="addWorkLogbtn" value="Add New Work Log" onclick="addWorkLog();">
+					
 						</div>
 
 					<div id=tableDisplay>

@@ -1,3 +1,17 @@
+/* Copyright 2022 DigitME2
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 $(document).ready(function(){
     initUserList();
 
@@ -134,7 +148,7 @@ function getTimesheet(){
             $("#totalOvertime").html("Total overtime (HH:MM): " + timesheetData.totalOvertime);
             
             var tableData = timesheetData["timesheet"];
-            var columns = [{"headingName":"Job IDs", "dataName":"recordDate"}];
+            var columns = [{"headingName":"Job IDs", "dataName":"Job IDs"}];
             
             for(var i = 1; i < timesheetData.columnNames.length; i++) 
                 columns.push({"headingName":timesheetData.columnNames[i],"dataName":timesheetData.columnNames[i], "link":"job_details_client.php?jobId=" + timesheetData.columnNames[i], "generatePlainLinkCells": true, "headerLink": "job_details_client.php?jobId=" + timesheetData.columnNames[i]});
@@ -149,14 +163,14 @@ function getTimesheet(){
 
             var table = generateTable("currentUsersTable", tableData, tableStructure);
 
-            $("#hideProductId").change(function(){
-                console.log('hideProductId');
-                hideProductId('#currentUsersTable');
+            $("#excludeProductIdColumn").change(function(){
+                console.log('excludeProductIdColumn');
+                excludeProductIdColumn('#currentUsersTable');
             })
         
-            $("#hideAggregate").change(function(){
-                console.log('hideAggregate');
-                hideAggregate('#currentUsersTable');
+            $("#excludeAggregateColumn").change(function(){
+                console.log('excludeAggregateColumn');
+                excludeAggregateColumn('#currentUsersTable');
             })
 
 
@@ -172,25 +186,25 @@ function getTimesheet(){
 				"startDate":$("#dateStartInput").val(),
 				"endDate":$("#dateEndInput").val()
             }
-            
+            excludeProductIdColumn('#currentUsersTable');
+            excludeAggregateColumn('#currentUsersTable');
             var csvUrl = "../scripts/server/time_sheet.php?" + $.param(data);
             $("#csvDownloadLink").attr("href",csvUrl).show();
-            
             $(".controls").attr("disabled", false);
         }
     });
 }
 
-function hideProductId(table_id){
-    if($("#hideProductId").prop("checked")){
+function excludeProductIdColumn(table_id){
+    if($("#excludeProductIdColumn").prop("checked")){
         $(table_id).find('tbody').children('tr:nth-child(1)').hide();
     }else{
         $(table_id).find('tbody').children('tr:nth-child(1)').show();
     }
 }
 
-function hideAggregate(table_id){
-    if($("#hideAggregate").prop("checked")){
+function excludeAggregateColumn(table_id){
+    if($("#excludeAggregateColumn").prop("checked")){
         $(table_id).find('tbody').children('tr:nth-child(2)').hide();
     }else{
         $(table_id).find('tbody').children('tr:nth-child(2)').show();

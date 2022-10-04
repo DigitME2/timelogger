@@ -1,3 +1,20 @@
+-- '''
+
+-- Copyright 2022 DigitME2
+
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+
+--     http://www.apache.org/licenses/LICENSE-2.0
+
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+-- '''
+
 -- phpMyAdmin SQL Dump
 -- version 4.8.3
 -- https://www.phpmyadmin.net/
@@ -145,69 +162,39 @@ BEGIN
 	SELECT @totalWorkedTime, @totalOvertime INTO WorkedTimeSec, OvertimeSec;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `changeWorkLogRecord` (IN `workLogRef` VARCHAR(20), IN `station` VARCHAR(50), IN `userId` VARCHAR(20), IN `recordDate` DATE, IN `clockOnTime` TIME, IN `clockOffTime` TIME, IN `workStatus` VARCHAR(20), IN `quantityComplete` INT(11))  MODIFIES SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `changeWorkLogRecord` (IN `workLogRef` VARCHAR(20), IN `station` VARCHAR(50), IN `userId` VARCHAR(20), IN `recordDate` DATE, IN `clockOnTime` TIME, IN `clockOffTime` TIME, IN `clockOffTimeValid` TINYINT(1), IN `workStatus` VARCHAR(20), IN `quantityComplete` INT(11))  MODIFIES SQL DATA
 BEGIN
 	
-	DECLARE orgDuration INT DEFAULT 0;
-	DECLARE orgOvertime INT DEFAULT 0;
-
-	DECLARE orgClockOffTime TIME;
-
 	DECLARE newDuration INT DEFAULT 0;
 	DECLARE newOvertime INT DEFAULT 0;
 	
-	DECLARE durationDifference INT DEFAULT 0;
-	DECLARE overtimeDifference INT DEFAULT 0;
+	DECLARE newClockOffTime TIME DEFAULT NULL;
 
-	DECLARE eventDate DATE;
-	DECLARE eventJobId VARCHAR(20);
-
-	SELECT workedDuration, overtimeDuration, recordDate, jobId, clockOffTime INTO orgDuration, orgOvertime, recordDate, eventJobId, orgClockOffTime
-	FROM timeLog
-	WHERE timeLog.ref=workLogRef;
-	
-	IF (orgClockOffTime <> '00:00:00') THEN
+	IF clockOffTimeValid IS TRUE THEN -- this represents an open record.
 		-- find the new total duration
 		SET newDuration = TIME_TO_SEC(TIMEDIFF(clockOffTime, clockOnTime));
 		
 		-- find the new overtime duration
-		SET newOvertime = CalcOvertimeDuration(clockOnTime, clockOffTime, eventDate);
-
-		set durationDifference = newDuration - orgDuration;
-
-		set overtimeDifference = newOvertime - orgOvertime;
-		
-		-- update records
-		UPDATE jobs 
-		SET closedWorkedDuration = closedWorkedDuration + durationDifference,
-		closedOvertimeDuration = closedOvertimeDuration + overtimeDifference
-		WHERE jobs.jobId=eventJobId;
-		
-		UPDATE timeLog
-		SET clockOnTime = clockOnTime,
-		clockOffTime = clockOffTime,
-		workedDuration = newDuration,
-		overtimeDuration = newOvertime,
-		recordDate = recordDate,
-		userId = userId,
-		stationId = station,
-		workStatus = workStatus,
-		quantityComplete = quantityComplete
-		WHERE timeLog.ref=workLogRef;
-
-		SELECT "success" as result;
-	ELSE
-		IF not (clockOnTime > CURRENT_TIME) THEN
-			UPDATE timeLog
-			SET clockOnTime = clockOnTime,
-			stationId = station
-			WHERE timeLog.ref=workLogRef;
-
-			SELECT "success" as result;
-		ELSE
-			SELECT "Start Time in future" as result;
-		END IF;
+		SET newOvertime = CalcOvertimeDuration(clockOnTime, clockOffTime, recordDate);
+		SET newClockOffTime = clockOffTime;
 	END IF;
+
+		
+		
+	UPDATE timeLog
+	SET clockOnTime = clockOnTime,
+	clockOffTime = newClockOffTime,
+	workedDuration = newDuration,
+	overtimeDuration = newOvertime,
+	recordDate = recordDate,
+	userId = userId,
+	stationId = station,
+	workStatus = workStatus,
+	quantityComplete = quantityComplete
+	WHERE timeLog.ref=workLogRef;
+
+	SELECT "success" as result;
+	
 	
 END$$
 
@@ -762,41 +749,41 @@ BEGIN
 		SET @conditionPrecederTerm = " AND "; 
 	END IF;		
 		
-	IF ShowPendingJobs IS TRUE AND ShowWorkInProgressJobs IS TRUE AND ShowCompletedJobs IS TRUE THEN
-		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'pending' OR currentStatus = 'workInProgress' OR currentStatus = 'complete'");
+		IF ShowPendingJobs IS TRUE AND ShowWorkInProgressJobs IS TRUE AND ShowCompletedJobs IS TRUE THEN
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "(currentStatus = 'pending' OR currentStatus = 'workInProgress' OR currentStatus = 'complete')");
 		SET @conditionPrecederTerm = " AND "; 
 
 	ELSEIF ShowPendingJobs IS TRUE AND ShowWorkInProgressJobs IS TRUE AND ShowCompletedJobs IS FALSE THEN
-		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'pending' OR currentStatus = 'workInProgress'");
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "(currentStatus = 'pending' OR currentStatus = 'workInProgress')");
 		SET @conditionPrecederTerm = " AND "; 
 	
 	ELSEIF ShowPendingJobs IS TRUE AND ShowWorkInProgressJobs IS FALSE AND ShowCompletedJobs IS TRUE THEN
-		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'pending' OR currentStatus = 'complete'");
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "(currentStatus = 'pending' OR currentStatus = 'complete')");
 		SET @conditionPrecederTerm = " AND "; 
 
 	ELSEIF ShowPendingJobs IS FALSE AND ShowWorkInProgressJobs IS TRUE AND ShowCompletedJobs IS TRUE THEN
-		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'workInProgress' OR currentStatus = 'complete'");
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "(currentStatus = 'workInProgress' OR currentStatus = 'complete')");
 		SET @conditionPrecederTerm = " AND ";
 
 	ELSEIF ShowPendingJobs IS TRUE AND ShowWorkInProgressJobs IS FALSE AND ShowCompletedJobs IS FALSE THEN
-		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'pending'");
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "(currentStatus = 'pending')");
 
 		SET @conditionPrecederTerm = " AND ";
 	
 	ELSEIF ShowPendingJobs IS FALSE AND ShowWorkInProgressJobs IS FALSE AND ShowCompletedJobs IS TRUE THEN
-		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'complete'");
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "(currentStatus = 'complete')");
 		SET @conditionPrecederTerm = " AND ";
 
 	ELSEIF ShowPendingJobs IS FALSE AND ShowWorkInProgressJobs IS TRUE AND ShowCompletedJobs IS FALSE THEN
-		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "currentStatus = 'workInProgress'");
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "(currentStatus = 'workInProgress')");
 		SET @conditionPrecederTerm = " AND ";
 	END IF;
 
-	-- IFLimitDateCreatedRange IS TRUE THEN
-	-- 	SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm,
-	-- 		 "DATE(recordAdded) >= '", DateCreatedStart, "' AND DATE(recordAdded) <= '", DateCreatedEnd, "' ");
-	-- 	SET @conditionPrecederTerm = " AND ";
-	-- END IF;
+	IF LimitDateCreatedRange IS TRUE THEN
+		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm,
+			 "DATE(recordAdded) >= '", DateCreatedStart, "' AND DATE(recordAdded) <= '", DateCreatedEnd, "' ");
+		SET @conditionPrecederTerm = " AND ";
+	END IF;
 		
 		
 	IF LimitDateDueRange IS TRUE THEN
@@ -1086,6 +1073,7 @@ BEGIN
 	
 	SELECT @totalDuration, @totalOvertimeDuration;
 
+    	
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetWorkedTimes` (IN `JobId` VARCHAR(20), IN `LimitDateRange` TINYINT(1), IN `StartDate` DATE, IN `EndDate` DATE)  MODIFIES SQL DATA
@@ -1459,6 +1447,7 @@ INSERT INTO `config` (`paramName`, `paramValue`) VALUES
 ('quantityComplete', 'true'),
 ('configVersion', '1'),
 ('requireStageComplete', 'true'),
+('showQuantityComplete', 'true'),
 ('trimLunch', 'false');
 
 -- --------------------------------------------------------

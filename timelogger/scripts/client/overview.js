@@ -1,3 +1,17 @@
+/* Copyright 2022 DigitME2
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. */
+
 var TableData = null;
 var updateRequestNumber = 0;
 
@@ -15,40 +29,58 @@ function initDisplayOptions(){
 	
 	if(localStorage.getItem("retainDisplayOptions") == "true"){
 		// ---------- LOAD PREVIOUS SETTINGS ----------
+		
+		$('#showControlsCheckbox').prop("checked",localStorage.getItem("showControlsCheckbox") == "true");
+
 		if(localStorage.getItem("sorting")=="sortByCreatedNewest")
+		{
 			$("#sortByCreatedNewest").prop("checked", true);
+			$('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
+			sortRadioChange();
+		}
 		else if(localStorage.getItem("sorting")=="sortByCreatedOldest")
+		{
 			$("#sortByCreatedOldest").prop("checked", true);
+			$('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
+			sortRadioChange();
+		}
 		else if(localStorage.getItem("sorting")=="sortByDueSoonest")
+		{	
 			$("#sortByDueSoonest").prop("checked", true);
+			$('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
+			$('#subSortByPriority').prop("checked",localStorage.getItem("subSortByPriority") == "true");
+			sortRadioChange();
+		}
 		else if(localStorage.getItem("sorting")=="sortByDueLatest")
+		{
 			$("#sortByDueLatest").prop("checked", true);
+			$('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
+			$('#subSortByPriority').prop("checked",localStorage.getItem("subSortByPriority") == "true");
+			sortRadioChange();
+		}
 		else if(localStorage.getItem("sorting")=="sortAlphabetic")
+		{
 			$("#sortAlphabetic").prop("checked", true);
+			$('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
+			sortRadioChange();
+		}
 		else if(localStorage.getItem("sorting")=="sortByPriority")
 			$("#sortByPriority").prop("checked", true);
-		else if(localStorage.getItem("sorting")=="showUrgentJobsFirst")
-			$("#showUrgentJobsFirst").prop("checked", true);
-		$('#showUrgentJobsFirstLabel').prop("checked",localStorage.getItem("showUrgentJobsFirstLabel") == "true");
-		$('#subSortByPriority').prop("checked",localStorage.getItem("subSortByPriority") == "true");
-		
-		$('#subSortByPriorityLabel').prop("checked",localStorage.getItem("subSortByPriorityLabel") == "true");
 
-		if(localStorage.getItem("useDateCreatedRange") == "true"){
-			$('#dateCreatedStartInput').prop("disabled", false);
-			$('#dateCreatedEndInput').prop("disabled", false);
-			$('#useDateCreatedRange').prop("checked", true);
-		}
-		
-		
-		if(localStorage.getItem("useDateDueRange") == "true"){
-			$('#dateDueStartInput').prop("disabled", false);
-			$('#dateDueEndInput').prop("disabled", false);
-			$('#useDateDueRange').prop("checked", true);
-		}
-		
+		$('#useDateCreatedRange').prop("checked",localStorage.getItem("useDateCreatedRange") == "true");
+		$('#dateCreatedStartInput').val(localStorage.getItem("dateCreatedStartInput"));
+		$('#dateCreatedEndInput').val(localStorage.getItem("dateCreatedEndInput"));
+
+		$('#useDateDueRange').prop("checked",localStorage.getItem("useDateDueRange") == "true");
+		$('#dateDueStartInput').val(localStorage.getItem("dateDueStartInput"));
+		$('#dateDueEndInput').val(localStorage.getItem("dateDueEndInput"));
+
 		$('#useDateTimeWorkedRange').prop("checked",localStorage.getItem("useDateTimeWorkedRange") == "true");
+		$('#dateTimeWorkStartInput').val(localStorage.getItem("dateTimeWorkStartInput"));
+		$('#dateTimeWorkEndInput').val(localStorage.getItem("dateTimeWorkEndInput"));
 		$('#excludeUnworkedJobs').prop("checked",localStorage.getItem("excludeUnworkedJobs") == "true");
+
+		$('#searchPhrase').val(localStorage.getItem("searchPhrase"));
 		$('#showOnlyUrgentJobs').prop("checked",localStorage.getItem("showOnlyUrgentJobs") == "true");
 		
 		$('#showPendingJobs').prop("checked",localStorage.getItem("showPendingJobs") == "true");
@@ -77,30 +109,51 @@ function initDisplayOptions(){
 		$('#showNotes').prop("checked",localStorage.getItem("showNotes") == "true");
 		$('#showQuantityComplete').prop("checked",localStorage.getItem("showQuantityComplete") == "true");
 		$('#retainDisplayOptions').prop("checked",localStorage.getItem("retainDisplayOptions") == "true");
-
-		setDefaultDateRange(7, "Due");
-		setDefaultDateRange(7, "TimeWork");
 	}
 	else{
 		// ---------- SET INPUTS TO DEFAULT ----------
-		$('#sortByCreatedNewest').prop("checked", true);
-		$('#sortByCreatedOldest').prop("checked", false);
-		$('#sortByDueSoonest').prop("checked", false);
-		$('#sortByDueLatest').prop("checked", false);
-		$('#sortAlphabetic').prop("checked", false);
-		$('#sortByPriority').prop("checked", false);
-		$('#showUrgentJobsFirst').prop("checked", false);
-		$('#subSortByPriority').prop("checked", false);
+		$('#showControlsCheckbox').prop("checked",true);
 
-		$('#useDateCreatedRange').prop("checked", true);
-		if(localStorage.getItem("useDateDueRange") == "false"){
-			$('#dateDueStartInput').prop("disabled", true);
-			$('#dateDueEndInput').prop("disabled", true);
-			$('#useDateDueRange').prop("checked", false);
+		if($('#sortByCreatedNewest').prop("checked", true))
+		{
+			$('#showUrgentJobsFirst').prop("checked", false);
+			sortRadioChange();
 		}
+		if($('#sortByCreatedOldest').prop("checked", false))
+		{
+			$('#showUrgentJobsFirst').prop("checked", false);
+			sortRadioChange();
+		}
+		if($('#sortByDueSoonest').prop("checked", false))
+		{
+			$('#showUrgentJobsFirst').prop("checked", false);
+			$('#subSortByPriority').prop("checked", false);
+			sortRadioChange();
+		}
+		if($('#sortByDueLatest').prop("checked", false))
+		{
+			$('#showUrgentJobsFirst').prop("checked", false);
+			$('#subSortByPriority').prop("checked", false);
+			sortRadioChange();
+		}
+		if($('#sortAlphabetic').prop("checked", false))
+		{
+			$('#showUrgentJobsFirst').prop("checked", false);
+			sortRadioChange();
+		}
+		$('#sortByPriority').prop("checked", false);
+
+		$("#useDateCreatedRange").prop("checked",true)
+		setDefaultDateRange(7, "Created");
+
+		$("#useDateDueRange").prop("checked",false)
+		setDefaultDateRange(7, "Due");
+
 		$('#useDateTimeWorkedRange').prop("checked", false);
+		setDefaultDateRange(7, "TimeWork");
+
 		$('#excludeUnworkedJobs').prop("checked", false);
-		
+		$('#searchPhrase').val("");
 		$('#showOnlyUrgentJobs').prop("checked", false);
 		$('#showPendingJobs').prop("checked", true);
 		$('#showWorkInProgressJobs').prop("checked", true);
@@ -127,27 +180,16 @@ function initDisplayOptions(){
 		$('#showNotes').prop("checked", true);
 		$('#showQuantityComplete').prop("checked", true);
 		$('#retainDisplayOptions').prop("checked", false);	
-		
-		setDefaultDateRange(7, "Due");
-		setDefaultDateRange(7, "TimeWork");
 	}
-
+	setControlVisibility(fade=false);
 }
 
 function setDefaultDateRange(period, filterName)
 {
 
-	if (filterName == "Created") 
-	{
-		var startDate = new Date(Date.now() - (period * 24 * 60 *60 *1000)); // one week ago, in milliseconds
-		var endDate = new Date(Date.now());
-	}
-	else
-	{
-		var startDate = new Date(Date.now()); 
-		var endDate = new Date(Date.now() + (period * 24 * 60 *60 *1000)); 
-	}
-	
+	var startDate = new Date(Date.now() - (period * 24 * 60 *60 *1000)); // one week ago, in milliseconds
+	var endDate = new Date(Date.now());
+
 	var startDateString = startDate.getFullYear() + "-" + ("0"+(startDate.getMonth()+1)).slice(-2)  + "-" + ("0" + startDate.getDate()).slice(-2);
 	var endDateString =   endDate.getFullYear()   + "-" + ("0"+(endDate.getMonth()+1)).slice(-2)    + "-" + ("0" + endDate.getDate()).slice(-2);
     
@@ -197,24 +239,43 @@ function updateBodySize(){
 // update the display and then save the display options settings
 function onDisplayOptionsChange(){
 	updateTableDisplay();
-	
+
+	localStorage.setItem("showControlsCheckbox", $("#showControlsCheckbox").is(":checked"));
+
 	if($("#sortByCreatedNewest").is(":checked"))
+	{
 		localStorage.setItem("sorting", "sortByCreatedNewest");
+		localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
+		sortRadioChange();
+	}
 	else if($("#sortByCreatedOldest").is(":checked"))
+	{
 		localStorage.setItem("sorting", "sortByCreatedOldest");
+		localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
+		sortRadioChange();
+	}
 	else if($("#sortByDueSoonest").is(":checked"))
+	{
 		localStorage.setItem("sorting", "sortByDueSoonest");
+		localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
+		localStorage.setItem("subSortByPriority", $("#subSortByPriority").is(":checked"));
+		sortRadioChange();
+	}
 	else if($("#sortByDueLatest").is(":checked"))
+	{
 		localStorage.setItem("sorting", "sortByDueLatest");
+		localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
+		localStorage.setItem("subSortByPriority", $("#subSortByPriority").is(":checked"));
+		sortRadioChange();
+	}
 	else if($("#sortAlphabetic").is(":checked"))
+	{
 		localStorage.setItem("sorting", "sortAlphabetic");
+		localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
+		sortRadioChange();
+	}
 	else if($("#sortByPriority").is(":checked"))
 		localStorage.setItem("sorting", "sortByPriority");
-	else if($("#showUrgentJobsFirst").is(":checked"))
-		localStorage.setItem("sorting", "showUrgentJobsFirst");
-	localStorage.setItem("showUrgentJobsFirstLabel", $("#showUrgentJobsFirstLabel").is(":checked"));
-	localStorage.setItem("subSortByPriority", $("#subSortByPriority").is(":checked"));
-	localStorage.setItem("subSortByPriorityLabel", $("#subSortByPriorityLabel").is(":checked"));
 
 	localStorage.setItem("useDateCreatedRange", $("#useDateCreatedRange").is(":checked"));
 	localStorage.setItem("dateCreatedStartInput", $("#dateCreatedStartInput").val());
@@ -225,9 +286,11 @@ function onDisplayOptionsChange(){
 	localStorage.setItem("dateDueEndInput", $("#dateDueEndInput").val());
 
 	localStorage.setItem("useDateTimeWorkedRange", $("#useDateTimeWorkedRange").is(":checked"));
-	localStorage.setItem("dateTimeWorkStartInput", $("#dateTimeWorkStartInput").val());
-	localStorage.setItem("dateTimeWorkEndInput", $("#dateTimeWorkEndInput").val());
+	localStorage.setItem("dateTimeWorkStartInput", $('#dateTimeWorkStartInput').val());
+	localStorage.setItem("dateTimeWorkEndInput", $('#dateTimeWorkEndInput').val());
 	localStorage.setItem("excludeUnworkedJobs", $("#excludeUnworkedJobs").is(":checked"));
+
+	localStorage.setItem("searchPhrase", $('#searchPhrase').val());
 
 	localStorage.setItem("showOnlyUrgentJobs", $("#showOnlyUrgentJobs").is(":checked"));
 	localStorage.setItem("showPendingJobs", $("#showPendingJobs").is(":checked"));
@@ -263,12 +326,6 @@ function updateJobsData(){
 	// get user data, ordered by selected option
     // generate table
     // drop old table and append new one
-    
-    var startDate = $('#dateCreatedStartInput').val();
-    var endDate = $('#dateCreatedEndInput').val();
-    var useDateCreatedRange = $('#useDateDueRange').is(':checked');
-    var startDate = $('#dateDueStartInput').val();
-    var endDate = $('#dateDueEndInput').val();
 
 	var searchPhrase = $('#searchPhrase').val();
 	var useSearchPhrase = false;
@@ -295,17 +352,40 @@ function updateJobsData(){
 
 	console.log(useDataDueRange)
 
-	if($("#useDateTimeWorkedRange").is(':checked'))
+	if($("#useDateDueRange").is(':checked')) 
 	{
-		$("#dateTimeWorkStartInput").prop("disabled",false)
-		$("#dateTimeWorkEndInput").prop("disabled",false)
-		$("#excludeUnworkedJobs").prop("disabled",false)
+		$('#dateDueStartInput').prop("disabled", false);
+		$('#dateDueEndInput').prop("disabled", false);
 	}
 	else
 	{
-		$("#dateTimeWorkStartInput").prop("disabled",true)
-		$("#dateTimeWorkEndInput").prop("disabled",true)
-		$("#excludeUnworkedJobs").prop("disabled",true)
+		$('#dateDueStartInput').prop("disabled", true);
+		$('#dateDueEndInput').prop("disabled", true);
+	}
+
+	if($("#useDateTimeWorkedRange").is(':checked'))
+	{
+		$("#dateTimeWorkStartInput").prop("disabled",false);
+		$("#dateTimeWorkEndInput").prop("disabled",false);
+		$("#excludeUnworkedJobs").prop("disabled",false);
+	}
+	else
+	{
+		$("#dateTimeWorkStartInput").prop("disabled",true);
+		$("#dateTimeWorkEndInput").prop("disabled",true);
+		$("#excludeUnworkedJobs").prop("disabled",true);
+		$("#excludeUnworkedJobs").prop(':checked', true);
+	}
+
+	if($("#useDateCreatedRange").is(':checked'))
+	{
+		$("#dateCreatedStartInput").prop("disabled",false);
+		$("#dateCreatedEndInput").prop("disabled",false);
+	}
+	else
+	{
+		$("#dateCreatedStartInput").prop("disabled",true);
+		$("#dateCreatedEndInput").prop("disabled",true);
 	}
 
 	var dateTimeWorkStartInput = $('#dateTimeWorkStartInput').val()
@@ -623,13 +703,37 @@ function updateTableDisplay(){
 	updateBodySize();
 }
 
+// function setControlVisibility(){
+// 	if($('#showControlsCheckbox').is(':checked')){
+		
+// 			$('#currentJobsDisplayControls').fadeIn();
+// 			$('#navbar').fadeIn();
+// 		}
+// 		else{
+			
+// 		}
+// 	}else{
+// 		if(fade=true){
+// 			$('#navbar').fadeOut();
+// 			$('#currentJobsDisplayControls').fadeOut();
+// 		}
+// 		else{
+			
+// 		}
+// 	}
+// }
+
 function setControlVisibility(){
 	if($('#showControlsCheckbox').is(':checked')){
 		$('.controls').fadeIn();
 		$('#navbar').fadeIn();
+		$('#currentJobsDisplayControls').prop("hidden", false);
+		$('#navbar').prop("hidden", false);
 	}else{
 		$('#navbar').fadeOut();
 		$('.controls').fadeOut();
+		$('#currentJobsDisplayControls').prop("hidden", true);
+		$('#navbar').prop("hidden", true);
 	}
 }
 
