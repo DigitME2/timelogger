@@ -59,13 +59,13 @@ function updateUserTable(){
                             "headingName":"Clocked On",
                             "dataName":"clockOnTime"
                         },
-						{
-							"headingName":"Clock Off",
-                        	"functionToRun":clockOffUser,
+			{
+			    "headingName":"Clock Off",
+                            "functionToRun":clockOffUser,
                             "functionParamDataName":"ref",
                             "functionParamDataLabel":"ref",
                             "functionButtonText":"Clock Off"
-						}
+			}
                     ]
                 };
                 
