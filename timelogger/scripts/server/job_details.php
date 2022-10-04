@@ -772,7 +772,7 @@ function main()
 							"workStatus"
 						);
 						$columnNames = array(
-							"Station Name",
+							"Location Name",
 							"User Name",
 							"Date",
 							"Start Time",
@@ -803,7 +803,7 @@ function main()
 							"workStatus"
 						);
 						$columnNames = array(
-							"Station Name",
+							"Location Name",
 							"Record Start Date",
 							"record End Date",
 							"Worked Duration",
