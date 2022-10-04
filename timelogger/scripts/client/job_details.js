@@ -458,7 +458,7 @@ function updateJobLogTable(JobId){
 							},
 							"columns":[
 								{
-									"headingName":"Station Name",
+									"headingName":"Location Name",
 									"dataName":"stationId"
 								},
 								{
@@ -495,7 +495,7 @@ function updateJobLogTable(JobId){
 							},
 							"columns":[
 								{
-									"headingName":"Station Name",
+									"headingName":"Location Name",
 									"dataName":"stationId"
 								},
 								{
@@ -644,7 +644,7 @@ function updateStoppagesLogTable(JobId){
                     },
                     "columns":[
                         {
-                            "headingName":"Station Name",
+                            "headingName":"Location Name",
                             "dataName":"stationId"
                         },
                         {
@@ -718,7 +718,7 @@ function updateStoppagesLogTable(JobId){
 
 				$("#addStoppageStationDropDown").empty();
 				var placeHolder = $("<option>")
-							.text("Select a station...")
+							.text("Select Location...")
 							.attr("value", "");
 				$("#addStoppageStationDropDown").append(placeHolder);
 				var placeHolder = $("<option>")
