@@ -718,7 +718,7 @@ function updateStoppagesLogTable(JobId){
 
 				$("#addStoppageStationDropDown").empty();
 				var placeHolder = $("<option>")
-							.text("Select Location...")
+							.text("Select Location....")
 							.attr("value", "");
 				$("#addStoppageStationDropDown").append(placeHolder);
 				var placeHolder = $("<option>")
