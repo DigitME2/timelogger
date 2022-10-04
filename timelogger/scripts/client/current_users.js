@@ -52,7 +52,7 @@ function updateUserTable(){
                             "dataName":"userName"
                         },
                         {
-                            "headingName":"Station",
+                            "headingName":"Location",
                             "dataName":"stationId"
                         },
                         {
