@@ -216,7 +216,7 @@ else
 								<label for="showEfficiency">Show job efficiency</label>
 								<input type="checkbox" id="showEfficiency" onchange="onDisplayOptionsChange()"/>
 
-								<label for="showStoppages">Show stoppages</label>
+								<label for="showStoppages">Show problems</label>
 								<input type="checkbox" id="showStoppages" onchange="onDisplayOptionsChange()"/>
 								
 								<label for="showChargePerMinute" <?php echo($hidenChargeDisplayElements); ?>>Show Charge Per Minute</label>

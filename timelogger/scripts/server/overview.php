@@ -154,7 +154,7 @@ function getOverviewData($DbConn, $TableOrdering = "createdNewestFirst", $showPe
 			"routeStageName"	=> $row["routeCurrentStageName"],
 			"priority"			=> $row["priority"],
 			"dueDate"			=> $dueDate,
-			"stoppages"			=> $row["stoppages"],
+			"problems"			=> $row["stoppages"],
 			"numberOfUnits"		=> $row["numberOfUnits"],
 			"totalParts"		=> $row["totalParts"],
 			"chargePerMin"		=> $chargePerMinStr,
@@ -378,7 +378,7 @@ function main()
                     "workedTime",
                     "overtime",
                     "efficiency",
-					"stoppages",
+					"problems",
 					"notes",
 					"priority"
                 );
@@ -400,7 +400,7 @@ function main()
                     "Worked Time",
                     "Overtime",
                     "Efficiency",
-					"Stoppages",
+					"problems",
 					"Notes",
 					"Priority"
                 );
@@ -414,7 +414,7 @@ function main()
 				for($i=0; $i<$numRows; $i++)
 				{
 					$overviewData[$i]["description"] = $overviewData[$i]["description"];
-					$overviewData[$i]["stoppages"] = $overviewData[$i]["stoppages"];
+					$overviewData[$i]["problems"] = $overviewData[$i]["problems"];
 				}
                     
                sendCsvToClient($overviewData, $dataNames, $columnNames, $fileName);

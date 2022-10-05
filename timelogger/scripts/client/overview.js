@@ -644,7 +644,7 @@ function updateTableDisplay(){
 		tableStructure.columns.push(
 			{
 				"headingName":"Problems",
-				"dataName":"stoppages"
+				"dataName":"problems"
 			}
 		);
 	}

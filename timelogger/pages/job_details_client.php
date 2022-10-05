@@ -147,12 +147,12 @@ else
 				</div>			
 				
 				<div id="stoppagesContainer">
-					<h2>Stoppages:</h2>
+					<h2>Problems:</h2>
 					<div id="addStoppageInputContainer">
 						<select id="addStoppageStationDropDown" class="addStoppageInput"></select>
 						<select id="addStoppageReasonDropDown" class="addStoppageInput"></select>
 						<textarea id="stoppageDescription" class="addStoppageInput" rows="2" wrap="hard" placeholder="Description" maxlength="2000"></textarea>
-						<input type="button" id="btnAddStoppage" disabled="true" value="Add Stoppage" onclick="addStoppageBtnPress(<?php echo(("'$jobId'"))?>)"/>
+						<input type="button" id="btnAddStoppage" disabled="true" value="Add Problem" onclick="addStoppageBtnPress(<?php echo(("'$jobId'"))?>)"/>
 					</div>					
 					<br>
 					<span id="addStoppageFeedback"></span>
