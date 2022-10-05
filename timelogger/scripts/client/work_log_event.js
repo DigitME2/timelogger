@@ -210,7 +210,7 @@ function enableControls(){
 }
 
 function inputsFormValidRecord(){	
-	if (($("#recordDate").val() !== "") && ($("#startTime").val() !== "") && ($("#endTime").val() !== "")) {
+	if (($("#recordDate").val() !== "") && ($("#startTime").val() !== "")) {
 		console.log(true);
 		return true;
 	}
