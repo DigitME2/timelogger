@@ -222,6 +222,6 @@ limitations under the License. */
 #addWorkLogbtn{
 	grid-column:6;
 	grid-row:2;
-	margin-left:100px;
-	max-width: 135px;
+	margin-left:115px;
+	max-width: 155px;
 }
