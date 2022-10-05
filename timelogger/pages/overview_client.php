@@ -31,7 +31,18 @@ else
 <meta charset="utf-8">
 <html>
     <head>
-	    <!--   Copyright 2022 DigitME2
+        <script src="../scripts/client/jquery.js"></script>
+        <script src="../scripts/client/overview.js"></script>
+        <script src="../scripts/client/generate_table_generic.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+        <link rel="stylesheet" href="../css/common.css" type="text/css">
+        <link rel="stylesheet" href="../css/overview.css" type="text/css">
+		<script>
+			$(document).ready(function(){
+				$("#overview_client_nav_link").addClass("navActive");
+			});
+		</script>
+		<!--   Copyright 2022 DigitME2
 
 		  Licensed under the Apache License, Version 2.0 (the "License");
 		  you may not use this file except in compliance with the License.
@@ -44,17 +55,6 @@ else
 		  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 		  See the License for the specific language governing permissions and
 		  limitations under the License. -->
-        <script src="../scripts/client/jquery.js"></script>
-        <script src="../scripts/client/overview.js"></script>
-        <script src="../scripts/client/generate_table_generic.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
-        <link rel="stylesheet" href="../css/common.css" type="text/css">
-        <link rel="stylesheet" href="../css/overview.css" type="text/css">
-		<script>
-			$(document).ready(function(){
-				$("#overview_client_nav_link").addClass("navActive");
-			});
-		</script>
     </head>
     <body>
         <div class="pageContainer">
