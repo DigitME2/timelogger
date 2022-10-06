@@ -18,6 +18,7 @@
 // terminates
 require "db_params.php";
 require "common.php";
+require_once "paths.php";
 
 $Debug = false;
 
