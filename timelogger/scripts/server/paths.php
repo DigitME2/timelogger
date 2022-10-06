@@ -18,7 +18,7 @@ if($envVersion == "linux")
 	$UserQrCodeDirAbs = "/var/www/html/timelogger/generatedUserQrCodes/";
 	$UserQrCodeDirRelativeToPage = "../generatedUserQrCodes/";
 }
-else if($envVersion == "windows"
+else if($envVersion == "windows")
 {
 	$JobQrCodeDirAbs = "";
 	$JobQrCodeDirRelativeToPage = "../generatedJobQrCodes/";
