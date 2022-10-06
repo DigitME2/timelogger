@@ -1,7 +1,11 @@
 <?php 
 
 require "client_config.php";
-require "../scripts/server/systemConfig.php";
+// require "../scripts/server/systemConfig.php";
+
+function showQuantityComplete(){
+	return true;
+}
 
 if($showChargeDisplayElements)
 {
