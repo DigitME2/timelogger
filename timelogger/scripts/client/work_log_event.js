@@ -176,7 +176,6 @@ function loadWorkLogRecord(workLogRef){
 			$("#jobId").html(record.jobId);
 			$("#recordDate").val(record.recordDate);
 			$("#startTime").val(record.clockOnTime);
-			$("#endTime").val(record.clockOffTime);
 			$("#endTime").attr("disabled", false);
 			$("#stationId").attr("disabled", false);
 			$("#status").attr("disabled", false);
@@ -201,11 +200,12 @@ function loadWorkLogRecord(workLogRef){
 }
 
 function enableControls(){
-	if (inputsFormValidRecord() == true){
+	if ((inputsFormValidRecord() == true) && (invalidClockOff() == true)){
 		$("#btnSaveChanges").attr("disabled", false);
 	}
 	else{
-		console.log("Please fill all the entries!")
+		$("#btnSaveChanges").attr("disabled", true);
+		console.log("Please fill all the entries! or the entries are invalid");
 	}
 }
 
@@ -215,6 +215,20 @@ function inputsFormValidRecord(){
 		return true;
 	}
 	else{
+		console.log(false);
+		return false;
+	}
+}
+
+function invalidClockOff(){
+	if(($("#endTime").val()) !== "00:00:00")
+	{
+		console.log(true);
+		return true;
+	}
+	else
+	{
+		$("#saveChangesFeedback").html("Invalid Time, This system accepts only till 11:59:59 PM.");
 		console.log(false);
 		return false;
 	}
