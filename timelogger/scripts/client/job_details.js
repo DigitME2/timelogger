@@ -478,7 +478,7 @@ function updateJobLogTable(JobId){
 									"dataName":"overtime"
 								},
 								{
-									"headingName":"Last Status at Station",
+									"headingName":"Job Status",
 									"dataName":"workStatus"
 								}
 							]
@@ -523,7 +523,7 @@ function updateJobLogTable(JobId){
 									"dataName":"overtime"
 								},
 								{
-									"headingName":"Job Status at Station",
+									"headingName":"Job Status",
 									"dataName":"workStatus"
 								}
 							]
@@ -718,7 +718,7 @@ function updateStoppagesLogTable(JobId){
 
 				$("#addStoppageStationDropDown").empty();
 				var placeHolder = $("<option>")
-							.text("Select Location....")
+							.text("Select Location...")
 							.attr("value", "");
 				$("#addStoppageStationDropDown").append(placeHolder);
 				var placeHolder = $("<option>")

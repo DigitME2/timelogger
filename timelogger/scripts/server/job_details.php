@@ -779,7 +779,7 @@ function main()
 							"End Time",
 							"Duration",
 							"Overtime",
-							"Job Status at End of Record"
+							"Job Status"
 						);
 
 						if($showQuantityDisplayElements){
@@ -808,7 +808,7 @@ function main()
 							"record End Date",
 							"Worked Duration",
 							"Overtime Duration",
-							"Last Status at Station"
+							"Job Status"
 						);
 
 						if($showQuantityDisplayElements){

@@ -177,6 +177,7 @@ function loadWorkLogRecord(workLogRef){
 			$("#recordDate").val(record.recordDate);
 			$("#startTime").val(record.clockOnTime);
 			$("#endTime").attr("disabled", false);
+			$("#endTime").val(record.clockOffTime);
 			$("#stationId").attr("disabled", false);
 			$("#status").attr("disabled", false);
 			$("#quantityComplete").attr("disabled", false);
