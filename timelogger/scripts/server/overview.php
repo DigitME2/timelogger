@@ -400,7 +400,7 @@ function main()
                     "Worked Time",
                     "Overtime",
                     "Efficiency",
-					"problems",
+					"Problems",
 					"Notes",
 					"Priority"
                 );
@@ -431,6 +431,19 @@ function main()
             $connectedClientData = getConnectedClients($dbConn);
             sendResponseToClient("success",$connectedClientData);
             break;
+		
+		case "getConfigShowQtyComplete":
+			printDebug("Fetching response for Qty Complete");
+			if(showQuantityComplete($dbConn))
+			{
+				sendResponseToClient("success", "true");
+			}
+			else
+			{
+				sendResponseToClient("success", "false");
+			}
+			break;
+
             
         default:
             sendResponseToClient("error","Unknown command: $request");

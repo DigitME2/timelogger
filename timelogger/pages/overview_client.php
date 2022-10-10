@@ -2,13 +2,6 @@
 
 require "client_config.php";
 
-$systemConfig_path = $_SERVER['DOCUMENT_ROOT'] . "/scripts/server/systemConfig.php";
-require $systemConfig_path;
-
-// function showQuantityComplete(){
-// 	return true;
-// }
-
 if($showChargeDisplayElements)
 {
 	$hidenChargeDisplayElements="";
@@ -147,7 +140,7 @@ else
 								<!--<input type="checkbox" id="useSearchPhrase" class="tableControl">
 								<label for="useSearchPhrase">Display jobs containing the specified text</label>-->
 								<br>
-								<label for="searchPhrase">Search Phrase:</label>
+								<label for="searchPhrase">Search jobs:</label>
 								<input type="text" id="searchPhrase" class="tableControl" placeholder="enter search phrase" oninput="onTableDataOptionsChange()"/>
 							</div>
 							<br>
@@ -228,8 +221,8 @@ else
 								<label for="showNotes">Show Notes</label>
 								<input type="checkbox" id="showNotes" onchange="onDisplayOptionsChange()"/>
 
-								<label for="showQuantityComplete" <?php if(showQuantityComplete()==false){ echo("hidden"); } ?> >Show Quantity Completed</label>
-								<input type="checkbox" id="showQuantityComplete" onchange="onDisplayOptionsChange()" <?php if(showQuantityComplete()==false){ echo("hidden"); } ?>/>
+								<label for="showQuantityComplete" id="showQuantityCompleteLabel" hidden >Show Quantity Completed</label>
+								<input type="checkbox" id="showQuantityComplete" onchange="onDisplayOptionsChange()" hidden/>
 								
 								<label for="retainDisplayOptions">Retain Display Options</label>
 								<input type="checkbox" id="retainDisplayOptions" onchange="onDisplayOptionsChange()"/>

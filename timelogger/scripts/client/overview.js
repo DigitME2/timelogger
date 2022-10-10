@@ -14,16 +14,18 @@ limitations under the License. */
 
 var TableData = null;
 var updateRequestNumber = 0;
+var showQuantityComplete;
 
 $(document).ready(function(){
 	sortRadioChange();	
 
 	initDisplayOptions();
+
+	setShowQuantityCompleteVisibilityFromConfig();
 	
     updateJobsData();
     setInterval(function(){updateJobsData();}, 60000);
 });
-
 
 function initDisplayOptions(){
 	
@@ -392,6 +394,9 @@ function updateJobsData(){
 	var dateTimeWorkEndInput = $('#dateTimeWorkEndInput').val()
 	var excludeUnworkedJobs = $('#excludeUnworkedJobs').is(':checked')
 	var useDateTimeWorkedRange = $('#useDateTimeWorkedRange').is(':checked')
+
+	$("#showQuantityComplete").prop("hidden", false);
+	$("#showQuantityCompleteLabel").prop("hidden", false);	
 	
 
 	if(dateTimeWorkStartInput == '' && dateTimeWorkEndInput == ''){
@@ -461,6 +466,40 @@ function updateJobsData(){
             }
         }
     });
+
+}
+
+function setShowQuantityCompleteVisibilityFromConfig(){
+	
+	requestParameter = { "request" : "getConfigShowQtyComplete"};
+	$.ajax({
+		url:"../scripts/server/overview.php",
+		type:"GET",
+		dataType:"text",
+		data:requestParameter,
+		success:function(result){
+			console.log(result);
+			resultJson = $.parseJSON(result);
+			if(resultJson["status"] != "success"){
+				console.log("Failed to get Qty Complete: " + resultJson["result"]);
+				$("#tablePlaceholder").html(resultJson["result"]);
+			}
+			else{
+				if (resultJson["result"] == "true"){
+					showQuantityComplete = true;
+					$("#showQuantityComplete").prop("hidden", false);
+					$("#showQuantityCompleteLabel").prop("hidden", false);					
+				} else {
+					showQuantityComplete = false;
+					$("#showQuantityComplete").prop("hidden", true);
+					$("#showQuantityCompleteLabel").prop("hidden", true);
+				}
+				updateTableDisplay();
+				initDisplayOptions();
+				onDisplayOptionsChange();
+			}
+		}
+	});
 }
 
 function updateTableDisplay(){
@@ -687,7 +726,7 @@ function updateTableDisplay(){
 		);
 	}
 	
-	if(!$("#showQuantityComplete").is(":hidden")){
+	if(showQuantityComplete){
 		if($("#showQuantityComplete").is(":checked")){
 			tableStructure.columns.push(
 				{
@@ -702,6 +741,9 @@ function updateTableDisplay(){
 	$("#currentJobsTableContainer").empty().append(table);
 	updateBodySize();
 }
+
+
+
 
 // function setControlVisibility(){
 // 	if($('#showControlsCheckbox').is(':checked')){
