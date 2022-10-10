@@ -206,14 +206,6 @@ BEGIN
 	
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `addWorkLogRecord` (IN `JobId` VARCHAR(20))  MODIFIES SQL DATA
-BEGIN
-	
-	INSERT INTO `timeLog` (`jobId`, `workStatus`) VALUES (JobId, 'workInProgress');
-    SELECT ref FROM timeLog WHERE jobId = JobId ORDER BY ref DESC LIMIT 1; 
-	
-END$$
-
 CREATE DEFINER=`root`@`localhost` PROCEDURE GetFullJobTimeLog(
     IN JobId VARCHAR(20),
     IN LimitDateRange TINYINT(1),
