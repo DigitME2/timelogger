@@ -92,6 +92,14 @@ BEGIN
 
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addWorkLogRecord` (IN `JobId` VARCHAR(20))  MODIFIES SQL DATA
+BEGIN
+	
+	INSERT INTO `timeLog` (`jobId`, `workStatus`) VALUES (JobId, 'workInProgress');
+    SELECT ref FROM timeLog WHERE jobId = JobId ORDER BY ref DESC LIMIT 1; 
+	
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `CalcWorkedTimes` (IN `JobId` VARCHAR(20), IN `LimitDateRange` TINYINT(1), IN `StartDate` DATE, IN `EndDate` DATE, OUT `WorkedTimeSec` INT, OUT `OvertimeSec` INT)  MODIFIES SQL DATA
 BEGIN
 
@@ -749,7 +757,7 @@ BEGIN
 		SET @conditionPrecederTerm = " AND "; 
 	END IF;		
 		
-		IF ShowPendingJobs IS TRUE AND ShowWorkInProgressJobs IS TRUE AND ShowCompletedJobs IS TRUE THEN
+	IF ShowPendingJobs IS TRUE AND ShowWorkInProgressJobs IS TRUE AND ShowCompletedJobs IS TRUE THEN
 		SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm, "(currentStatus = 'pending' OR currentStatus = 'workInProgress' OR currentStatus = 'complete')");
 		SET @conditionPrecederTerm = " AND "; 
 
@@ -1447,7 +1455,7 @@ INSERT INTO `config` (`paramName`, `paramValue`) VALUES
 ('quantityComplete', 'true'),
 ('configVersion', '1'),
 ('requireStageComplete', 'true'),
-('showQuantityComplete', 'true'),
+('showQuantityComplete', 'false'),
 ('trimLunch', 'false');
 
 -- --------------------------------------------------------
