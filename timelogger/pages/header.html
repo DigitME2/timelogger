@@ -2,8 +2,13 @@
 	<div class="container">
 		<h1 id="commonHeaderTitle">  
 			<a href="overview_client.php">DigitME2 Process Time Tracker</a>
-			<span id="serverAddressResponseField"><?php $localIP = $_SERVER['SERVER_ADDR'];
-				echo "Server IP Address: " . $localIP ?></span>
+			<span id="serverAddressResponseField"><?php 
+				if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+					$output = getHostbyName(getHostName());
+				} else {
+					$output = shell_exec('hostname -I');
+				}
+				echo "Server IP Address: " . $output ?></span>
 			<span id="versionNumber">v2.12</span>
 		</h1>
 	</div>
