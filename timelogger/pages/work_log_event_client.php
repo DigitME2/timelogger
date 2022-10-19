@@ -31,6 +31,8 @@ else
 <meta charset="utf-8">
 <html>
     <head>
+		<title>digitME2 - PTT</title>
+		<link rel="icon" type="image/x-icon" href="favicon.ico">
         <script src="../scripts/client/jquery.js"></script>
         <script src="../scripts/client/work_log_event.js"></script>
         <script src="../scripts/client/generate_table_generic.js"></script>

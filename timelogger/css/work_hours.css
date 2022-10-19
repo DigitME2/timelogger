@@ -21,13 +21,13 @@ limitations under the License. */
 #timeSettingContainer{
 	margin-top:10px;
     display: grid;
-    grid-template-columns: repeat(var(--work-hours-number-columns), 100px);
+    grid-template-columns: repeat(var(--work-hours-number-columns), 180px);
 	align-items: center;
 	grid-row-gap: 1px;
 }
 
 .timeDisplayStart, .timeDisplayEnd, .lunchtimeDisplayStart, .lunchtimeDisplayEnd{
-	width : 70px;
+	width : 150px;
     height: 16px;
 }
 
