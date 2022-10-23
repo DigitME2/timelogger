@@ -269,6 +269,88 @@ BEGIN
 	END IF;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetTimesheet` (IN `UserId` VARCHAR(20), IN `StartDate` DATE, IN `EndDate` DATE)  MODIFIES SQL DATA
+BEGIN
+    
+    
+    
+	
+    CREATE TEMPORARY TABLE jobDurations (recordDate DATE, jobId VARCHAR(20), duration INT, overtimeDuration INT);
+    
+	
+	
+	
+    
+    INSERT INTO jobDurations (recordDate, jobId, duration, overtimeDuration)
+    SELECT
+    recordDate,
+    timeLog.jobId,
+    TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
+    CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
+    FROM timeLog WHERE clockOffTime IS NULL 
+    AND timeLog.userId=UserId
+    AND recordDate >= StartDate
+    AND recordDate <= EndDate;
+	
+	
+	
+	
+    
+    INSERT INTO jobDurations (recordDate, jobId, duration, overtimeDuration)
+    SELECT
+    recordDate,
+    timeLog.jobId,
+    TIME_TO_SEC(TIMEDIFF(clockOffTime, clockOnTime)),
+    CalcOvertimeDuration(clockOnTime, clockOffTime, recordDate)
+    FROM timeLog WHERE clockOffTime IS NOT NULL 
+    AND timeLog.userId=UserId
+    AND recordDate >= StartDate
+    AND recordDate <= EndDate;
+	
+	
+	
+	
+	CREATE INDEX IDX_durations_date_jobId ON jobDurations(recordDate, jobId);
+    
+    SELECT paramValue INTO @allowMultipleClockOn 
+    FROM config WHERE paramName = "allowMultipleClockOn" LIMIT 1;
+    
+	
+	
+	
+    IF @allowMultipleClockOn = "true" THEN
+        SET @totalDuration = -1;
+        SET @totalOvertimeDuration = -1;
+    ELSE
+        SELECT SUM(duration) INTO @totalDuration FROM jobDurations;
+        SELECT SUM(overtimeDuration) INTO @totalOvertimeDuration FROM jobDurations;
+    END IF;
+	
+	
+    SELECT DISTINCT jobId FROM jobDurations ORDER BY jobId ASC;
+
+     
+
+    SELECT 
+        jobDurations.jobId, 
+        jobs.productId
+    FROM jobDurations
+    LEFT JOIN jobs
+    ON jobDurations.jobId = jobs.jobId
+    GROUP BY jobId;
+
+	  
+    SELECT jobId, SUM(duration) AS workedDuration, SUM(overtimeDuration) AS overtimeDuration FROM jobDurations GROUP BY jobId;
+
+    
+	
+	
+	SELECT recordDate, jobId, SUM(duration) AS workedDuration, SUM(overtimeDuration) AS overtimeDuration FROM jobDurations GROUP BY recordDate, jobId ORDER BY recordDate;
+	
+	SELECT @totalDuration, @totalOvertimeDuration;
+
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `clockOffAllUsers` ()  MODIFIES SQL DATA
 BEGIN    
 	-- The current time and date are unboxed ensure that all records are 
