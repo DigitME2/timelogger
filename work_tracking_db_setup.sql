@@ -105,7 +105,7 @@ BEGIN
     SELECT
     TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
     CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
-    FROM timeLog WHERE clockOffTime IS NULL AND stationId IS NOT NULL AND userId IS NOT NULL AND clockOnTime IS NOT NULL AND recordDate IS NOT NULL AND timeLog.jobId='",JobId,"' ");
+    FROM timeLog WHERE clockOffTime IS NULL AND timeLog.jobId='",JobId,"' ");
     
     IF LimitDateRange THEN
         SET @query = CONCAT(@query, " AND timeLog.recordDate >= '", StartDate, "' AND timeLog.recordDate <= '", EndDate, "'");
@@ -912,8 +912,7 @@ BEGIN
 		TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
 		CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
 		FROM timeLog
-		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.stationId IS NOT NULL)
-		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timelog.recordDate IS NOT NULL);
+		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds);
 
 		INSERT INTO closedRecords(jobId, closedDuration, closedOvertimeDuration, quantityComplete)
 		SELECT 
@@ -922,8 +921,7 @@ BEGIN
 		timeLog.overtimeDuration,
 		timeLog.quantityComplete
 		FROM timeLog
-		WHERE clockOffTime IS NOT NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.stationId IS NOT NULL)
-		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timelog.recordDate IS NOT NULL);
+		WHERE clockOffTime IS NOT NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds);
 		-- timelog.quantitycomplete add to the above tble
 		-- remove the below
 
@@ -934,8 +932,7 @@ BEGIN
 		TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
 		CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
 		FROM timeLog
-		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd) AND (timeLog.stationId IS NOT NULL)
-		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timelog.recordDate IS NOT NULL);
+		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd);
 
 		INSERT INTO closedRecords(jobId, closedDuration, closedOvertimeDuration, quantityComplete)
 		SELECT 
@@ -944,8 +941,7 @@ BEGIN
 		timeLog.overtimeDuration,
 		timeLog.quantityComplete
 		FROM timeLog
-		WHERE clockOffTime IS NOT NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd) AND (timeLog.stationId IS NOT NULL)
-		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timelog.recordDate IS NOT NULL);
+		WHERE clockOffTime IS NOT NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd);
 
 	END IF;
 	--  ... else if true
