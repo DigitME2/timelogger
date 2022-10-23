@@ -92,14 +92,6 @@ BEGIN
 
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `addWorkLogRecord` (IN `JobId` VARCHAR(20))  MODIFIES SQL DATA
-BEGIN
-	
-	INSERT INTO `timeLog` (`jobId`, `workStatus`) VALUES (JobId, 'workInProgress');
-    SELECT ref FROM timeLog WHERE jobId = JobId ORDER BY ref DESC LIMIT 1; 
-	
-END$$
-
 CREATE DEFINER=`root`@`localhost` PROCEDURE `CalcWorkedTimes` (IN `JobId` VARCHAR(20), IN `LimitDateRange` TINYINT(1), IN `StartDate` DATE, IN `EndDate` DATE, OUT `WorkedTimeSec` INT, OUT `OvertimeSec` INT)  MODIFIES SQL DATA
 BEGIN
 
@@ -113,7 +105,7 @@ BEGIN
     SELECT
     TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
     CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
-    FROM timeLog WHERE clockOffTime IS NULL AND timeLog.jobId='",JobId,"' ");
+    FROM timeLog WHERE clockOffTime IS NULL AND stationId IS NOT NULL AND userId IS NOT NULL AND clockOnTime IS NOT NULL AND recordDate IS NOT NULL AND timeLog.jobId='",JobId,"' ");
     
     IF LimitDateRange THEN
         SET @query = CONCAT(@query, " AND timeLog.recordDate >= '", StartDate, "' AND timeLog.recordDate <= '", EndDate, "'");
@@ -168,6 +160,7 @@ BEGIN
     SET @totalOvertime = @totalOvertime + (SELECT SUM(openOvertimeDuration) FROM openTimes);
     
 	SELECT @totalWorkedTime, @totalOvertime INTO WorkedTimeSec, OvertimeSec;
+
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `changeWorkLogRecord` (IN `workLogRef` VARCHAR(20), IN `station` VARCHAR(50), IN `userId` VARCHAR(20), IN `recordDate` DATE, IN `clockOnTime` TIME, IN `clockOffTime` TIME, IN `clockOffTimeValid` TINYINT(1), IN `workStatus` VARCHAR(20), IN `quantityComplete` INT(11))  MODIFIES SQL DATA
@@ -203,6 +196,14 @@ BEGIN
 
 	SELECT "success" as result;
 	
+	
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addWorkLogRecord` (IN `JobId` VARCHAR(20))  MODIFIES SQL DATA
+BEGIN
+	
+	INSERT INTO `timeLog` (`jobId`, `workStatus`) VALUES (JobId, 'workInProgress');
+    SELECT ref FROM timeLog WHERE jobId = JobId ORDER BY ref DESC LIMIT 1; 
 	
 END$$
 
@@ -829,7 +830,8 @@ BEGIN
 		TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
 		CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
 		FROM timeLog
-		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds);
+		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.stationId IS NOT NULL)
+		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timelog.recordDate IS NOT NULL);
 
 		INSERT INTO closedRecords(jobId, closedDuration, closedOvertimeDuration, quantityComplete)
 		SELECT 
@@ -849,7 +851,8 @@ BEGIN
 		TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
 		CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
 		FROM timeLog
-		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd);
+		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd) AND (timeLog.stationId IS NOT NULL)
+		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timelog.recordDate IS NOT NULL);
 
 		INSERT INTO closedRecords(jobId, closedDuration, closedOvertimeDuration, quantityComplete)
 		SELECT 
@@ -978,38 +981,8 @@ BEGIN
     DROP TABLE openTimes;
 	DROP TABLE closedRecords;
     DROP TABLE selectedJobIds;
-
+	
 END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetStoppagesLog` (IN `JobId` VARCHAR(20))  MODIFIES SQL DATA
-BEGIN
-	CREATE TEMPORARY TABLE stoppagesLogData AS SELECT * FROM stoppagesLog WHERE stoppagesLog.jobId=JobId;
-	
---	SET @now = CURRENT_TIME;
-	
---    UPDATE timeLogData 
---	SET workedDuration = TIME_TO_SEC(TIMEDIFF(@now, clockOnTime)),
---	overtimeDuration = CalcOvertimeDuration(clockOnTime, @now, recordDate)
---	WHERE workedDuration IS NULL;
-	
-	-- control selection within date range
-	SELECT
-	ref,
-	jobId,
-	stationId,
-	stoppageReasonName,
-	description,
-	startTime,
-	endTime,
-	startDate,
-	endDate,
-	duration,
-	status
-	FROM stoppagesLogData
-	JOIN stoppageReasons ON stoppagesLogData.stoppageReasonId = stoppageReasons.stoppageReasonId
-	ORDER BY recordTimeStamp DESC;
-
- END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetTimesheet` (IN `UserId` VARCHAR(20), IN `StartDate` DATE, IN `EndDate` DATE)  MODIFIES SQL DATA
 BEGIN
@@ -1465,7 +1438,7 @@ INSERT INTO `config` (`paramName`, `paramValue`) VALUES
 ('quantityComplete', 'true'),
 ('configVersion', '1'),
 ('requireStageComplete', 'true'),
-('showQuantityComplete', 'false'),
+('showQuantityComplete', 'true'),
 ('trimLunch', 'false');
 
 -- --------------------------------------------------------
@@ -1788,6 +1761,15 @@ DELIMITER $$
 --
 -- Events
 --
+
+-- This is to remove the null rows from timeLog 
+DELETE FROM `timeLog`
+WHERE `stationId` IS NULL
+AND `userId` IS NULL
+AND `recordDate` IS NULL
+AND `clockOnTime` IS NULL;
+
+
 CREATE DEFINER=`root`@`localhost` EVENT `autoClockOff` ON SCHEDULE EVERY 1 DAY STARTS '2018-08-13 23:59:00' ON COMPLETION PRESERVE ENABLE DO CALL clockOffAllUsers()$$
 
 DELIMITER ;
