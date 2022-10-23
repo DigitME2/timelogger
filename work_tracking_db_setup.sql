@@ -830,8 +830,7 @@ BEGIN
 		TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
 		CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
 		FROM timeLog
-		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.stationId IS NOT NULL)
-		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timelog.recordDate IS NOT NULL);
+		WHERE (clockOffTime IS NULL AND stationId IS NOT NULL AND userId IS NOT NULL AND clockOnTime IS NOT NULL recordDate IS NOT NULL) AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds);
 
 		INSERT INTO closedRecords(jobId, closedDuration, closedOvertimeDuration, quantityComplete)
 		SELECT 
@@ -851,8 +850,7 @@ BEGIN
 		TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
 		CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
 		FROM timeLog
-		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd) AND (timeLog.stationId IS NOT NULL)
-		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timelog.recordDate IS NOT NULL);
+		WHERE (clockOffTime IS NULL AND stationId IS NOT NULL AND userId IS NOT NULL AND clockOnTime IS NOT NULL recordDate IS NOT NULL) AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd);
 
 		INSERT INTO closedRecords(jobId, closedDuration, closedOvertimeDuration, quantityComplete)
 		SELECT 
