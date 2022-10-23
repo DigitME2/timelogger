@@ -1762,14 +1762,6 @@ DELIMITER $$
 -- Events
 --
 
--- This is to remove the null rows from timeLog 
-
--- DELETE FROM `timeLog`
--- WHERE `stationId` IS NULL
--- OR `userId` IS NULL
--- OR `recordDate` IS NULL
--- OR `clockOnTime` IS NULL;
-
 
 CREATE DEFINER=`root`@`localhost` EVENT `autoClockOff` ON SCHEDULE EVERY 1 DAY STARTS '2018-08-13 23:59:00' ON COMPLETION PRESERVE ENABLE DO CALL clockOffAllUsers()$$
 
