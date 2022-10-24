@@ -38,7 +38,7 @@ else
 		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 		See the License for the specific language governing permissions and
 		limitations under the License. -->
-        <title>digitME2 - PTT</title>
+        <title>DigitME2 - PTT</title>
 		<link rel="icon" type="image/x-icon" href="favicon.ico">
         <script src="../scripts/client/jquery.js"></script>
         <script src="../scripts/client/overview.js"></script>
