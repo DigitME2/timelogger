@@ -246,7 +246,7 @@ else
 									<td>Urgent</td>
 								</tr>
 								<tr class="priority_High highlight">
-									<td>Hight Priority</td>
+									<td>High Priority</td>
 								</tr>
 								<tr class="priority_Medium highlight">
 									<td>Medium Priority</td>
