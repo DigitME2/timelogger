@@ -105,7 +105,7 @@ BEGIN
     SELECT
     TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
     CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
-    FROM timeLog WHERE clockOffTime IS NULL AND timeLog.jobId='",JobId,"' ");
+    FROM timeLog WHERE clockOffTime IS NULL AND stationId IS NOT NULL AND userId IS NOT NULL AND clockOnTime IS NOT NULL AND recordDate IS NOT NULL AND timeLog.jobId='",JobId,"' ");
     
     IF LimitDateRange THEN
         SET @query = CONCAT(@query, " AND timeLog.recordDate >= '", StartDate, "' AND timeLog.recordDate <= '", EndDate, "'");
@@ -267,88 +267,6 @@ BEGIN
 	IF @ExistingRouteName != InputRouteName THEN
 		UPDATE timeLog SET routeStageIndex = -1 WHERE timeLog.jobId = JobId;
 	END IF;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetTimesheet` (IN `UserId` VARCHAR(20), IN `StartDate` DATE, IN `EndDate` DATE)  MODIFIES SQL DATA
-BEGIN
-    
-    
-    
-	
-    CREATE TEMPORARY TABLE jobDurations (recordDate DATE, jobId VARCHAR(20), duration INT, overtimeDuration INT);
-    
-	
-	
-	
-    
-    INSERT INTO jobDurations (recordDate, jobId, duration, overtimeDuration)
-    SELECT
-    recordDate,
-    timeLog.jobId,
-    TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
-    CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
-    FROM timeLog WHERE clockOffTime IS NULL 
-    AND timeLog.userId=UserId
-    AND recordDate >= StartDate
-    AND recordDate <= EndDate;
-	
-	
-	
-	
-    
-    INSERT INTO jobDurations (recordDate, jobId, duration, overtimeDuration)
-    SELECT
-    recordDate,
-    timeLog.jobId,
-    TIME_TO_SEC(TIMEDIFF(clockOffTime, clockOnTime)),
-    CalcOvertimeDuration(clockOnTime, clockOffTime, recordDate)
-    FROM timeLog WHERE clockOffTime IS NOT NULL 
-    AND timeLog.userId=UserId
-    AND recordDate >= StartDate
-    AND recordDate <= EndDate;
-	
-	
-	
-	
-	CREATE INDEX IDX_durations_date_jobId ON jobDurations(recordDate, jobId);
-    
-    SELECT paramValue INTO @allowMultipleClockOn 
-    FROM config WHERE paramName = "allowMultipleClockOn" LIMIT 1;
-    
-	
-	
-	
-    IF @allowMultipleClockOn = "true" THEN
-        SET @totalDuration = -1;
-        SET @totalOvertimeDuration = -1;
-    ELSE
-        SELECT SUM(duration) INTO @totalDuration FROM jobDurations;
-        SELECT SUM(overtimeDuration) INTO @totalOvertimeDuration FROM jobDurations;
-    END IF;
-	
-	
-    SELECT DISTINCT jobId FROM jobDurations ORDER BY jobId ASC;
-
-     
-
-    SELECT 
-        jobDurations.jobId, 
-        jobs.productId
-    FROM jobDurations
-    LEFT JOIN jobs
-    ON jobDurations.jobId = jobs.jobId
-    GROUP BY jobId;
-
-	  
-    SELECT jobId, SUM(duration) AS workedDuration, SUM(overtimeDuration) AS overtimeDuration FROM jobDurations GROUP BY jobId;
-
-    
-	
-	
-	SELECT recordDate, jobId, SUM(duration) AS workedDuration, SUM(overtimeDuration) AS overtimeDuration FROM jobDurations GROUP BY recordDate, jobId ORDER BY recordDate;
-	
-	SELECT @totalDuration, @totalOvertimeDuration;
-
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `clockOffAllUsers` ()  MODIFIES SQL DATA
@@ -808,7 +726,7 @@ BEGIN
 	
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetOverviewData` (IN `UseSearchKey` TINYINT(1), IN `SearchKey` VARCHAR(200), IN `ShowPendingJobs` TINYINT(1), IN `ShowWorkInProgressJobs` TINYINT(1), IN `ShowCompletedJobs` TINYINT(1), IN `LimitDateCreatedRange` TINYINT(1), IN `DateCreatedStart` DATE, IN `DateCreatedEnd` DATE, IN `LimitDateDueRange` TINYINT(1), IN `DateDueStart` DATE, IN `DateDueEnd` DATE, IN `LimitDateTimeWorkedRange` TINYINT(1), IN `DateTimeWorkStart` DATE, IN `DateTimeWorkEnd` DATE, IN `ExcludeUnworkedJobs` TINYINT(1), IN `ShowOnlyUrgentJobs` TINYINT(1), IN `ShowOnlyNonurgentJobs` TINYINT(1), IN `OrderByCreatedAsc` TINYINT(1), IN `OrderByCreatedDesc` TINYINT(1), IN `OrderByDueAsc` TINYINT(1), IN `OrderByDueDesc` TINYINT(1), IN `OrderByJobId` TINYINT(1), IN `OrderBypriority` TINYINT(1), IN `SubOrderByPriority` TINYINT(1))  MODIFIES SQL DATA
+CREATE PROCEDURE `GetOverviewData` (IN `UseSearchKey` TINYINT(1), IN `SearchKey` VARCHAR(200), IN `ShowPendingJobs` TINYINT(1), IN `ShowWorkInProgressJobs` TINYINT(1), IN `ShowCompletedJobs` TINYINT(1), IN `LimitDateCreatedRange` TINYINT(1), IN `DateCreatedStart` DATE, IN `DateCreatedEnd` DATE, IN `LimitDateDueRange` TINYINT(1), IN `DateDueStart` DATE, IN `DateDueEnd` DATE, IN `LimitDateTimeWorkedRange` TINYINT(1), IN `DateTimeWorkStart` DATE, IN `DateTimeWorkEnd` DATE, IN `ExcludeUnworkedJobs` TINYINT(1), IN `ShowOnlyUrgentJobs` TINYINT(1), IN `ShowOnlyNonurgentJobs` TINYINT(1), IN `OrderByCreatedAsc` TINYINT(1), IN `OrderByCreatedDesc` TINYINT(1), IN `OrderByDueAsc` TINYINT(1), IN `OrderByDueDesc` TINYINT(1), IN `OrderByJobId` TINYINT(1), IN `OrderBypriority` TINYINT(1), IN `SubOrderByPriority` TINYINT(1)) MODIFIES SQL DATA 
 BEGIN
     CREATE TEMPORARY TABLE openTimes (jobId VARCHAR(20), openDuration INT, openOvertimeDuration INT);
     CREATE TEMPORARY TABLE selectedJobIds (counter INT PRIMARY KEY AUTO_INCREMENT, jobId VARCHAR(20));
@@ -912,7 +830,8 @@ BEGIN
 		TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
 		CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
 		FROM timeLog
-		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds);
+		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.stationId IS NOT NULL)
+		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timelog.recordDate IS NOT NULL);
 
 		INSERT INTO closedRecords(jobId, closedDuration, closedOvertimeDuration, quantityComplete)
 		SELECT 
@@ -932,7 +851,8 @@ BEGIN
 		TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
 		CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
 		FROM timeLog
-		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd);
+		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd) AND (timeLog.stationId IS NOT NULL)
+		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timelog.recordDate IS NOT NULL);
 
 		INSERT INTO closedRecords(jobId, closedDuration, closedOvertimeDuration, quantityComplete)
 		SELECT 
@@ -1061,6 +981,90 @@ BEGIN
     DROP TABLE openTimes;
 	DROP TABLE closedRecords;
     DROP TABLE selectedJobIds;
+	
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetTimesheet` (IN `UserId` VARCHAR(20), IN `StartDate` DATE, IN `EndDate` DATE)  MODIFIES SQL DATA
+BEGIN
+    -- Calculates the total worked time and total overtime, including currently open jobs.
+    -- See method used in overview.sql
+    
+	-- DROP TABLE IF EXISTS jobDurations;
+    CREATE TEMPORARY TABLE jobDurations (recordDate DATE, jobId VARCHAR(20), duration INT, overtimeDuration INT);
+    
+	-- test
+	-- SELECT * FROM jobDurations;
+	
+    -- handle open records first
+    INSERT INTO jobDurations (recordDate, jobId, duration, overtimeDuration)
+    SELECT
+    recordDate,
+    timeLog.jobId,
+    TIME_TO_SEC(TIMEDIFF(CURRENT_TIME, clockOnTime)),
+    CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
+    FROM timeLog WHERE clockOffTime IS NULL 
+    AND timeLog.userId=UserId
+    AND recordDate >= StartDate
+    AND recordDate <= EndDate;
+	
+	-- test
+	-- SELECT * FROM jobDurations;
+	
+    -- Then the rest of the records
+    INSERT INTO jobDurations (recordDate, jobId, duration, overtimeDuration)
+    SELECT
+    recordDate,
+    timeLog.jobId,
+    TIME_TO_SEC(TIMEDIFF(clockOffTime, clockOnTime)),
+    CalcOvertimeDuration(clockOnTime, clockOffTime, recordDate)
+    FROM timeLog WHERE clockOffTime IS NOT NULL 
+    AND timeLog.userId=UserId
+    AND recordDate >= StartDate
+    AND recordDate <= EndDate;
+	
+	-- test
+	-- SELECT * FROM jobDurations;
+	
+	CREATE INDEX IDX_durations_date_jobId ON jobDurations(recordDate, jobId);
+    
+    SELECT paramValue INTO @allowMultipleClockOn 
+    FROM config WHERE paramName = "allowMultipleClockOn" LIMIT 1;
+    
+	-- Note that if multiple jobs may be clocked onto simultaneously by a 
+	-- single user, then the total worked time and overtime is considered
+	-- to be undefined.
+    IF @allowMultipleClockOn = "true" THEN
+        SET @totalDuration = -1;
+        SET @totalOvertimeDuration = -1;
+    ELSE
+        SELECT SUM(duration) INTO @totalDuration FROM jobDurations;
+        SELECT SUM(overtimeDuration) INTO @totalOvertimeDuration FROM jobDurations;
+    END IF;
+	
+	-- Create a list of unique IDs. This is returned as the first of two results sets.
+    SELECT DISTINCT jobId FROM jobDurations ORDER BY jobId ASC;
+
+     -- This is for getting Product Ids
+
+    SELECT 
+        jobDurations.jobId, 
+        jobs.productId
+    FROM jobDurations
+    LEFT JOIN jobs
+    ON jobDurations.jobId = jobs.jobId
+    GROUP BY jobId;
+
+	  -- This is for getting Aggregate Times 
+    SELECT jobId, SUM(duration) AS workedDuration, SUM(overtimeDuration) AS overtimeDuration FROM jobDurations GROUP BY jobId;
+
+    -- select the times from the table, ordered appropriately. This following result set is 
+	-- processed into the rows and columns of a time sheet in the PHP code that called 
+	-- this procedure.
+	SELECT recordDate, jobId, SUM(duration) AS workedDuration, SUM(overtimeDuration) AS overtimeDuration FROM jobDurations GROUP BY recordDate, jobId ORDER BY recordDate;
+	
+	SELECT @totalDuration, @totalOvertimeDuration;
+
+    	
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetWorkedTimes` (IN `JobId` VARCHAR(20), IN `LimitDateRange` TINYINT(1), IN `StartDate` DATE, IN `EndDate` DATE)  MODIFIES SQL DATA
@@ -1757,6 +1761,14 @@ DELIMITER $$
 --
 -- Events
 --
+
+-- This is to remove the null rows from timeLog 
+
+DELETE FROM `timeLog`
+WHERE `stationId` IS NULL
+OR `userId` IS NULL
+OR `recordDate` IS NULL
+OR `clockOnTime` IS NULL;
 
 
 CREATE DEFINER=`root`@`localhost` EVENT `autoClockOff` ON SCHEDULE EVERY 1 DAY STARTS '2018-08-13 23:59:00' ON COMPLETION PRESERVE ENABLE DO CALL clockOffAllUsers()$$
