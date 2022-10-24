@@ -831,7 +831,7 @@ BEGIN
 		CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
 		FROM timeLog
 		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.stationId IS NOT NULL)
-		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timelog.recordDate IS NOT NULL);
+		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timeLog.recordDate IS NOT NULL);
 
 		INSERT INTO closedRecords(jobId, closedDuration, closedOvertimeDuration, quantityComplete)
 		SELECT 
@@ -852,7 +852,7 @@ BEGIN
 		CalcOvertimeDuration(clockOnTime, CURRENT_TIME, CURRENT_DATE)
 		FROM timeLog
 		WHERE clockOffTime IS NULL AND timeLog.jobId IN (SELECT jobId FROM selectedJobIds) AND (timeLog.recordDate >= DateTimeWorkStart AND timeLog.recordDate <= DateTimeWorkEnd) AND (timeLog.stationId IS NOT NULL)
-		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timelog.recordDate IS NOT NULL);
+		AND (timeLog.userId IS NOT NULL) AND (timeLog.clockOnTime IS NOT NULL) AND (timeLog.recordDate IS NOT NULL);
 
 		INSERT INTO closedRecords(jobId, closedDuration, closedOvertimeDuration, quantityComplete)
 		SELECT 
