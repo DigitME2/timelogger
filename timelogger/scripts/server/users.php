@@ -19,15 +19,11 @@
 // terminates
 require "db_params.php";
 require "common.php";
-require_once "paths.php";
 
-// $UserQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedUserQrCodes/";
-// $UserQrCodeDirRelativeToPage = "../generatedUserQrCodes/";
+$UserQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedUserQrCodes/";
+$UserQrCodeDirRelativeToPage = "../generatedUserQrCodes/";
 
 $Debug = false;
-
-//$UserQrCodeDirAbs = "/var/www/html/timelogger/generatedUserQrCodes/";
-//$UserQrCodeDirRelativeToPage = "../generatedUserQrCodes/";
 
 function addUser($DbConn, $UserName)
 {

@@ -20,7 +20,7 @@ $(document).ready(function(){
 	sortRadioChange();	
 
 	initDisplayOptions();
-
+	
 	setShowQuantityCompleteVisibilityFromConfig();
 	
     updateJobsData();
@@ -376,7 +376,8 @@ function updateJobsData(){
 		$("#dateTimeWorkStartInput").prop("disabled",true);
 		$("#dateTimeWorkEndInput").prop("disabled",true);
 		$("#excludeUnworkedJobs").prop("disabled",true);
-		$("#excludeUnworkedJobs").prop(':checked', true);
+		$("#excludeUnworkedJobs").prop(':checked', false);
+		
 	}
 
 	if($("#useDateCreatedRange").is(':checked'))

@@ -171,13 +171,11 @@ function loadWorkLogRecord(workLogRef){
 				}
 			}
 			disableControls(false);
-		
+
+
 			//Populate Page
 			$("#jobId").html(record.jobId);
-			$("#recordDate").val(record.recordDate);
-			$("#startTime").val(record.clockOnTime);
 			$("#endTime").attr("disabled", false);
-			$("#endTime").val(record.clockOffTime);
 			$("#stationId").attr("disabled", false);
 			$("#status").attr("disabled", false);
 			$("#quantityComplete").attr("disabled", false);
@@ -185,7 +183,6 @@ function loadWorkLogRecord(workLogRef){
 			$("#overtime").html(record.overtimeDuration);
 			$("#status").val(record.workStatus);
 			$("#quantityComplete").val(record.quantityComplete);
-
 			$("#btnSaveChanges").attr("disabled", true);
 			
 			if(inputsFormValidRecord()){
@@ -224,6 +221,7 @@ function inputsFormValidRecord(){
 function invalidClockOff(){
 	if(($("#endTime").val()) !== "00:00:00")
 	{
+		$("#saveChangesFeedback").html("");
 		console.log(true);
 		return true;
 	}

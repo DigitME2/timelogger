@@ -17,25 +17,15 @@
 
 // Various functions used throughout the server software.
 require_once "phpqrcode/qrlib.php";
-require_once "paths.php";
 
-// $JobQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedJobQrCodes/";
-// $JobQrCodeDirRelativeToPage = "../generatedJobQrCodes/";
+$JobQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedJobQrCodes/";
+$JobQrCodeDirRelativeToPage = "../generatedJobQrCodes/";
 
-// $ProductQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedProductQrCodes/";
-// $ProductQrCodeDirRelativeToPage = "../generatedProductQrCodes/";
+$ProductQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedProductQrCodes/";
+$ProductQrCodeDirRelativeToPage = "../generatedProductQrCodes/";
 
-// $StoppageReasonQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedStoppageReasonQrCodes/";
-// $StoppageReasonQrCodeDirRelativeToPage = "../generatedStoppageReasonQrCodes/";
-
-//$JobQrCodeDirAbs = "/var/www/html/timelogger/generatedJobQrCodes/";
-//$JobQrCodeDirRelativeToPage = "../generatedJobQrCodes/";
-
-//$ProductQrCodeDirAbs = "/var/www/html/timelogger/generatedProductQrCodes/";
-//$ProductQrCodeDirRelativeToPage = "../generatedProductQrCodes/";
-
-//$StoppageReasonQrCodeDirAbs = "/var/www/html/timelogger/generatedStoppageReasonQrCodes/";
-//$StoppageReasonQrCodeDirRelativeToPage = "../generatedStoppageReasonQrCodes/";
+$StoppageReasonQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedStoppageReasonQrCodes/";
+$StoppageReasonQrCodeDirRelativeToPage = "../generatedStoppageReasonQrCodes/";
 
 $productIDCodePrefix = 'pdrt_';
 $stoppageReasonIDCodePrefix = 'stpg_';

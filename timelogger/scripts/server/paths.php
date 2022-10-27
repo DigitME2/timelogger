@@ -1,50 +1,55 @@
-<?php
+<?
 
-$envVersion = "linux";
-//$envVersion = "windows";
-//$envVersion = "xampp_docker";
+//  Copyright 2022 DigitME2
 
-if($envVersion == "linux")
-{
-	$JobQrCodeDirAbs = "/var/www/html/timelogger/generatedJobQrCodes/";
-	$JobQrCodeDirRelativeToPage = "../generatedJobQrCodes/";
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 
-	$ProductQrCodeDirAbs = "/var/www/html/timelogger/generatedProductQrCodes/";
-	$ProductQrCodeDirRelativeToPage = "../generatedProductQrCodes/";
+//      http://www.apache.org/licenses/LICENSE-2.0
 
-	$StoppageReasonQrCodeDirAbs = "/var/www/html/timelogger/generatedStoppageReasonQrCodes/";
-	$StoppageReasonQrCodeDirRelativeToPage = "../generatedStoppageReasonQrCodes/";
-	
-	$UserQrCodeDirAbs = "/var/www/html/timelogger/generatedUserQrCodes/";
-	$UserQrCodeDirRelativeToPage = "../generatedUserQrCodes/";
-}
-else if($envVersion == "windows")
-{
-	$JobQrCodeDirAbs = "";
-	$JobQrCodeDirRelativeToPage = "../generatedJobQrCodes/";
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
-	$ProductQrCodeDirAbs = "";
-	$ProductQrCodeDirRelativeToPage = "../generatedProductQrCodes/";
+    $sysOS = "linux";
 
-	$StoppageReasonQrCodeDirAbs = "";
-	$StoppageReasonQrCodeDirRelativeToPage = "../generatedStoppageReasonQrCodes/";
-	
-	$UserQrCodeDirAbs = "";
-	$UserQrCodeDirRelativeToPage = "../generatedUserQrCodes/";
-}
-else if($envVersion == "xampp_docker")
-{
-	$JobQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedJobQrCodes/";
-	$JobQrCodeDirRelativeToPage = "../generatedJobQrCodes/";
+    if (($sysOS) == "windows") {    
 
-	$ProductQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedProductQrCodes/";
-	$ProductQrCodeDirRelativeToPage = "../generatedProductQrCodes/";
+        $JobQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedJobQrCodes/";
+        $JobQrCodeDirRelativeToPage = "../generatedJobQrCodes/";
 
-	$StoppageReasonQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedStoppageReasonQrCodes/";
-	$StoppageReasonQrCodeDirRelativeToPage = "../generatedStoppageReasonQrCodes/";
-	
-	$UserQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedUserQrCodes/";
-	$UserQrCodeDirRelativeToPage = "../generatedUserQrCodes/";
-}
+        $ProductQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedProductQrCodes/";
+        $ProductQrCodeDirRelativeToPage = "../generatedProductQrCodes/";
 
+        $StoppageReasonQrCodeDirAbs = "C:/xampp/htdocs/timelogger/generatedStoppageReasonQrCodes/";
+        $StoppageReasonQrCodeDirRelativeToPage = "../generatedStoppageReasonQrCodes/";
+
+    } elseif (($sysos) == "linux") {
+
+        $JobQrCodeDirAbs = "/var/www/html/timelogger/generatedJobQrCodes/";
+        $JobQrCodeDirRelativeToPage = "../generatedJobQrCodes/";
+
+        $ProductQrCodeDirAbs = "/var/www/html/timelogger/generatedProductQrCodes/";
+        $ProductQrCodeDirRelativeToPage = "../generatedProductQrCodes/";
+
+        $StoppageReasonQrCodeDirAbs = "/var/www/html/timelogger/generatedStoppageReasonQrCodes/";
+        $StoppageReasonQrCodeDirRelativeToPage = "../generatedStoppageReasonQrCodes/";
+
+    } elseif (($sysos) == "lampp") {
+
+        $JobQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedJobQrCodes/";
+        $JobQrCodeDirRelativeToPage = "../generatedJobQrCodes/";
+
+        $ProductQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedProductQrCodes/";
+        $ProductQrCodeDirRelativeToPage = "../generatedProductQrCodes/";
+
+        $StoppageReasonQrCodeDirAbs = "/opt/lampp/htdocs/timelogger/generatedStoppageReasonQrCodes/";
+        $StoppageReasonQrCodeDirRelativeToPage = "../generatedStoppageReasonQrCodes/";
+
+    }
+
+    
 ?>
