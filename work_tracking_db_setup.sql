@@ -599,6 +599,37 @@ BEGIN
 	
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetStoppagesLog`(IN `JobId` VARCHAR(20))
+    MODIFIES SQL DATA
+BEGIN
+	CREATE TEMPORARY TABLE stoppagesLogData AS SELECT * FROM stoppagesLog WHERE stoppagesLog.jobId=JobId;
+	
+
+	
+
+
+
+
+	
+	
+	SELECT
+	ref,
+	jobId,
+	stationId,
+	stoppageReasonName,
+	description,
+	startTime,
+	endTime,
+	startDate,
+	endDate,
+	duration,
+	status
+	FROM stoppagesLogData
+	JOIN stoppageReasons ON stoppagesLogData.stoppageReasonId = stoppageReasons.stoppageReasonId
+	ORDER BY recordTimeStamp DESC;
+
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetCollapsedJobTimeLog` (IN `JobId` VARCHAR(20), IN `LimitDateRange` TINYINT(1), IN `StartDate` DATE, IN `EndDate` DATE)  MODIFIES SQL DATA
 BEGIN
 
