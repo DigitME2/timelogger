@@ -120,6 +120,32 @@ function clockOffUser($DbConn, $ref)
     return $result;
 }
 
+function GetUserStatus($DbConn, $userId) 
+{
+
+    $query = "SELECT jobId, stationId FROM `timeLog` WHERE clockOffTime IS NULL AND userId=?;";
+    $statement =  $DbConn->prepare($query);
+    $statement->bind_param('s', $userId);
+    $statement->execute();
+    $res = $statement->get_result();
+    if ($res->num_rows == 0)
+        $response = array("status"=>"clockedOff");
+    else
+    {
+        $row = $res->fetch_assoc();
+        $jobId = $row["jobId"];
+        $productId = getProductID($DbConn, $row["jobId"]);
+        $stationId = $row["stationId"];
+        $response = array(
+            "status"=>"clockedOn",
+            "jobId"=>$jobId,
+            "productId"=>$productId,
+            "stationId"=>$stationId
+        );
+    }
+    return $response;
+}
+
 function main()
 {
     global $dbParamsServerName;
@@ -148,6 +174,15 @@ function main()
             	sendResponseToClient("success", $result);
 			else
 				sendResponseToClient("error", $result);
+            break;
+        case "GetUserStatus":
+            printDebug("Getting the user status..");
+            $userId = $_GET["userId"];
+            $response = GetUserStatus($dbConn, $userId);
+            if ($response == "clockedOff" || "clockedOn")
+                sendResponseToClient("success", $response);
+            else
+                sendResponseToClient("error", $response);
             break;
     }
 }
