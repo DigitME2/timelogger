@@ -20,7 +20,7 @@ After=network.target
 [Service]
 User=root
 Group=www-data
-WorkingDirectory=/etc/systemd/system/
+WorkingDirectory=/var/www/
 ExecStart=/usr/bin/python3 device_discovery.py
 Restart=always
 
