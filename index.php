@@ -25,7 +25,6 @@
                 $uri = 'http://';
         }
         $uri .= $_SERVER['HTTP_HOST'];
-        header('Location: '.$uri.'/timelogger/');
+        header('Location: '.$uri.'/timelogger/pages/overview_client.php');
         exit;
 ?>
-Something is wrong with the XAMPP installation :-(
