@@ -45,19 +45,6 @@ function addStoppageReason($DbConn, $stoppageReason)
 
     printDebug("Adding new Stoppage Reason $stoppageReason");
 
-    $query = "INSERT INTO stoppageReasons (stoppageReasonId, stoppageReasonName) VALUES (?, ?)";
-    
-    if(!($statement = $DbConn->prepare($query)))
-        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-    if(!($statement->bind_param('ss', $newStoppageReasonId, $stoppageReason)))
-        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    if(!$statement->execute())
-        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    return $newStoppageReasonId;
-
     $query = "SELECT COUNT(stoppageReasonName) FROM stoppagereasons WHERE stoppagereasons.stoppageReasonName=?";
     
     if(!($statement = $DbConn->prepare($query)))
@@ -76,6 +63,19 @@ function addStoppageReason($DbConn, $stoppageReason)
         printDebug("Error: Stoppage Reason Name already exists");
         return false;
     }
+
+    $query = "INSERT INTO stoppageReasons (stoppageReasonId, stoppageReasonName, stoppageReasonIdIndex) VALUES (?, ?, ?)";
+    
+    if(!($statement = $DbConn->prepare($query)))
+        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+    
+    if(!($statement->bind_param('ssi', $newStoppageReasonId, $stoppageReason, $newStoppageReasonIdNum)))
+        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    if(!$statement->execute())
+        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    return $newStoppageReasonId;
     
 }
 
