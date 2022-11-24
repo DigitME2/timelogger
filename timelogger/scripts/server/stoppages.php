@@ -26,9 +26,6 @@ function addStoppageReason($DbConn, $stoppageReason)
 {	
 	global $stoppageReasonIDCodePrefix;
 
-    printDebug("Adding new Stoppage Reason $stoppageReason");
-
-        
     $query = "SELECT stoppageReasonIdIndex FROM stoppageReasons ORDER BY stoppageReasonIdIndex DESC LIMIT 1";
     
     if(!($statement = $DbConn->prepare($query)))
@@ -46,6 +43,21 @@ function addStoppageReason($DbConn, $stoppageReason)
         $newStoppageReasonIdNum = intval($row[0]) + 1;
     }    
     $newStoppageReasonId = sprintf("%s%04d", $stoppageReasonIDCodePrefix, $newStoppageReasonIdNum);
+
+    printDebug("Adding new Stoppage Reason $stoppageReason");
+
+    $query = "INSERT INTO stoppageReasons (stoppageReasonId, stoppageReasonName) VALUES (?, ?)";
+    
+    if(!($statement = $DbConn->prepare($query)))
+        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+    
+    if(!($statement->bind_param('ss', $newStoppageReasonId, $stoppageReason)))
+        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    if(!$statement->execute())
+        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    return $newStoppageReasonId;
 
     $query = "SELECT COUNT(stoppageReasonName) FROM stoppagereasons WHERE stoppagereasons.stoppageReasonName=?";
     
@@ -66,19 +78,6 @@ function addStoppageReason($DbConn, $stoppageReason)
         return false;
     }
     
-    
-    $query = "INSERT INTO stoppageReasons (stoppageReasonId, stoppageReasonName) VALUES (?, ?)";
-    
-    if(!($statement = $DbConn->prepare($query)))
-        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-    if(!($statement->bind_param('ss', $newStoppageReasonId, $stoppageReason)))
-        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    if(!$statement->execute())
-        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    return $newStoppageReasonId;
 }
 
 function getStoppageReasonTableData($DbConn, $OrderByName){
