@@ -113,29 +113,7 @@ function getStoppageReasonTableData($DbConn, $OrderByName){
 
 function deleteStoppageReason($DbConn, $StoppageReasonId)
 {
-    // get the abs path to the relevant QR code first, delete the QR code, 
-    // then remove the Stoppage Reason from the database.
     
-    // $query = "SELECT absolutePathToQrCode FROM stoppageReasons WHERE stoppageReasonId=?";
-    
-    // if(!($statement = $DbConn->prepare($query)))
-    //     errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-    // if(!($statement->bind_param('s', $StoppageReasonId)))
-    //     errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    // if(!$statement->execute())
-    //     errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    // $res = $statement->get_result();
-    // $row = $res->fetch_row();
-    
-    // $qrCodePath = $row[0];
-    
-    // if($qrCodePath != null)
-    //     exec("rm $qrCodePath");
-    
-	
     $query = "DELETE FROM stoppageReasons WHERE stoppageReasonId=?";
     
     if(!($statement = $DbConn->prepare($query)))
@@ -159,33 +137,6 @@ function deleteStoppageReason($DbConn, $StoppageReasonId)
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
 }
-
-
-// generate a QR code, log the path to the database, and return said path for download
-// function generateStoppageReasonQrCode($DbConn, $StoppageReasonId)
-// {
-//     global $StoppageReasonQrCodeDirAbs;
-//     global $StoppageReasonQrCodeDirRelativeToPage;
-        
-//     $webPath = $StoppageReasonQrCodeDirRelativeToPage . $StoppageReasonId . ".png";
-//     $actualpath = $StoppageReasonQrCodeDirAbs . $StoppageReasonId . ".png";
-
-//     generateQrCode($StoppageReasonId, $actualpath);
-//     printDebug("Generated QR code at $actualpath");
-    
-//     $query = "UPDATE stoppageReasons SET relativePathToQrCode=?, absolutePathToQrCode=? WHERE stoppageReasonId=?";
-    
-//     if(!($statement = $DbConn->prepare($query)))
-//         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-//     if(!($statement->bind_param('sss', $webPath, $actualpath, $StoppageReasonId)))
-//         errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-//     if(!$statement->execute())
-//         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-//     return $webPath;
-// }
 
 function getIdsfortheStoppageReasonName($DbConn, $stoppageReason)
 {
@@ -253,14 +204,6 @@ function main()
 			
 			            
             break;
-
-            
-        // case "getQrCode":
-        //     $stoppageReasonId = $_GET["stoppageReasonId"];
-
-		// 	$downloadPath = generatestoppageReasonQrCode($dbConn, $stoppageReasonId);
-        //     sendResponseToClient("success",$downloadPath);
-        //     break;
             
         case "getStoppageReasonTableData":
             // get an array of data to send to the client.
