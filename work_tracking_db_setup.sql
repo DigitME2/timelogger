@@ -417,14 +417,6 @@ BEGIN
 				
 				SELECT "clockedOff" as result, newlyClosedRecordRef as logRef;
 
-                IF StationStatus = "complete" THEN
-						CALL MarkJobComplete(JobId);
-                        UPDATE timeLog 
-                        SET clockOffTime=CURRENT_TIME, workStatus=StationStatus 
-                        WHERE timelog.jobId = JobId;
-
-                END IF;
-
 				-- Get lunch config options
 				SELECT paramValue INTO @addLunchBreak 
 				FROM config WHERE paramName = "addLunchBreak" LIMIT 1;
@@ -465,6 +457,14 @@ BEGIN
 				SET workedDuration = newlyClosedDuration,
 				overtimeDuration = newlyClosedOvertime
 				WHERE timeLog.ref=newlyClosedRecordRef;
+
+				IF StationStatus = "complete" THEN
+					CALL MarkJobComplete(JobId);
+					UPDATE timeLog 
+					SET clockOffTime=CURRENT_TIME, workStatus=StationStatus 
+					WHERE timelog.ref = newlyClosedRecordRef;
+
+                END IF;
 			   
 			END IF;
 			
