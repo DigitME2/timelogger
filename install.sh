@@ -65,7 +65,7 @@ sudo chmod 777 index.php
 sudo systemctl restart apache2 && sudo systemctl restart mysql
 sudo systemctl restart ptt_discovery.service
 sudo echo -e "\e[42mProcess Time Tracker Software Installed Successfully.\e[0m"
-sudo echo -e "\e[33mTo change the server ports. Please read the readme.txt file for further information."
+sudo echo -e "\e[33mTo change the server ports. Please read the readme.txt file for further information.[0m"
 sleep 5
 xdg-open http://localhost/timelogger/pages/overview_client.php </dev/null >/dev/null 2>&1 
 exit

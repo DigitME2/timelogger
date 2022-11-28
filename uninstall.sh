@@ -29,7 +29,7 @@ while true; do
 		* ) echo "Invalid input. Please Enter Y for Yes, Enter N for No.";;
 	esac
 done
-sudo echo -e "\e[31mStarting uninstallation of the DigitME2 PTT Server Software. After this all your data stored in the software will be removed..\e[1m"
+sudo echo -e "\e[31mStarting uninstallation of the DigitME2 PTT Server Software. After this all your data stored in the software will be removed..\e[0m"
 sudo echo -e "\e[33mStopping PTT Server, Database server, Discovery Server..\e[0m"
 sudo systemctl stop apache2
 sudo systemctl stop mysql
@@ -37,7 +37,9 @@ sudo systemctl stop ptt_discovery.service
 sudo echo -e "\e[33mUninstalling Apache2 Server...\e[0m"
 sudo apt-get -y -qqq purge apache2 apache2-utils apache2-bin apache2.2-common
 sudo apt-get autoremove -y
-sudo rm -R /var/www/
+sudo rm -R /var/www/timelogger/
+sudo rm /var/www/index.php
+sudo rm /var/www/ptt_device_discovery.py
 sudo apt-get -y -qq purge 'php*'
 sudo apt-get -y -qq purge php.*
 sudo apt autoremove -y
