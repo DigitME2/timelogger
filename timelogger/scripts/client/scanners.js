@@ -129,6 +129,28 @@ function loadExtraScannerNames(){
 
 function addNewExtraScannerName(){
 	var newName = $("#newExtraScannerName").val();
+
+	if(newName.length == 0){
+        $("#addScannerResponseField").html("Scanner Location Name must not be blank");
+        return;
+    }
+    
+    if(newName.length > 50){
+        $("#addScannerResponseField").html("Scanner Location Name must not be longer than 50 characters");
+        return;
+    }
+	
+	regexp = /^[a-z0-9_,;./\\ ]+$/i;
+	if(!regexp.test(newName)){
+		$("#addScannerResponseField").html("Scanner Location Name must only contain letters (a-z, A-Z), numbers (0-9), spaces ( ), comma (,), full stop (.), semicolon(;), backward slash (\\), forward slash (/), and underscores (_)");
+		return;
+	}
+	
+	if(newName.charAt(0) == ' '){
+		$("#addScannerResponseField").html("Scanner Location Name cannot start with a space.");
+		return;
+	}
+
 	$.ajax({
         url:"../scripts/server/scanners.php",
         type:"GET",
@@ -142,14 +164,14 @@ function addNewExtraScannerName(){
             resultJson = $.parseJSON(result);
             if(resultJson["status"] != "success"){
                 console.log(resultJson["result"]);
-                $("#extraScannerNameFeedback").empty().html("Error");
-				setTimeout(function(){$("#extraScannerNameFeedback").empty();},10000);
+                $("#addScannerResponseField").empty().html(resultJson["result"]);
+				setTimeout(function(){$("#addScannerResponseField").empty();},5000);
 			}
             else{
 				updateExtraScannersTable();
-				$("#newExtraScannerName").val("");
-				$("#extraScannerNameFeedback").empty().html(newName + " added");
-				setTimeout(function(){$("#extraScannerNameFeedback").empty();},10000);
+				$("#addScannerResponseField").val("");
+				$("#addScannerResponseField").empty().html(newName + " added");
+				setTimeout(function(){$("#addScannerResponseField").empty();},5000);
             }
         }
     });
