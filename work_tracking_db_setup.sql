@@ -462,7 +462,7 @@ BEGIN
 					CALL MarkJobComplete(JobId);
 					UPDATE timeLog 
 					SET clockOffTime=CURRENT_TIME, workStatus=StationStatus 
-					WHERE timelog.ref = newlyClosedRecordRef;
+					WHERE timeLog.ref = newlyClosedRecordRef;
 
                 END IF;
 			   
@@ -559,7 +559,7 @@ BEGIN
                     ELSEIF StationStatus = "complete" AND newlyClosedRecordRef != -1 THEN
 						CALL MarkJobComplete(JobId);
 						UPDATE jobs 
-                        SET routeCurrentStageIndex = -1, routeCurrentStageName = Null, currentStatus = complete
+                        SET routeCurrentStageIndex = -1, routeCurrentStageName = Null, currentStatus = StationStatus
 						WHERE jobs.jobId = JobId;
 
                     END IF;
