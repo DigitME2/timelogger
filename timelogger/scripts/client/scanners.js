@@ -170,7 +170,7 @@ function addNewExtraScannerName(){
             else{
 				updateExtraScannersTable();
 				$("#addScannerResponseField").val("");
-				$("#addScannerResponseField").empty().html(newName + " added");
+				$("#addScannerResponseField").empty().html("New Scanner Location Name - " + newName + " - is added");
 				setTimeout(function(){$("#addScannerResponseField").empty();},5000);
             }
         }
