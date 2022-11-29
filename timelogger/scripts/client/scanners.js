@@ -165,13 +165,11 @@ function addNewExtraScannerName(){
             if(resultJson["status"] != "success"){
                 console.log(resultJson["result"]);
                 $("#addScannerResponseField").empty().html(resultJson["result"]);
-				setTimeout(function(){$("#addScannerResponseField").empty();},5000);
 			}
             else{
 				updateExtraScannersTable();
 				$("#addScannerResponseField").val("");
 				$("#addScannerResponseField").empty().html("New Scanner Location Name - " + newName + " - is added");
-				setTimeout(function(){$("#addScannerResponseField").empty();},5000);
             }
         }
     });
