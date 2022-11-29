@@ -43,8 +43,8 @@ systemctl stop ptt_discovery.service
 echo -e "\e[33mUninstalling Apache2 Server...\e[0m"
 apt-get -y -qqq purge apache2 apache2-utils apache2-bin apache2.2-common
 apt-get autoremove -y
-rm -R /var/www/timelogger/
-rm /var/www/index.php
+rm -R /var/www/html/timelogger
+rm /var/www/html/index.php
 rm /var/www/ptt_device_discovery.py
 apt-get -y -qq purge 'php*'
 apt-get -y -qq purge php.*
