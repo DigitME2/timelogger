@@ -20,7 +20,11 @@ cd timelogger/
 
 4.    Install the timelogger with the following command (or) copy here and press (ctrl+shift+v) in the terminal to paste.
 
-sh install.sh
+`sh install.sh`
+
+    --or--
+
+`sudo ./installer.sh`
 
 5.   Then system will ask for your password, enter your ubuntu system password for completing the installation. And while installing the ubuntu terminal will ask only once to press <ENTER> to continue, please press Enter Button in your keyboard then to proceed with the installation.
 
@@ -38,6 +42,14 @@ Else Please ignore the following ***Note***
  
 	sh ports_change.sh
 	
-!! After running the above file, To open the Process Time Tracker Software please open the following link in your Browser. 
+!!. After running the above file, To open the Process Time Tracker Software please open the following link in your Browser. 
 
 	http://localhost:81/timelogger/pages/overview_client.php
+	
+!!!. To uninstall Process Time Tracker, Please use any one command from the following. But please be aware that you will loose all your data saved in this Process Time Tracker software will be lost after the uninstallation of this software and that data can never be retrieved.
+
+	sh uninstall.sh      # Please don't do without making backup of your data.
+	
+	   --or--
+	 
+	sudo ./uninstaller.sh  # Please don't do without making backup of your data.
