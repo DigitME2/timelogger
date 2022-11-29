@@ -59,7 +59,7 @@ function getActualNamesforIds($DbConn, $UserInputId)
     }
     if(str_starts_with($UserInputId, "stpg_"))
     {
-        $query = "SELECT stoppagereasonName from stoppagereasons WHERE stoppagereasonId = ? "; 
+        $query = "SELECT stoppageReasonName from stoppageReasons WHERE stoppageReasonId = ? "; 
         
         if(!($statement = $DbConn->prepare($query)))
             errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
@@ -72,8 +72,8 @@ function getActualNamesforIds($DbConn, $UserInputId)
 		
 	    $res = $statement->get_result();
 	    $row = $res->fetch_assoc();
-        $stoppagereasonName = $row["stoppagereasonName"];
-        return $stoppagereasonName;
+        $stoppageReasonName = $row["stoppageReasonName"];
+        return $stoppageReasonName;
     }
 }
 
@@ -112,9 +112,9 @@ function main()
             break;
 
         case "getDownloadstoppageIdQrCode":
-            $DataToEncode = $_GET["stoppageReasonId"];
-            $StoppagereasonName = getActualNamesforIds($dbConn, $DataToEncode);
-            getDownloadQrCode($DataToEncode, $StoppagereasonName.'-ID-QRCode.png');
+            $DataToEncode = $_GET["stoppagereasonId"];
+            $StoppageReasonName = getActualNamesforIds($dbConn, $DataToEncode);
+            getDownloadQrCode($DataToEncode, $StoppageReasonName.'-ID-QRCode.png');
             sendResponseToClient("success");
             break;
     

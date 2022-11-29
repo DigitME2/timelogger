@@ -21,6 +21,32 @@ require "common.php";
 
 $Debug = false;
 
+function checkStoppageExists($DbConn, $stoppageReason) 
+{
+    $query = "SELECT COUNT(stoppageReasonName) FROM stoppageReasons WHERE stoppageReasons.stoppageReasonName=?";
+    
+    if(!($statement = $DbConn->prepare($query)))
+        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+    
+    if(!($statement->bind_param('s', $stoppageReason)))
+        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    if(!$statement->execute())
+        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    $res = $statement->get_result();
+    $row = $res->fetch_row();
+    if($row[0] != 0)
+    {
+        printDebug("Error: Stoppage Reason Name already exists");
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
 function addStoppageReason($DbConn, $stoppageReason)
 {	
 	global $stoppageReasonIDCodePrefix;
@@ -44,25 +70,6 @@ function addStoppageReason($DbConn, $stoppageReason)
     $newStoppageReasonId = sprintf("%s%04d", $stoppageReasonIDCodePrefix, $newStoppageReasonIdNum);
 
     printDebug("Adding new Stoppage Reason $stoppageReason");
-
-    $query = "SELECT COUNT(stoppageReasonName) FROM stoppageReasons WHERE stoppageReasons.stoppageReasonName=?";
-    
-    if(!($statement = $DbConn->prepare($query)))
-        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-    if(!($statement->bind_param('s', $stoppageReason)))
-        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    if(!$statement->execute())
-        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    $res = $statement->get_result();
-    $row = $res->fetch_row();
-    if($row[0] != 0)
-    {
-        printDebug("Error: Stoppage Reason Name already exists");
-        return false;
-    }
 
     $query = "INSERT INTO stoppageReasons (stoppageReasonId, stoppageReasonName, stoppageReasonIdIndex) VALUES (?, ?, ?)";
     
@@ -192,7 +199,7 @@ function main()
         case "addStoppageReason":
             $stoppageReason = $_GET["stoppageReason"];
 
-            if(addStoppageReason($dbConn, $stoppageReason))
+            if(checkStoppageExists($dbConn, $stoppageReason))
             {
                 $stoppageReasonId = addStoppageReason($dbConn, $stoppageReason);
 			    sendResponseToClient("success");

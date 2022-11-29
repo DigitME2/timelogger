@@ -23,6 +23,32 @@ require_once "paths.php";
 
 $Debug = false;
 
+
+function checkUserExists($DbConn, $UserName) 
+{
+    $query = "SELECT COUNT(UserName) FROM users WHERE users.userName=?";
+    
+    if(!($statement = $DbConn->prepare($query)))
+        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+    
+    if(!($statement->bind_param('s', $UserName)))
+        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    if(!$statement->execute())
+        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    $res = $statement->get_result();
+    $row = $res->fetch_row();
+    if($row[0] != 0)
+    {
+        printDebug("Error: User Name already exists");
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
 function addUser($DbConn, $UserName)
 {
     
@@ -43,28 +69,9 @@ function addUser($DbConn, $UserName)
 	$newUserId = sprintf("%s%04d", $userIDPrefix, $newUserIdNum);
 
     printDebug("Adding new user $UserName");
-	   
-    $query = "SELECT COUNT(UserName) FROM users WHERE users.userName=?";
-    
-    if(!($statement = $DbConn->prepare($query)))
-        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-    if(!($statement->bind_param('s', $UserName)))
-        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    if(!$statement->execute())
-        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    $res = $statement->get_result();
-    $row = $res->fetch_row();
-    if($row[0] != 0)
-    {
-        printDebug("Error: User Name already exists");
-        return false;
-    }
-    
+
     $query = "INSERT INTO users (userId, userName, userIdIndex) VALUES (?, ?, ?)";
-    
+
     if(!($statement = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
@@ -74,7 +81,7 @@ function addUser($DbConn, $UserName)
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
     
-    return $newUserId;
+    return $newUserId;    
 }
 
 function getUserTabledata($DbConn, $OrderByName){
@@ -231,11 +238,13 @@ function main()
     {
         case "addUser":
             $userName = $_GET["userName"];
-            if(addUser($dbConn, $userName)){
+            if(checkUserExists($dbConn, $userName))
+            {
                 $userId = addUser($dbConn, $userName);
 			    sendResponseToClient("success",$userId);
             }
-            else{
+            else
+            {
                 sendResponseToClient("error","User already exists");
             }
             break;

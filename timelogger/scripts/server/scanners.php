@@ -121,11 +121,10 @@ function getAllScannerNames($DbConn)
 	return $allNames;
 }
 
-function addNewExtraName($DbConn, $newName)
+function checkExtraScannerNamesExists($DbConn, $newName) 
 {
-	printDebug("Adding new Scanner Location $newName");
-	   
-    $query = "SELECT COUNT(name) FROM extraScannerNames WHERE extraScannerNames.name = ?";
+
+	$query = "SELECT COUNT(name) FROM extraScannerNames WHERE extraScannerNames.name = ?";
     
     if(!($statement = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
@@ -143,6 +142,15 @@ function addNewExtraName($DbConn, $newName)
         printDebug("Error: Location Name already exists");
         return false;
     }
+	else 
+	{
+		return true;
+	}
+
+}
+function addNewExtraName($DbConn, $newName)
+{
+	printDebug("Adding new Scanner Location $newName");
 
 	$query = "INSERT INTO extraScannerNames (name) VALUES (?)";
     if(!($stmt = $DbConn->prepare($query)))
@@ -155,7 +163,6 @@ function addNewExtraName($DbConn, $newName)
         errorHandler("Error executing statement: ($stmt->errno) $stmt->error, line " . __LINE__);
     
 	$stmt->close();
-	return true;
 }
 
 function deleteExtraScannerName($DbConn, $nameToDelete)
@@ -216,7 +223,8 @@ function main()
         case "addExtraScannerName":
         	printDebug("Adding new extra scanner name");
         	$newName = $_GET["newName"];
-			if(addNewExtraName($dbConn, $newName)){
+			if(checkExtraScannerNamesExists($dbConn, $newName))
+			{
 				addNewExtraName($dbConn, $newName);
 				sendResponseToClient("success");
 			}
