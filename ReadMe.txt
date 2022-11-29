@@ -20,11 +20,11 @@ cd timelogger/
 
 4.    Install the timelogger with the following command (or) copy here and press (ctrl+shift+v) in the terminal to paste.
 
-`sh install.sh`
+sh install.sh
 
     --or--
 
-`sudo ./installer.sh`
+sudo ./installer.sh
 
 5.   Then system will ask for your password, enter your ubuntu system password for completing the installation. And while installing the ubuntu terminal will ask only once to press <ENTER> to continue, please press Enter Button in your keyboard then to proceed with the installation.
 
