@@ -1,0 +1,49 @@
+### Script for changing configs ####
+
+1. select mysql in terminal 
+
+	 sudo mysql -uroot
+
+2. change database to work_tracking
+
+ 	use work_tracking;
+ 	
+3. Enable show quantities complete
+
+	UPDATE  `config` SET `paramValue` = 'true' WHERE `paramName` = 'showQuantityComplete';
+	
+3.1 Disable show quantities complete
+
+	UPDATE  `config` SET `paramValue` = 'false' WHERE `paramName` = 'showQuantityComplete';
+
+4. Enable Add Lunch Break
+
+	UPDATE  `config` SET `paramValue` = 'true' WHERE `paramName` = 'addLunchBreak';
+	
+4.1 Disable Add Lunch Break
+
+	UPDATE  `config` SET `paramValue` = 'false' WHERE `paramName` = 'addLunchBreak';
+	
+5. Enable Allow multiple clock on
+
+	UPDATE  `config` SET `paramValue` = 'true' WHERE `paramName` = 'allowMultipleClockOn';
+	
+5.1 Enable Allow multiple clock on
+
+	UPDATE  `config` SET `paramValue` = 'false' WHERE `paramName` = 'allowMultipleClockOn';
+	
+6. Enable Require Stage Complete
+
+	UPDATE  `config` SET `paramValue` = 'true' WHERE `paramName` = 'requireStageComplete';
+	
+6.1 Enable Require Stage Complete
+
+	UPDATE  `config` SET `paramValue` = 'false' WHERE `paramName` = 'requireStageComplete';
+	
+7. Enable Trim Lunch
+
+	UPDATE  `config` SET `paramValue` = 'true' WHERE `paramName` = 'trimLunch';
+	
+7.1 Enable Trim Lunch
+
+	UPDATE  `config` SET `paramValue` = 'false' WHERE `paramName` = 'trimLunch';
