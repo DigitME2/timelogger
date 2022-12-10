@@ -33,7 +33,7 @@ while true; do
 done
 sudo echo -e "\e[42mStarting installation of the DigitME2 PTT Server Software.\e[0m" 
 sudo echo -e "\e[33mInstalling apt packages...\e[0m"
-sudo apt-get update -qqq
+sudo apt-get -y update -qqq
 sudo echo -e "\e[33mInstalling software-properties...\e[0m"
 sudo apt-get -y install -qq software-properties-common
 sudo add-apt-repository -y universe -qq
@@ -48,7 +48,7 @@ sudo echo -e "\e[33mInstalling PHP & Other requirements for PHP.\e[0m"
 sudo apt -y -qqq install php libapache2-mod-php php-mysql
 sudo apt -y -qqq install php-mbstring php-zip php-gd php-curl php-json
 sudo echo -e "Downloading latest version of Process Time Tracker from github...."
-sudo apt-get install git
+sudo apt-get -y install git
 git clone https://github.com/DigitME2/timelogger.git ~/timelogger --quiet
 cd ~/timelogger
 sudo cp -rf timelogger /var/www/html/
