@@ -33,10 +33,10 @@ while true; do
 done
 sudo echo -e "\e[42mStarting installation of the DigitME2 PTT Server Software.\e[0m" 
 sudo echo -e "\e[33mInstalling apt packages...\e[0m"
-sudo apt-get update
+sudo apt-get update -qqq
 sudo echo -e "\e[33mInstalling software-properties...\e[0m"
 sudo apt-get -y install -qq software-properties-common
-sudo add-apt-repository -y universe
+sudo add-apt-repository -y universe -qq
 sudo echo -e "\e[33mInstalling Apache2 Server...\e[0m"
 sudo apt -y -qq install apache2
 sudo ufw allow in "Apache full"
@@ -47,6 +47,9 @@ sudo mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GR
 sudo echo -e "\e[33mInstalling PHP & Other requirements for PHP.\e[0m"
 sudo apt -y -qqq install php libapache2-mod-php php-mysql
 sudo apt -y -qqq install php-mbstring php-zip php-gd php-curl php-json
+sudo echo -e "Downloading latest version of Process Time Tracker from github...."
+git clone https://github.com/DigitME2/timelogger.git ~/timelogger --quiet
+cd ~/timelogger
 sudo cp -rf timelogger /var/www/html/
 sudo rm /var/www/html/index.html
 sudo cp index.php /var/www/html/
