@@ -48,6 +48,7 @@ sudo echo -e "\e[33mInstalling PHP & Other requirements for PHP.\e[0m"
 sudo apt -y -qqq install php libapache2-mod-php php-mysql
 sudo apt -y -qqq install php-mbstring php-zip php-gd php-curl php-json
 sudo echo -e "Downloading latest version of Process Time Tracker from github...."
+sudo apt-get install git
 git clone https://github.com/DigitME2/timelogger.git ~/timelogger --quiet
 cd ~/timelogger
 sudo cp -rf timelogger /var/www/html/
