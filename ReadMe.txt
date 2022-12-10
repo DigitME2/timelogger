@@ -2,6 +2,8 @@
 
 **Note: To copy & Paste the following commands in the ubuntu Terminal, Please copy here and paste with your mouse right-click, or press (ctrl+shift+v) in the terminal. **
 
+!! Please note that this installation procedure is for installing after cloning the repository.
+
 To install Process Time Tracker Software:
 
 1.   Open Terminal in ubuntu
@@ -12,13 +14,12 @@ by Pressing Ctrl+Alt+T at once
 
 cd ~/Downloads/
 
-
-3.    Change the working directory of the terminal to Timelogger by pressing the following
-    command in the terminal (or) copy here and press (ctrl+shift+v) in the terminal to paste.
+3. Change the directory from Downloads to timelogger folder with the following command (or) copy here and press (ctrl+shift+v) in the terminal to paste.
 
 cd timelogger/
 
-4.    Install the timelogger with the following command (or) copy here and press (ctrl+shift+v) in the terminal to paste.
+
+4. Install the timelogger with the following command (or) copy here and press (ctrl+shift+v) in the terminal to paste.
 
 sh install.sh
 
