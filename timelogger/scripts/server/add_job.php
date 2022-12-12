@@ -87,9 +87,19 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 		if(checkStartsWithPrefix($jobId))
 			$result = "System prefix present at start of ID";
 	}
-	
-	if(isset($jobDetails["expectedDuration"]) && $jobDetails["expectedDuration"] != "")
-		$expectedDuration = $jobDetails["expectedDuration"];
+
+	if (isset($jobDetails["expectedDuration"]) && $jobDetails["expectedDuration"] != "") {
+		// $expectedDuration = $jobDetails["expectedDuration"];
+		$obtainedDuration = $jobDetails["expectedDuration"];
+		$splitObtainedDuration = explode(":", $obtainedDuration);
+		if (count($splitObtainedDuration) == 1) {
+			$expectedDuration = $splitObtainedDuration[0] . ":00";
+		} 
+		elseif (count($splitObtainedDuration) == 3 || count($splitObtainedDuration) == 2) 
+		{
+			$expectedDuration = $splitObtainedDuration[0] . ":" . $splitObtainedDuration[1];
+		}
+	}
 	else
 		$expectedDuration = 0;
 	
@@ -161,7 +171,7 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 	{
 		//convert duration into seconds
 		$durationParts = explode(":", $expectedDuration);
-		if(count($durationParts) == 2)
+		if (count($durationParts) == 2)
 			$expectedDuration = (intval($durationParts[0]) * 3600) + (intval($durationParts[1] * 60));
 
 		//convert total charge into pence
