@@ -86,10 +86,10 @@ else
 							<label for="sortByPriority">Sort by priority</label>
 							<br>
 							<br>
-							<input type="checkbox" id="showUrgentJobsFirst" class="tableControl" onchange="onTableDataOptionsChange()" disabled>
-							<label id="showUrgentJobsFirstLabel" for="showUrgentJobsFirst">Show urgent jobs first</label>
+							<!-- <input type="checkbox" id="showUrgentJobsFirst" name="tableOrdering" value="urgentJobsFirst" class="tableControl" onchange="onTableDataOptionsChange()">
+							<label id="showUrgentJobsFirstLabel" for="showUrgentJobsFirst">Show urgent jobs first</label> -->
 							<br>
-							<input type="checkbox" id="subSortByPriority" class="tableControl" onchange="onTableDataOptionsChange()">
+							<input type="checkbox" id="subSortByPriority" name="tableOrdering" value="subSortByPriority" class="tableControl" onchange="onTableDataOptionsChange()">
 							<label id="subSortByPriorityLabel" for="subSortByPriority">Sub-sort by priority</label>
 						</div>
 						

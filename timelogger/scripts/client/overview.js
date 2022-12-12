@@ -37,33 +37,33 @@ function initDisplayOptions(){
 		if(localStorage.getItem("sorting")=="sortByCreatedNewest")
 		{
 			$("#sortByCreatedNewest").prop("checked", true);
-			$('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
+			// $('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
 			sortRadioChange();
 		}
 		else if(localStorage.getItem("sorting")=="sortByCreatedOldest")
 		{
 			$("#sortByCreatedOldest").prop("checked", true);
-			$('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
+			// $('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
 			sortRadioChange();
 		}
 		else if(localStorage.getItem("sorting")=="sortByDueSoonest")
 		{	
 			$("#sortByDueSoonest").prop("checked", true);
-			$('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
+			// $('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
 			$('#subSortByPriority').prop("checked",localStorage.getItem("subSortByPriority") == "true");
 			sortRadioChange();
 		}
 		else if(localStorage.getItem("sorting")=="sortByDueLatest")
 		{
 			$("#sortByDueLatest").prop("checked", true);
-			$('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
+			// $('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
 			$('#subSortByPriority').prop("checked",localStorage.getItem("subSortByPriority") == "true");
 			sortRadioChange();
 		}
 		else if(localStorage.getItem("sorting")=="sortAlphabetic")
 		{
 			$("#sortAlphabetic").prop("checked", true);
-			$('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
+			// $('#showUrgentJobsFirst').prop("checked",localStorage.getItem("showUrgentJobsFirst") == "true");
 			sortRadioChange();
 		}
 		else if(localStorage.getItem("sorting")=="sortByPriority")
@@ -118,29 +118,29 @@ function initDisplayOptions(){
 
 		if($('#sortByCreatedNewest').prop("checked", true))
 		{
-			$('#showUrgentJobsFirst').prop("checked", false);
+			// $('#showUrgentJobsFirst').prop("checked", false);
 			sortRadioChange();
 		}
 		if($('#sortByCreatedOldest').prop("checked", false))
 		{
-			$('#showUrgentJobsFirst').prop("checked", false);
+			// $('#showUrgentJobsFirst').prop("checked", false);
 			sortRadioChange();
 		}
 		if($('#sortByDueSoonest').prop("checked", false))
 		{
-			$('#showUrgentJobsFirst').prop("checked", false);
+			// $('#showUrgentJobsFirst').prop("checked", false);
 			$('#subSortByPriority').prop("checked", false);
 			sortRadioChange();
 		}
 		if($('#sortByDueLatest').prop("checked", false))
 		{
-			$('#showUrgentJobsFirst').prop("checked", false);
+			// $('#showUrgentJobsFirst').prop("checked", false);
 			$('#subSortByPriority').prop("checked", false);
 			sortRadioChange();
 		}
 		if($('#sortAlphabetic').prop("checked", false))
 		{
-			$('#showUrgentJobsFirst').prop("checked", false);
+			// $('#showUrgentJobsFirst').prop("checked", false);
 			sortRadioChange();
 		}
 		$('#sortByPriority').prop("checked", false);
@@ -247,33 +247,33 @@ function onDisplayOptionsChange(){
 	if($("#sortByCreatedNewest").is(":checked"))
 	{
 		localStorage.setItem("sorting", "sortByCreatedNewest");
-		localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
+		// localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
 		sortRadioChange();
 	}
 	else if($("#sortByCreatedOldest").is(":checked"))
 	{
 		localStorage.setItem("sorting", "sortByCreatedOldest");
-		localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
+		// localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
 		sortRadioChange();
 	}
 	else if($("#sortByDueSoonest").is(":checked"))
 	{
 		localStorage.setItem("sorting", "sortByDueSoonest");
-		localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
+		// localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
 		localStorage.setItem("subSortByPriority", $("#subSortByPriority").is(":checked"));
 		sortRadioChange();
 	}
 	else if($("#sortByDueLatest").is(":checked"))
 	{
 		localStorage.setItem("sorting", "sortByDueLatest");
-		localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
+		// localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
 		localStorage.setItem("subSortByPriority", $("#subSortByPriority").is(":checked"));
 		sortRadioChange();
 	}
 	else if($("#sortAlphabetic").is(":checked"))
 	{
 		localStorage.setItem("sorting", "sortAlphabetic");
-		localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
+		// localStorage.setItem("showUrgentJobsFirst", $("#showUrgentJobsFirst").is(":checked"));
 		sortRadioChange();
 	}
 	else if($("#sortByPriority").is(":checked"))
@@ -429,8 +429,8 @@ function updateJobsData(){
 			"excludeUnworkedJobs":excludeUnworkedJobs,
 			"useSearchKey":useSearchPhrase,
 			"searchKey":searchPhrase,
-			"showUrgentJobsFirst":$('#showUrgentJobsFirst').is(':checked'),
 			"showOnlyUrgentJobs":$('#showOnlyUrgentJobs').is(':checked'),
+			// "showUrgentJobsFirst":$('#showUrgentJobsFirst').is(':checked'),
 			"subSortByPriority":$('#subSortByPriority').is(':checked'),
 			"updateRequestNumber":++updateRequestNumber
 		};
@@ -795,17 +795,17 @@ function sortRadioChange(){
 		$('#subSortByPriorityLabel').fadeOut();
 	}
 
-	if(sortingOption=="priority")
-	{
-		$('#showUrgentJobsFirst').fadeOut();
-		$('#showUrgentJobsFirstLabel').fadeOut();
-	}
-	else
-	{
+	// if(sortingOption=="priority")
+	// {
+	// 	$('#showUrgentJobsFirst').fadeOut();
+	// 	$('#showUrgentJobsFirstLabel').fadeOut();
+	// }
+	// else
+	// {
 
-		$('#showUrgentJobsFirst').fadeIn();
-		$('#showUrgentJobsFirstLabel').fadeIn();
-	}
+	// 	$('#showUrgentJobsFirst').fadeIn();
+	// 	$('#showUrgentJobsFirstLabel').fadeIn();
+	// }
 }
 
 function onTableDataOptionsChange(){
