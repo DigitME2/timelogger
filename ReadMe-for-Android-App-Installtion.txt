@@ -3,7 +3,9 @@
 To Install Andriod Application on Andriod Tablets or Andriod Phone
 Firstly please open this page in your mobile phone or android tablet and please follow the following steps.
 
-Click on the ProcessTimeTracker.apk through your android phone or android tablet to download the file.
+Please select the Releases Section, Go to Assets and there you can see PTT-v2.15.apk file.
+
+Click on the PTT-v2.15.apk through your android phone or android tablet to download the file.
 
 It will ask for download anyway or cancel the file to be download. Please select download anyway.
 
