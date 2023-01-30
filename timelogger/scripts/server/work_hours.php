@@ -16,6 +16,7 @@
 
 require "db_params.php";
 require "common.php";
+require_once "kafka.php";
 
 $Debug = false;
 
@@ -113,6 +114,11 @@ function setTimes($DbConn, $WorkTimes, $LunchTimes)
     // note: assumed that the data alerady exists
 
     printDebug("Settings times...");
+
+    $dayStartTimes = array();
+    $lunchStartTimes = array();
+    $lunchEndTimes = array();
+    $dayEndTimes = array();
     
     $query = "UPDATE workHours SET startTime = ?, endTime = ? WHERE DAYNAME(dayDate) = ?";
 
@@ -122,6 +128,9 @@ function setTimes($DbConn, $WorkTimes, $LunchTimes)
     
     foreach($WorkTimes as $time)
     {        
+        $dayStartTimes[$time["day"]] = $time["startTime"];
+        $dayEndTimes[$time["day"]] = $time["endTime"];
+
         if(!($statement->bind_param('sss', $time["startTime"], $time["endTime"], $time["day"])))
             errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
 
@@ -139,12 +148,17 @@ function setTimes($DbConn, $WorkTimes, $LunchTimes)
     
     foreach($LunchTimes as $time)
     {        
+        $lunchStartTimes[$time["day"]] = $time["startTime"];
+        $lunchEndTimes[$time["day"]] = $time["endTime"];
+
         if(!($statement->bind_param('sss', $time["startTime"], $time["endTime"], $time["day"])))
             errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
 
         if(!$statement->execute())
             errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
     }
+
+    kafkaOutputSetWorkHours($dayStartTimes, $dayEndTimes, $lunchStartTimes, $lunchEndTimes);
 }
 
 function getAllowMultipleClockOn($DbConn)

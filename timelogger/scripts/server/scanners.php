@@ -16,6 +16,7 @@
 
 require "db_params.php";
 require "common.php";
+require_once "kafka.php";
 
 $debug = false;
 
@@ -163,6 +164,7 @@ function addNewExtraName($DbConn, $newName)
         errorHandler("Error executing statement: ($stmt->errno) $stmt->error, line " . __LINE__);
     
 	$stmt->close();
+	kafkaOutputCreateScannerLocation($newName);
 }
 
 function deleteExtraScannerName($DbConn, $nameToDelete)
@@ -178,6 +180,7 @@ function deleteExtraScannerName($DbConn, $nameToDelete)
         errorHandler("Error executing statement: ($stmt->errno) $stmt->error, line " . __LINE__);
     
 	$stmt->close();
+	kafkaOutputDeleteScannerLocation($nameToDelete);
 }
 
 function main()

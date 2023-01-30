@@ -15,10 +15,10 @@
 //  limitations under the License.
 
  
- require "db_params.php";
+require "db_params.php";
 
- function showQuantityComplete($DbConn = null){
-
+function getSystemConfigParameterValue($ParamName, $DbConn = null)
+{
     global $dbParamsServerName;
     global $dbParamsUserName;
     global $dbParamsPassword;
@@ -28,24 +28,36 @@
         $DbConn = initDbConn($dbParamsServerName, $dbParamsUserName, $dbParamsPassword, $dbParamsDbName);
 
     // check show quantity totals is true or false
-    $query = "SELECT `paramValue` FROM `config` WHERE `paramName`='showQuantityComplete' LIMIT 1";
+    $query = "SELECT `paramValue` FROM `config` WHERE `paramName`=? LIMIT 1";
     
-    $dbresult = $DbConn->prepare($query);
-
-    $dbresult->execute();
+    if(!($statement = $DbConn->prepare($query)))
+        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
-    $res = $dbresult->get_result();
-
-    $dbRow = $res->fetch_assoc();
-
-    $getQuantityRow = $dbRow['paramValue'];
+    if(!($statement->bind_param('s', $ParamName)))
+        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
     
-    if ($getQuantityRow=='true')
-         return true;
-    else
-        return false;
+    if(!$statement->execute())
+        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    $res = $statement->get_result();
 
+    if($res->num_rows > 0)
+    {
+        $row = $res->fetch_row();
+        return $row[0];
+    }
+    
+    return null;
 }
- 
+
+function showQuantityComplete($DbConn = null)
+{
+    return getSystemConfigParameterValue("showQuantityComplete", $DbConn) == "true";
+}
+
+function publishKafkaEvents($DbConn = null)
+{
+    return getSystemConfigParameterValue("publishKafkaEvents", $DbConn) == "true";
+}
 
 ?>

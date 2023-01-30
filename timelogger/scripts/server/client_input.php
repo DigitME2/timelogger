@@ -21,6 +21,7 @@
 // terminates
 require "db_params.php";
 require "common.php";
+require_once "kafka.php";
 
 $debug =false;
 
@@ -76,11 +77,11 @@ function clockUser($DbConn, $UserId, $JobId, $StationId, $JobStatus)
     $res = $statement->get_result();
 	$row = $res->fetch_assoc();
     
-	if(array_key_exists("logRef", $row))
-		$return = array("state"=>$row["result"], "logRef"=>$row["logRef"]);
+	if($row["result"] == "clockedOn" || $row["result"] == "clockedOff")
+		$return = array("state"=>$row["result"], "logRef"=>$row["logRef"], "workState"=>$row["workState"], "routeName"=>$row["routeName"], "routeStageIndex"=>$row["routeStageIndex"]);
 	else
 		$return = array("state"=>$row["result"]);
-
+	
     return $return;
 }
 
@@ -235,12 +236,17 @@ function main()
 				sendResponseToClient("error", "Unknown ID");
 			}
 			else{
-            	sendResponseToClient("success", $result);
+				// handle jobStatus being coerced to workInProgress if user is clocked on
+				if($result["state"] == "clockedOn")
+					$jobStatus = "workInProgress";
+				kafkaOutputClockUser($userId, $result["state"], $jobId, $stationId, $jobStatus, $result["logRef"]);
+				kafkaOutputSetJobProgressState($jobId, $result["workState"], $result["routeName"], $result["routeStageIndex"]);
+            	sendResponseToClient("success", array("state" => $result["state"], "logRef" => $result["logRef"]));
 			}
             break;
 
 		case "recordStoppage":   
-		        $userId     = $_GET["stoppageId"];
+		        $stoppageId = $_GET["stoppageId"];
 		        $jobId      = $_GET["jobId"];
 		        $stationId  = $_GET["stationId"];
 		        $jobStatus  = $_GET["jobStatus"];
@@ -250,12 +256,18 @@ function main()
 				else
 					$description = '';
 
-		        $result = recordStoppage($dbConn, $userId, $jobId, $stationId, $jobStatus, $description);
+		        $result = recordStoppage($dbConn, $stoppageId, $jobId, $stationId, $jobStatus, $description);
 				if ($result == "unknownId"){
 					sendResponseToClient("error", "Unknown ID");
 				}
 				else{
 		        	sendResponseToClient("success", $result);
+					if($result == "stoppageOn")
+						$stoppageActive = TRUE;
+					else
+						$stoppageActive = FALSE;
+
+					kafkaOutputRecordProblemState($jobId, $stoppageId, $stoppageActive);
 					updateJobStoppages($dbConn, $jobId);
 				}				
 		        break;
@@ -296,6 +308,7 @@ function main()
 			$logRef = $_GET["logRef"];
 			$numberCompleted = $_GET["numberCompleted"];
 			recordNumberCompleted($dbConn, $logRef, $numberCompleted);
+			kafkaOutputRecordWorkQuantityComplete($numberCompleted, $logRef);
 			sendResponseToClient("success");
             break;
             

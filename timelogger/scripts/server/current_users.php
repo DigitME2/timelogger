@@ -19,6 +19,7 @@
 // terminates
 require "db_params.php";
 require "common.php";
+require_once "kafka.php";
 
 $Debug = false;
 
@@ -108,11 +109,14 @@ function clockOffUser($DbConn, $ref)
 		
 		if(!$statement->execute())
 		    errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-		
-		if(!($statement->bind_result($result)))
+            
+		if(!($statement->bind_result($userState, $logRef, $workState, $routeName, $routeStageIndex)))
 		    errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-		
+
 		$statement->fetch();
+        
+        $result = $userState;
+        kafkaOutputClockUser($userId, $userState, $jobId, $stationId, $jobStatus, $logRef);
 	}
 	else
 		$result = "Already Clocked Off";

@@ -18,6 +18,7 @@
 // terminates
 require "db_params.php";
 require "common.php";
+require "kafka.php";
 
 $Debug = false;
 
@@ -81,6 +82,8 @@ function addStoppageReason($DbConn, $stoppageReason)
     
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+
+    kafkaOutputCreateProblemReason($newStoppageReasonId, $stoppageReason);
     
     return $newStoppageReasonId;
     
@@ -143,6 +146,8 @@ function deleteStoppageReason($DbConn, $StoppageReasonId)
     
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+
+    kafkaOutputDeleteProblemReason($StoppageReasonId);
 }
 
 function getIdsfortheStoppageReasonName($DbConn, $stoppageReason)

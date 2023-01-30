@@ -20,6 +20,7 @@
 // terminates
 require "db_params.php";
 require "common.php";
+require_once "kafka.php";
 
 $debug = false;
 
@@ -56,6 +57,8 @@ function addJob($DbConn, $JobId, $Description, $ExpectedDuration, $RouteName, $D
     
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+
+	kafkaOutputCreateJob($JobId, $customerName, $ExpectedDuration, $DueDate, $Description, $TotalJobCharge, $NumberOfUnits, $TotalParts, $productId, $RouteName, $priority);
     
     return "Added";
 }

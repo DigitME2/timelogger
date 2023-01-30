@@ -351,6 +351,12 @@ BEGIN
 	
 	DECLARE userIdValid INT DEFAULT 0;
 	DECLARE jobIDValid INT DEFAULT 0;
+
+    SELECT "" INTO @outputLogRef;
+    SELECT "" INTO @outputUserState;
+    SELECT "workInProgress" INTO @outputWorkState;
+    SELECT "" INTO @outputRouteName;
+    SELECT "" INTO @outputRouteStageIndex;
 	
 	CREATE TEMPORARY TABLE routeStages (stageIndex INT PRIMARY KEY AUTO_INCREMENT, stageName VARCHAR(50));
     
@@ -404,7 +410,7 @@ BEGIN
 					AND timeLog.stationId=StationId
 					ORDER BY timeLog.recordTimestamp DESC LIMIT 1;
 
-				SELECT "clockedOn" as result, newlyOpenRecordRef as logRef;
+				SELECT "clockedOn", newlyOpenRecordRef into @outputUserState, @outputLogRef;
 
 			
 			-- or close an open one
@@ -415,7 +421,7 @@ BEGIN
 				
 				UPDATE timeLog SET clockOffTime=CURRENT_TIME, workStatus=StationStatus WHERE ref = newlyClosedRecordRef;
 				
-				SELECT "clockedOff" as result, newlyClosedRecordRef as logRef;
+                SELECT "clockedOff", newlyClosedRecordRef into @outputUserState, @outputLogRef;
 
 				-- Get lunch config options
 				SELECT paramValue INTO @addLunchBreak 
@@ -464,6 +470,8 @@ BEGIN
 					SET clockOffTime=CURRENT_TIME, workStatus=StationStatus 
 					WHERE timeLog.ref = newlyClosedRecordRef;
 
+                    SELECT "complete" INTO @outputWorkState;
+
                 END IF;
 			   
 			END IF;
@@ -481,6 +489,7 @@ BEGIN
 			FROM jobs 
 			WHERE jobs.jobId = JobId LIMIT 1;
 
+            SELECT -1 INTO @outputRouteStageIndex;
 			
 			IF @routeName IS NOT NULL AND @routeName != "" THEN
 				
@@ -555,6 +564,8 @@ BEGIN
 						UPDATE jobs 
 						SET routeCurrentStageIndex = -1, routeCurrentStageName = Null 
 						WHERE jobs.jobId = JobId;
+
+                        SELECT "complete" INTO @outputWorkState;
                     
                     ELSEIF StationStatus = "complete" AND newlyClosedRecordRef != -1 THEN
 						CALL MarkJobComplete(JobId);
@@ -562,7 +573,11 @@ BEGIN
                         SET routeCurrentStageIndex = -1, routeCurrentStageName = Null, currentStatus = StationStatus
 						WHERE jobs.jobId = JobId;
 
+                        SELECT "complete" INTO @outputWorkState;
+
                     END IF;
+
+                    SELECT @stageIndex INTO @outputRouteStageIndex;
 					
 
 				ELSE
@@ -582,8 +597,13 @@ BEGIN
 					IF @stageIndex IS NOT NULL AND newlyOpenRecordRef != -1 THEN
 						UPDATE timeLog SET timeLog.routeStageIndex = @stageIndex WHERE timeLog.ref = newlyOpenRecordRef;
 					END IF;
+
+                    SELECT @stageIndex INTO @outputRouteStageIndex;
+
 				END IF;
 			END IF;
+            SELECT @routeName INTO @outputRouteName;
+            SELECT @outputUserState as "result", @outputLogRef as "logRef", @outputWorkState as "workState", @outputRouteName as "routeName", @outputRouteStageIndex as "routeStageIndex";
 		ELSE
 			-- error message returned
 			SELECT "unknownId" as result;
@@ -1481,7 +1501,9 @@ INSERT INTO `config` (`paramName`, `paramValue`) VALUES
 ('requireStageComplete', 'true'),
 ('showQuantityComplete', 'true'),
 ('showWorkedTimeInSeconds','false'),
-('trimLunch', 'false');
+('trimLunch', 'false'),
+('kafkaBrokerAddress', ''),
+('publishKafkaEvents', 'false');
 
 -- --------------------------------------------------------
 

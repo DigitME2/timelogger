@@ -20,6 +20,7 @@
 require "db_params.php";
 require "common.php";
 require_once "paths.php";
+require_once "kafka.php";
 
 $Debug = false;
 
@@ -81,6 +82,7 @@ function addUser($DbConn, $UserName)
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
     
+    kafkaOutputCreateUser($newUserId, $UserName);
     return $newUserId;    
 }
 
@@ -118,28 +120,6 @@ function getUserTabledata($DbConn, $OrderByName){
 
 function deleteUser($DbConn, $UserId)
 {
-    // get the abs path to the relevant QR code first, delete the QR code, 
-    // then remove the user from the database.
-    
-    // $query = "SELECT absolutePathToQrCode FROM users WHERE userId=?";
-    
-    // if(!($statement = $DbConn->prepare($query)))
-    //     errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-    // if(!($statement->bind_param('s', $UserId)))
-    //     errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    // if(!$statement->execute())
-    //     errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    // $res = $statement->get_result();
-    // $row = $res->fetch_row();
-    
-    // $qrCodePath = $row[0];
-    
-    // if($qrCodePath != null)
-    //     exec("rm $qrCodePath");
-    
     $query = "DELETE FROM users WHERE userId=?";
     
     if(!($statement = $DbConn->prepare($query)))
@@ -162,36 +142,9 @@ function deleteUser($DbConn, $UserId)
     
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+
+    kafkaOutputDeleteUser($UserId);
 }
-
-
-// generate a QR code, log the path to the database, and return said path for download
-
-
-// function generateUserQrCode($DbConn, $UserId)
-// {
-//     global $UserQrCodeDirAbs;
-//     global $UserQrCodeDirRelativeToPage;
-        
-//     $webPath = $UserQrCodeDirRelativeToPage . $UserId . ".png";
-//     $actualpath = $UserQrCodeDirAbs . $UserId . ".png";
-    
-//     generateQrCode($UserId, $actualpath);
-//     printDebug("Generated QR code at $actualpath");
-    
-//     $query = "UPDATE users SET relativePathToQrCode=?, absolutePathToQrCode=? WHERE userId=?";
-    
-//     if(!($statement = $DbConn->prepare($query)))
-//         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-//     if(!($statement->bind_param('sss', $webPath, $actualpath, $UserId)))
-//         errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-//     if(!$statement->execute())
-//         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-//     return $webPath;
-// }
 
 function userTableInitialised($DbConn)
 {
