@@ -19,8 +19,6 @@
 
 require_once "systemconfig.php";
 
-$KafkaBrokerUrl = 'localhost:9092';
-
 // topic list. Kept in one place for easy editing.
 $CreateJobTopic             = "ptt_events";
 $UpdateJobTopic             = "ptt_events";
@@ -49,12 +47,12 @@ $DeleteWorkLogTopic         = "ptt_events";
 
 function getKafkaProducer()
 {
-    global $KafkaBrokerUrl;
+    $KafkaBrokerUrl = getSystemConfigParameterValue("kafkaBrokerAddress");
 
     $conf = new RdKafka\Conf();
     $conf->set('metadata.broker.list', $KafkaBrokerUrl);
 
-    //$conf->set('enable.idempotence', 'true'); // send exactly once, retaining ordering
+    $conf->set('enable.idempotence', 'true'); // send exactly once, retaining ordering
 
     $producer = new RdKafka\Producer($conf);
 
@@ -504,3 +502,4 @@ function kafkaOutputInsertWorkLogBreak($OriginalWorkLogId, $StartTime, $EndTime)
 
 
 ?>
+
