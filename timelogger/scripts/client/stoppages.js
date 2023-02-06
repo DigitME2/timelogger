@@ -175,7 +175,7 @@ function onGetDownloadStoppageQrCodeClick(event){
 function getDownloadStoppageQrCode(stoppageReasonId){
     // send a request to download the stoppage qr code. 
     
-    var url = new URL(window.location.origin + "/timelogger/scripts/server/getQrCode.php?request=getDownloadstoppageIdQrCode&stoppageReasonId=" + stoppageReasonId);
+    var url = new URL(window.location.origin + "/timelogger/scripts/server/getQrCode.php?request=getDownloadstoppageIdQrCode&stoppagereasonId=" + stoppageReasonId);
     window.location.href = url;
 }
 
