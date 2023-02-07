@@ -90,9 +90,18 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 		if(checkStartsWithPrefix($jobId))
 			$result = "System prefix present at start of ID";
 	}
-	
-	if(isset($jobDetails["expectedDuration"]) && $jobDetails["expectedDuration"] != "")
-		$expectedDuration = $jobDetails["expectedDuration"];
+
+	if (isset($jobDetails["expectedDuration"]) && $jobDetails["expectedDuration"] != "") {
+		$obtainedDuration = $jobDetails["expectedDuration"];
+		$splitObtainedDuration = explode(":", $obtainedDuration);
+		if (count($splitObtainedDuration) == 1) {
+			$expectedDuration = $splitObtainedDuration[0] . ":00";
+		}
+		elseif (count($splitObtainedDuration) == 3 || count($splitObtainedDuration) == 2)
+		{
+			$expectedDuration = $splitObtainedDuration[0] . ":" . $splitObtainedDuration[1];
+		}
+	}
 	else
 		$expectedDuration = 0;
 	
