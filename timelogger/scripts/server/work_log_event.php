@@ -21,6 +21,7 @@
 // terminates
 require "db_params.php";
 require "common.php";
+require_once "kafka.php";
 
 $debug = false;
 
@@ -74,6 +75,9 @@ function deleteEventRecord($DbConn, $workLogRef)
     
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+
+
+	kafkaOutputDeleteWorkLog($workLogRef);
 }
 
 function getWorkLogRecord($DbConn, $workLogRef)
@@ -194,6 +198,20 @@ function saveRecordDetails($DbConn, $DetailsArray)
 	if ($returnVal[0] != "success")
 		return "Unable to Save: ".$returnVal[0];
 
+	$kafkaClockOffTime = null;
+	if($newClockOffTimeValid)
+		$kafkaClockOffTime = $newClockOffTime;
+	kafkaOutputChangeWorkLogTopic(
+		$DetailsArray["workLogRef"],
+		$DetailsArray["stationId"],
+		$DetailsArray["userId"],
+		$DetailsArray["recordDate"],
+		$DetailsArray["clockOnTime"],
+		$kafkaClockOffTime,
+		$DetailsArray["workStatus"],
+		$DetailsArray["quantityComplete"]
+	);
+
 	return "Save Complete";
 }
 
@@ -218,6 +236,8 @@ function addEmptyWorkLog($DbConn, $jobId)
 	$res = $statement->get_result();
 
 	$row = $res->fetch_row();
+
+	kafkaOutputAddEmptyWorkLog($row[0]);
 
 	return $row[0];
 }
@@ -257,6 +277,8 @@ function insertBreak($DbConn, $DetailsArray)
 
 	if ($returnVal[0] != "success")
 		return "Unable to Insert: ".$returnVal[0];
+
+	kafkaOutputInsertWorkLogBreak($DetailsArray["workLogRef"], $DetailsArray["breakStart"], $DetailsArray["breakEnd"]);
 
 	return "Insert Complete";
 

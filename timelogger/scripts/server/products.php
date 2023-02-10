@@ -19,6 +19,7 @@
 require "db_params.php";
 require "common.php";
 require_once "paths.php";
+require_once "kafka.php";
 
 $Debug = false;
 
@@ -55,6 +56,8 @@ function addProduct($DbConn, $ProductID)
     
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+
+    kafkaOutputAddProductType($ProductID);
     
     return $ProductID;
 }
@@ -104,29 +107,7 @@ function getProductTabledata($DbConn, $searchPhrase){
 }
 
 function deleteProduct($DbConn, $ProductId)
-{
-    // get the abs path to the relevant QR code first, delete the QR code, 
-    // then remove the product from the database.
-    
-    // $query = "SELECT absolutePathToQrCode FROM products WHERE productId=?";
-    
-    // if(!($statement = $DbConn->prepare($query)))
-    //     errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-    // if(!($statement->bind_param('s', $ProductId)))
-    //     errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    // if(!$statement->execute())
-    //     errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    // $res = $statement->get_result();
-    // $row = $res->fetch_row();
-    
-    // $qrCodePath = $row[0];
-    
-    // if($qrCodePath != null)
-    //     exec("rm $qrCodePath");
-    
+{   
     $query = "DELETE FROM products WHERE productId=?";
     
     if(!($statement = $DbConn->prepare($query)))
@@ -137,37 +118,9 @@ function deleteProduct($DbConn, $ProductId)
     
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+
+    kafkaOutputDeleteProductType($ProductId);
 }
-
-
-// generate a QR code, log the path to the database, and return said path for download
-// function generateProductQrCode($DbConn, $ProductId)
-// {
-//     global $ProductQrCodeDirAbs;
-//     global $ProductQrCodeDirRelativeToPage;
-// 	global $productIDCodePrefix;
-        
-//     $webPath = $ProductQrCodeDirRelativeToPage . $ProductId . ".png";
-//     $actualpath = $ProductQrCodeDirAbs . $ProductId . ".png";
-
-// 	$QRCodeText = $productIDCodePrefix.$ProductId;//join product prefix with ID to creat text that will be displayed in code
-    
-//     generateQrCode($QRCodeText, $actualpath);
-//     printDebug("Generated QR code at $actualpath");
-    
-//     $query = "UPDATE products SET relativePathToQrCode=?, absolutePathToQrCode=? WHERE productId=?";
-    
-//     if(!($statement = $DbConn->prepare($query)))
-//         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-//     if(!($statement->bind_param('sss', $webPath, $actualpath, $ProductId)))
-//         errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-//     if(!$statement->execute())
-//         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-//     return $webPath;
-// }
 
 function getProductsList($DbConn)
 {

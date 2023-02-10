@@ -16,8 +16,9 @@
 
 require "db_params.php";
 require "common.php";
+require_once "kafka.php";
 
-$Debug = true;
+$Debug = false;
 
 function getInitialRoutes($DbConn)
 {
@@ -67,6 +68,8 @@ function saveRouteDescription($DbConn, $RouteName, $RouteDescription)
     
     if(!$updateRouteQuery->execute())
         errorHandler("Error executing statement: ($updateRouteQuery->errno) $updateRouteQuery->error, line " . __LINE__);
+
+    kafkaOutputSetRoute($RouteName, $RouteDescription);
 }
 
 function deleteRoute($DbConn, $RouteName)
@@ -91,6 +94,8 @@ function deleteRoute($DbConn, $RouteName)
     
     if(!$deleteRouteQuery->execute())
         errorHandler("Error executing statement: ($deleteRouteQuery->errno) $deleteRouteQuery->error, line " . __LINE__);
+
+    kafkaOutputDeleteRoute($RouteName);
 }
 
 function doesRouteExist($DbConn, $RouteName)

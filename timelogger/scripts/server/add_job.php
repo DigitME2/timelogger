@@ -20,6 +20,7 @@
 // terminates
 require "db_params.php";
 require "common.php";
+require_once "kafka.php";
 
 $debug = false;
 
@@ -56,6 +57,8 @@ function addJob($DbConn, $JobId, $Description, $ExpectedDuration, $RouteName, $D
     
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+
+	kafkaOutputCreateJob($JobId, $customerName, $ExpectedDuration, $DueDate, $Description, $TotalJobCharge, $NumberOfUnits, $TotalParts, $productId, $RouteName, $priority);
     
     return "Added";
 }
@@ -89,7 +92,7 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 	}
 
 	if (isset($jobDetails["expectedDuration"]) && $jobDetails["expectedDuration"] != "") {
-		// $expectedDuration = $jobDetails["expectedDuration"];
+
 		$obtainedDuration = $jobDetails["expectedDuration"];
 		$splitObtainedDuration = explode(":", $obtainedDuration);
 		if (count($splitObtainedDuration) == 1) {
@@ -192,6 +195,37 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 	return array($result, $jobId, $generatedIdFlag);
 }
 
+function checkCSVFields($csvRow)
+// checks for the empty or duplicate rows, if all rows are empty passed from the csv file and skips the entire row.
+{
+	$jobId = $csvRow["jobId"];
+	$expectedDuration = $csvRow["expectedDuration"];
+	$description = $csvRow["description"];
+	$routeName = $csvRow["routeName"];
+	$dueDate = $csvRow["dueDate"];
+	$totalChargeToCustomer = $csvRow["totalChargeToCustomer"];
+	$unitCount = $csvRow["unitCount"];
+	$totalParts = $csvRow["totalParts"];
+	$productId = $csvRow["productId"];
+	$priority = $csvRow["priority"];
+	$customerName = $csvRow["customerName"];
+	if (
+		$jobId === "" && 
+		$expectedDuration === "" && 
+		$description === "" && 
+		$routeName === "" && 
+		$dueDate === "" && 
+		$totalChargeToCustomer === "" &&
+		$unitCount === "" && 
+		$totalParts === "" && 
+		$productId === "" && 
+		$priority === "" && 
+		$customerName === ""
+	)
+		return false;
+	else
+		return true;
+}
 function processCsvFile($DbConn, $FileName)
 {
 	$csvJobsAdded = array();
@@ -211,30 +245,32 @@ function processCsvFile($DbConn, $FileName)
 
 	$rowCounter = 1;
 	
+	
 	foreach($csv as $csvRow)
 	{		
 		$rowCounter++;
-		
-		list($addJobResult, $jobId, $generatedIdFlag) = attemptToAddJob($DbConn, $csvRow);//sort array, validate values and attempt to add job
 
-		if($addJobResult === "Added") //if job was added succesfully
-		{
+		if (checkCSVFields($csvRow)) {
+			list($addJobResult, $jobId, $generatedIdFlag) = attemptToAddJob($DbConn, $csvRow); //sort array, validate values and attempt to add job
 
-			$jobResultArray = array("jobId"=>$jobId, "result"=>$addJobResult);
+			if ($addJobResult === "Added") //if job was added succesfully
+			{
 
-			array_push($csvJobsAdded, $jobResultArray); //add job to array of jobs succesfuly added
-		}
-		else //if the job was not added
-		{
-			if($generatedIdFlag)
-				//if no jobId was provided refer to row that could not be added by it's row number
-				$jobIdMessage = "Row ".$rowCounter; 
-			else
-				$jobIdMessage = $jobId;
+				$jobResultArray = array("jobId" => $jobId, "result" => $addJobResult);
 
-			$jobResultArray = array("jobId"=>$jobIdMessage, "result"=>$addJobResult);
+				array_push($csvJobsAdded, $jobResultArray); //add job to array of jobs succesfuly added
+			} else //if the job was not added
+			{
+				if ($generatedIdFlag)
+					//if no jobId was provided refer to row that could not be added by it's row number
+					$jobIdMessage = "Row ".$rowCounter;
+				else
+					$jobIdMessage = $jobId;
 
-			array_push($failedCsvJobs, $jobResultArray); //add job to array of jobs that could not be added
+				$jobResultArray = array("jobId" => $jobIdMessage, "result" => $addJobResult);
+
+				array_push($failedCsvJobs, $jobResultArray); //add job to array of jobs that could not be added
+			}
 		}
 	}
 

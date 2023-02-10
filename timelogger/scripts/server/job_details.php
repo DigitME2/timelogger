@@ -25,6 +25,7 @@
 // terminates
 require "db_params.php";
 require "common.php";
+require_once "kafka.php";
 
 // client page config
 require "./../../pages/client_config.php";
@@ -45,6 +46,8 @@ function markJobIncomplete($DbConn, $JobId)
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
 
+	kafkaOutputSetJobProgressState($JobId, "workInProgress", null, null);
+
 }
 
 function markJobComplete($DbConn, $JobId)
@@ -61,34 +64,11 @@ function markJobComplete($DbConn, $JobId)
     if(!($stmt->execute()))
         errorHandler("Error executing statement: ($stmt->errno) $stmt->error, line " . __LINE__);
 
+	kafkaOutputSetJobProgressState($JobId, "complete", null, null);
 }
 
 function deleteJob($DbConn, $JobId)
 {
-    // get the abs path to the relevant QR code first, delete the QR code,     
-	// remove from any products
-	// then remove the job from the database.
-    
-    // $query = "SELECT absolutePathToQrCode FROM jobs WHERE jobId=?";
-    
-    // if(!($statement = $DbConn->prepare($query)))
-    //     errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-    // if(!($statement->bind_param('s', $JobId)))
-    //     errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    // if(!$statement->execute())
-    //     errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    // $res = $statement->get_result();
-    // $row = $res->fetch_row();
-    
-    // $qrCodePath = $row[0];
-    
-	// //delete QR code file
-    // if($qrCodePath != null)
-    //     exec("rm $qrCodePath");
-
     //Set any products which have this as their current job, current job to Null
 	$query = "UPDATE products SET currentJobId=NULL WHERE currentJobId=?";
     
@@ -136,6 +116,8 @@ function deleteJob($DbConn, $JobId)
     
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+
+	kafkaOutputDeleteJob($JobId);
 }
 
 
@@ -199,30 +181,7 @@ function changeJobId($DbConn, $NewJobId, $OriginalJobId)
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
 
-	//Detlete old QR code file
-	// get the abs path to the relevant QR code first, delete the QR code, 
-    
-    // $query = "SELECT absolutePathToQrCode FROM jobs WHERE jobId=?";
-    
-    // if(!($statement = $DbConn->prepare($query)))
-    //     errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-    // if(!($statement->bind_param('s', $NewJobId)))
-    //     errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    // if(!$statement->execute())
-    //     errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    // $res = $statement->get_result();
-    // $row = $res->fetch_row();
-    
-    // $qrCodePath = $row[0];
-    
-    // if($qrCodePath != null)
-    //     exec("rm $qrCodePath");
-
-	// //Create QR code for new ID
-	// generateJobQrCode($DbConn, $NewJobId);
+	kafkaOutputChangeJobId($OriginalJobId, $NewJobId);
 
 	return $NewJobId;
 }
@@ -534,6 +493,22 @@ function resolveStoppage($DbConn, $stoppageRef)
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
 
     $res = $statement->get_result();
+	
+	// get the job ID stoppage type ID for kafka
+	$query = "SELECT `jobId`, `stoppageReasonId` FROM `stoppagesLog` WHERE ref=?";
+    if(!($statement = $DbConn->prepare($query)))
+        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+
+    if(!($statement->bind_param('s', $stoppageRef)))
+        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
+
+    if(!$statement->execute())
+        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+
+    $res = $statement->get_result();
+	$row = $res->fetch_assoc();
+
+	kafkaOutputRecordProblemState($row["jobId"], $row["stoppageReasonId"], false);
 
 	return "";
 }
@@ -643,6 +618,21 @@ function saveRecordDetails($DbConn, $DetailsArray)
     
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+
+	kafkaOutputUpdateJobDetails(
+		$DetailsArray["jobId"],
+		$DetailsArray["customerName"],
+		$DetailsArray["expectedDuration"],
+		$DetailsArray["dueDate"],
+		$DetailsArray["description"],
+		$DetailsArray["totalChargeToCustomer"],
+		$DetailsArray["numberOfUnits"],
+		$DetailsArray["totalParts"],
+		$DetailsArray["routeName"],
+		$DetailsArray["routeCurrentStageIndex"],
+		$DetailsArray["priority"],
+		$DetailsArray["notes"]
+	);
 
 	return $returnVal;
 }

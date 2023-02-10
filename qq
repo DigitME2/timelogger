@@ -1,0 +1,13 @@
+[0;1;31m●[0m apache2.service - The Apache HTTP Server
+     Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset: enabled)
+     Active: [0;1;31mfailed[0m (Result: exit-code) since Wed 2022-12-07 18:22:56 GMT; 9s ago
+       Docs: https://httpd.apache.org/docs/2.4/
+    Process: 29660 ExecStart=/usr/sbin/apachectl start [0;1;31m(code=exited, status=1/FAILURE)[0m
+
+Dec 07 18:22:56 galactica systemd[1]: Starting The Apache HTTP Server...
+Dec 07 18:22:56 galactica apachectl[29671]: apache2: Syntax error on line 146 of /etc/apache2/apache2.conf: Syntax error on line 1 of /etc/apache2/mods-enabled/wsgi.load: Cannot load /usr/lib/apache2/modules/mod_wsgi.so into server: /usr/lib/apache2/modules/mod_wsgi.so: cannot open shared object file: No such file or directory
+Dec 07 18:22:56 galactica apachectl[29660]: Action 'start' failed.
+Dec 07 18:22:56 galactica apachectl[29660]: The Apache error log may have more information.
+Dec 07 18:22:56 galactica systemd[1]: [0;1;39m[0;1;31m[0;1;39mapache2.service: Control process exited, code=exited, status=1/FAILURE[0m
+Dec 07 18:22:56 galactica systemd[1]: [0;1;38;5;185m[0;1;39m[0;1;38;5;185mapache2.service: Failed with result 'exit-code'.[0m
+Dec 07 18:22:56 galactica systemd[1]: [0;1;31m[0;1;39m[0;1;31mFailed to start The Apache HTTP Server.[0m
