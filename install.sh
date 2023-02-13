@@ -1,8 +1,8 @@
 #!/bin/bash
 # ******************************************
-# Program: Process Time Tracker - v.2.13
-# Developer: DigitME2# Date: 24-10-2022
-# Last Updated: 24-10-2022
+# Program: Process Time Tracker - v.2.16
+# Developer: DigitME2# Date: 10-02-2023
+# Last Updated: 13-02-2023
 # ******************************************
 
 #Copyright 2022 DigitME2
@@ -68,6 +68,11 @@ sudo chmod 777 -R timelogger
 sudo chmod 777 index.php
 sudo systemctl restart apache2 && sudo systemctl restart mysql
 sudo systemctl restart ptt_discovery.service
+sudo rm /etc/php/8.1/apache2/php.ini
+sudo rm /etc/php/8.1/cli/php.ini
+sudo cp /apache2/php.ini /etc/php/8.1/apache2/
+sudo cp /cli/php.ini /etc/php/8.1/cli/php.ini
+sudo systemctl restart apache2 && sudo systemctl restart mysql
 sudo echo -e "\e[42mProcess Time Tracker Software Installed Successfully.\e[0m"
 sudo echo -e "\e[33mTo change the server ports. Please read the readme.txt file for further information.[0m"
 sleep 5
