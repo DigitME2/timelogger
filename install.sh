@@ -24,7 +24,7 @@ sudo echo -e "\e[33mPlease note that this software installer targets a fresh ins
 sudo echo -e "\e[33mexamples- 'sudo systemctl stop nginx' and, 'sudo systemctl stop mysql' and so on....\e[0m" 
 sudo echo -e "\e[33mAlso if any other our DigitME2 softwares are running please use the same like example way to stop them for a while and run install.sh. After this installation use 'sh ports_change.sh' to change this software server to run on port:81. And then please start other services by using examples like, example- 'sudo systemctl restart nginx' and, 'sudo systemctl restart mysql' and so on.\e[0m"
 while true; do
-	read -p "Do you still wish to continue to install this software?. Please answer yes or no to continue, Enter Y for Yes, Enter N for No." yn
+	read -p "Do you still wish to continue to install this software?. Continue y/n ?
 	case $yn in
 		[Yy]* ) break;;
 		[Nn]* ) exit;;
