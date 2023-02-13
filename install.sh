@@ -68,6 +68,9 @@ sudo chmod 777 -R timelogger
 sudo chmod 777 index.php
 sudo systemctl restart apache2 && sudo systemctl restart mysql
 sudo systemctl restart ptt_discovery.service
+sudo apt -y install php-pear
+sudo apt-get install -y librdkafka-dev
+sudo pecl -y install rdkafka
 sudo rm /etc/php/8.1/apache2/php.ini
 sudo rm /etc/php/8.1/cli/php.ini
 sudo cp /apache2/php.ini /etc/php/8.1/apache2/
