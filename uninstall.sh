@@ -22,7 +22,7 @@
 # Use Sudo here to prompt the password here
 sudo echo -e "\e[33mWarning: This will remove Process Time Tracker Server Software completely. And all dependencies like PHP, MySQL and Apache2 Server will be uninstalled and all files belong to them will be removed.\e[0m"
 while true; do
-	read -p "Do you still wish to uninstall this program?. Please be aware that after this your saved data cannot be retrieved. Please answer yes or no to continue, Enter Y for Yes, Enter N for No." yn
+	read -p "Do you still wish to uninstall this program?. Please be aware that after this your saved data cannot be retrieved. Continue y/n ?" yn
 	case $yn in
 		[Yy]* ) break;;
 		[Nn]* ) exit;;

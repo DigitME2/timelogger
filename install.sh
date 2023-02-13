@@ -35,8 +35,8 @@ sudo echo -e "\e[42mStarting installation of the DigitME2 PTT Server Software.\e
 sudo echo -e "\e[33mInstalling apt packages...\e[0m"
 sudo apt-get -y update -qqq
 sudo echo -e "\e[33mInstalling software-properties...\e[0m"
-sudo apt-get -y install -qq software-properties-common
-sudo add-apt-repository -y universe -qq
+sudo apt-get -y install software-properties-common
+sudo add-apt-repository -y universe
 sudo echo -e "\e[33mInstalling Apache2 Server...\e[0m"
 sudo apt -y -qq install apache2
 sudo ufw allow in "Apache full"
@@ -73,8 +73,9 @@ sudo apt-get install -y librdkafka-dev
 sudo pecl -y install rdkafka
 sudo rm /etc/php/8.1/apache2/php.ini
 sudo rm /etc/php/8.1/cli/php.ini
-sudo cp /apache2/php.ini /etc/php/8.1/apache2/
-sudo cp /cli/php.ini /etc/php/8.1/cli/php.ini
+cd ~/timelogger
+sudo cp apache2/php.ini /etc/php/8.1/apache2/
+sudo cp cli/php.ini /etc/php/8.1/cli/php.ini
 sudo systemctl restart apache2 && sudo systemctl restart mysql
 sudo echo -e "\e[42mProcess Time Tracker Software Installed Successfully.\e[0m"
 sudo echo -e "\e[33mTo change the server ports. Please read the readme.txt file for further information.[0m"
