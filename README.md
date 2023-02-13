@@ -51,7 +51,7 @@ sudo apt-get install git
 clone our timelogger reposiratory from our github page, by using following command:
 
 ```
-https://github.com/DigitME2/timelogger.git
+git clone https://github.com/DigitME2/timelogger.git
 ```
 
 Go to timelogger folder in your home directory and open the terminal 
