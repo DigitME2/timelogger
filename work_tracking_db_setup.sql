@@ -545,8 +545,6 @@ BEGIN
 						INTO @prevComplete FROM timeLog 
 						WHERE timeLog.jobId=JobId AND timeLog.stationId=@prevStageName AND timeLog.workStatus="stageComplete";
 
-						SELECT @prevComplete;
-
 						IF @prevComplete > 0 THEN
 							UPDATE jobs 
 							SET routeCurrentStageIndex = @stageIndex, routeCurrentStageName = StationId 
@@ -1045,6 +1043,70 @@ BEGIN
 	
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getClockedOffUsers`() MODIFIES SQL DATA
+BEGIN
+    DECLARE _countUserIds INT;
+    DECLARE _userId VARCHAR(20);
+    DECLARE _userName VARCHAR(20);
+    DECLARE _jobId VARCHAR(20);
+    DECLARE _stationId VARCHAR(50);
+    DECLARE _clockOffTime TIME;
+    DECLARE _recordDate DATE;
+
+    CREATE TEMPORARY TABLE clockedOffUsersInfo (userName VARCHAR(20), jobId VARCHAR(20), stationId VARCHAR(50), clockOffTime TIME, recordDate DATE);
+    CREATE TEMPORARY TABLE clockedOnUserIds (userId VARCHAR(20)); 
+    CREATE TEMPORARY TABLE clockedOffUserIds (userId VARCHAR(20));
+
+
+    INSERT INTO clockedOnUserIds (userId) SELECT DISTINCT userId FROM timeLog 
+    WHERE timeLog.clockOnTime IS NOT NULL AND timeLog.clockOffTime IS NULL ORDER BY timeLog.userId ASC;
+
+    -- SELECT userId FROM clockedOnUserIds;
+    
+    INSERT INTO clockedOffUserIds (userId) SELECT DISTINCT users.userId FROM users 
+    WHERE userId != 'office' AND userId != 'noName' AND userId != 'user_Delt' 
+    AND userId NOT IN (SELECT clockedOnUserIds.userId FROM clockedOnUserIds);
+    
+    -- SELECT userId FROM clockedOnUserIds;
+
+    get_user_data_loop: LOOP
+        SELECT userId INTO _userId FROM clockedOffUserIds LIMIT 1;
+
+        SELECT userName INTO _userName FROM users WHERE users.userId = _userId;
+        INSERT INTO clockedOffUsersInfo (userName) VALUE (_userName);
+
+        SELECT JobId INTO _jobId FROM timeLog WHERE timeLog.userId = _userId AND clockOffTime IS NOT NULL 
+        ORDER BY recordDate DESC, clockOffTime DESC LIMIT 1;
+
+        SELECT stationId INTO _stationId FROM timeLog WHERE timeLog.userId = _userId AND clockOffTime IS NOT NULL 
+        ORDER BY recordDate DESC, clockOffTime DESC LIMIT 1;
+
+        SELECT clockOffTime INTO _clockOffTime FROM timeLog WHERE timeLog.userId = _userId AND clockOffTime IS NOT NULL 
+        ORDER BY recordDate DESC, clockOffTime DESC LIMIT 1;
+
+        SELECT recordDate INTO _recordDate FROM timeLog WHERE timeLog.userId = _userId AND clockOffTime IS NOT NULL 
+        ORDER BY recordDate DESC, clockOffTime DESC LIMIT 1;
+
+
+        UPDATE clockedOffUsersInfo SET jobId=_jobId, stationId=_stationId, clockOffTime=_clockOffTime, recordDate=_recordDate 
+        WHERE userName = _userName;
+
+        DELETE FROM clockedOffUserIds WHERE userId = _userId;
+
+        SELECT COUNT(userId) INTO _countUserIds FROM clockedOffUserIds;
+    
+        IF _countUserIds = 0 THEN
+            leave get_user_data_loop;
+        END IF;
+
+    END LOOP get_user_data_loop;
+
+
+    SELECT userName, jobId, stationId, clockOffTime, recordDate FROM clockedOffUsersInfo ORDER BY userName ASC;
+    
+END$$
+
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetTimesheet` (IN `UserId` VARCHAR(20), IN `StartDate` DATE, IN `EndDate` DATE)  MODIFIES SQL DATA
 BEGIN
     -- Calculates the total worked time and total overtime, including currently open jobs.
@@ -1294,90 +1356,96 @@ BEGIN
     END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `recordStoppage` (IN `JobId` VARCHAR(20), IN `StoppageReasonId` VARCHAR(20), IN `StationId` VARCHAR(50), IN `Description` TEXT, IN `StationStatus` VARCHAR(20))  MODIFIES SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `recordStoppage` (IN `TargetedRecordref` BIGINT(20), IN `JobId` VARCHAR(20), IN `StoppageReasonId` VARCHAR(20), IN `StationId` VARCHAR(50), IN `Description` TEXT, IN `StationStatus` VARCHAR(20))  MODIFIES SQL DATA
 BEGIN
-	-- stoppageReasonId
-	-- StoppageReasonId
-    -- stoppageReasonIdValid
+
+
     DECLARE inputComboOpenRecordRef INT DEFAULT -1;
-    DECLARE userOtherOpenRecordRef INT DEFAULT -1;
+	DECLARE newlyOpenRecordRef INT DEFAULT -1;
     DECLARE newlyClosedRecordRef INT DEFAULT -1;
     
     DECLARE newlyClosedDuration INT DEFAULT 0;
-    DECLARE newlyClosedOvertime INT DEFAULT 0;
 	
 	DECLARE stoppageReasonIdValid INT DEFAULT 0;
 	DECLARE jobIDValid INT DEFAULT 0;
 
-	DECLARE clockOffTime TIME;
-	
-	CREATE TEMPORARY TABLE routeStages (stageIndex INT PRIMARY KEY AUTO_INCREMENT, stageName VARCHAR(50));
+	DECLARE startDate DATE;
+	DECLARE startTime TIME;
+
+	DECLARE endDate DATE;
+	DECLARE endTime TIME;
+
+	DECLARE dateDifference INT DEFAULT 0;
+	DECLARE dateDifferenceInSeconds INT DEFAULT 0;
+	DECLARE calculatedDuration INT DEFAULT 0;
     
     START TRANSACTION;
-    
-        SELECT stoppagesLog.ref INTO inputComboOpenRecordRef FROM stoppagesLog
-        WHERE stoppagesLog.endTime IS NULL 
-        AND stoppagesLog.stoppageReasonId=StoppageReasonId 
-        AND stoppagesLog.jobId=JobId
-        AND stoppagesLog.stationId=StationId
-        ORDER BY stoppagesLog.recordTimestamp DESC LIMIT 1;
-    
-		-- Check that user and job ID are present in relevant tables
-		SELECT COUNT(stoppageReasonId) INTO stoppageReasonIdValid FROM stoppageReasons WHERE stoppageReasons.stoppageReasonId=StoppageReasonId LIMIT 1;
-		SELECT COUNT(jobId) INTO jobIDValid FROM jobs WHERE jobs.jobId=JobId LIMIT 1;
+
+		IF TargetedRecordref != -1 THEN
+			SET inputComboOpenRecordRef = TargetedRecordref;
+		ELSE
+			SELECT stoppagesLog.ref INTO inputComboOpenRecordRef FROM stoppagesLog
+			WHERE stoppagesLog.endTime IS NULL 
+			AND stoppagesLog.stoppageReasonId=StoppageReasonId 
+			AND stoppagesLog.jobId=JobId
+			AND stoppagesLog.stationId=StationId
+			ORDER BY stoppagesLog.recordTimestamp ASC LIMIT 1;
+			-- Check that Stoppage Reason ID and job ID are present in relevant tables
+			SELECT COUNT(stoppageReasonId) INTO stoppageReasonIdValid FROM stoppageReasons WHERE stoppageReasons.stoppageReasonId=StoppageReasonId LIMIT 1;
+			SELECT COUNT(jobId) INTO jobIDValid FROM jobs WHERE jobs.jobId=JobId LIMIT 1;
+		END IF;
 		
-		-- Confirm that both user and job ID are valid
-		IF stoppageReasonIdValid > 0 AND jobIDValid > 0 THEN
+		-- Confirm that both stoppage ID and Job ID are valid 
+		IF (stoppageReasonIdValid > 0 AND jobIDValid > 0) OR TargetedRecordref != -1 THEN
 			-- Create a new record
-			IF inputComboOpenRecordRef = -1 OR inputComboOpenRecordRef IS NULL or StationStatus='unresolved' THEN
+			IF inputComboOpenRecordRef = -1 OR inputComboOpenRecordRef IS NULL OR StationStatus='unresolved' THEN
 			
 				-- Create a new record in the stoppage log.
-				-- The job status is assumed to be either pending, workInProgress, or complete.
+				-- The job status is required to be unresolved.
 				INSERT INTO stoppagesLog (jobId, stationId, stoppageReasonId, description, startTime, startDate, status)
 				VALUES (JobId, StationId, StoppageReasonId, Description, CURRENT_TIME, CURRENT_DATE, 'unresolved');
 				
-				SELECT "stoppageOn" as result;
+				SELECT "stoppageOn" as result, inputComboOpenRecordRef as logRef;
 
 			
 			-- or close an open one
 			ELSE
 
-				SELECT ref INTO newlyClosedRecordRef FROM stoppagesLog
-				WHERE stoppagesLog.stoppageReasonId=StoppageReasonId AND endTime IS NULL AND stoppagesLog.jobId=JobId
-				ORDER BY recordTimestamp DESC LIMIT 1;
+				-- SELECT ref INTO inputComboOpenRecordRef FROM stoppagesLog
+				-- WHERE stoppagesLog.stoppageReasonId=StoppageReasonId AND endTime IS NULL AND stoppagesLog.jobId=JobId
+				-- ORDER BY stoppagesLog.recordTimestamp ASC LIMIT 1;
 				
-				UPDATE stoppagesLog SET endTime=CURRENT_TIME, endDate=CURRENT_DATE, status=StationStatus WHERE ref = newlyClosedRecordRef;
 				
-				SELECT "stoppageOff" as result;
+				IF inputComboOpenRecordRef != -1 THEN
+					-- SELECT * FROM stoppagesLog WHERE stoppagesLog.ref = inputComboOpenRecordRef;
+					UPDATE stoppagesLog SET endTime=CURRENT_TIME, endDate=CURRENT_DATE, status=StationStatus WHERE stoppagesLog.ref = inputComboOpenRecordRef;
+					-- INSERT INTO stoppagesLog (jobId, stationId, stoppageReasonId, description, endTime, endDate, status)
+					-- VALUES (JobId, StationId, StoppageReasonId, Description, CURRENT_TIME, CURRENT_DATE, 'resolved');
+					SET newlyClosedRecordRef = inputComboOpenRecordRef;
+				
+					SELECT stoppagesLog.startTime, stoppagesLog.startDate, stoppagesLog.endTime, stoppagesLog.endDate INTO startTime, startDate, endTime, endDate 
+					FROM stoppagesLog
+					WHERE stoppagesLog.ref=newlyClosedRecordRef;
+					
+					-- find the newly closed total duration
+					SET dateDifference = DATEDIFF(endDate, startDate);
+					-- SELECT endDate;
+					-- SELECT startDate;
+					-- SELECT endTime;
+					-- SELECT endDate;
+					SET dateDifferenceInSeconds = (dateDifference*24*60*60); -- to seconds
+					SET calculatedDuration = TIME_TO_SEC(TIMEDIFF(endTime, startTime));
+					SET newlyClosedDuration = calculatedDuration + dateDifferenceInSeconds;
+					-- SELECT newlyClosedDuration;
+					-- update records
+					UPDATE stoppagesLog
+					SET duration = newlyClosedDuration
+					WHERE stoppagesLog.ref=newlyClosedRecordRef;
+					-- SELECT newlyClosedRecordRef;
+					SELECT "stoppageOff" as result, newlyClosedRecordRef as logRef;
+				END IF;
+
 			END IF;
-			
-			
-			-- Update the jobs table. This is most easily done here, as references to the
-			-- rows updated in this procedure are required.        
---			IF newlyClosedRecordRef != -1 THEN
---			
---				SELECT clockOnTime, clockOffTime INTO @clockOnTime, @clockOffTime 
---				FROM timeLog
---				WHERE timeLog.ref=newlyClosedRecordRef;
---				
---				-- find the newly closed total duration
---				SET newlyClosedDuration = TIME_TO_SEC(TIMEDIFF(@clockOffTime, @clockOnTime));
---				
---				-- find the newly closed overtime duration
---				SET newlyClosedOvertime = CalcOvertimeDuration(@clockOnTime, @clockOffTime, CURRENT_DATE);
---				
---				-- update records
---				UPDATE jobs 
---				SET closedWorkedDuration = closedWorkedDuration + newlyClosedDuration,
---				closedOvertimeDuration = closedOvertimeDuration + newlyClosedOvertime
---				WHERE jobs.jobId=(SELECT timeLog.jobId FROM timeLog WHERE timeLog.ref=newlyClosedRecordRef LIMIT 1);
---				
---				UPDATE timeLog
---				SET workedDuration = newlyClosedDuration,
---				overtimeDuration = newlyClosedOvertime
---				WHERE timeLog.ref=newlyClosedRecordRef;
---			   
---			END IF;
 			
 		ELSE
 			-- error message returned
@@ -1385,6 +1453,7 @@ BEGIN
 		END IF;
         
     COMMIT;
+
 END$$
 
 --
@@ -1549,7 +1618,7 @@ CREATE TABLE `jobs` (
   `stageQuantityComplete` int(11) DEFAULT NULL,
   `stageOutstandingUnits` int(11) DEFAULT NULL,
   `totalParts` int(11) DEFAULT NULL,
-  `customerName` varchar(50) DEFAULT NULL
+  `customerName` varchar(120) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------

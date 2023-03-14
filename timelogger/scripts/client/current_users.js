@@ -12,6 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
+$(document).ready(function(){
+    updateClockedOffUserTable();
+    // setInterval(function(){updateClockedOffUserTable()}, 3000);
+});
+
 function updateUserTable(){
     $.ajax({
         url:"../scripts/server/current_users.php",
@@ -99,6 +104,64 @@ function clockOffUser(ref)
             else{
 				console.log("Clock Off Success: " + resultJson["result"]);
 				updateUserTable();
+            }
+        }
+    });
+}
+
+function updateClockedOffUserTable(){
+    $.ajax({
+        url:"../scripts/server/current_users.php",
+        type:"GET",
+        dataType:"text",
+        data:{
+            "request":"getClockedOffUsersList"
+        },
+        success:function(result){
+            console.log(result);
+            resultJson = $.parseJSON(result);
+            
+            if(resultJson["status"] != "success"){
+                console.log("Failed to update table: " + resultJson["result"]);
+                $("#clockOffUsersTablePlaceholder").html(resultJson["result"]);
+            }
+            else{
+                var tableData = resultJson["result"];
+                            
+                var tableStructure = {
+                    "rows":{
+                            "linksToPage":true,
+                            "link":"job_details_client.php",
+                            "linkParamLabel":"jobId",
+                            "linkParamDataName":"jobId",
+                    },
+                    "columns":[
+                        {
+                            "headingName":"User Name",
+                            "dataName":"userName"
+                        },
+                        {
+                            "headingName":"Job ID",
+                            "dataName":"jobId"
+                        },
+                        {
+                            "headingName":"Location",
+                            "dataName":"stationId"
+                        },
+                        {
+                            "headingName":"Last Seen Time",
+                            "dataName":"clockOffTime"
+                        },
+                        {
+                            "headingName":"Last Seen Date",
+                            "dataName":"recordDate"
+                        }
+                    ]
+                };
+                
+                
+                var table = generateTable("clockedOffUsersTable", tableData, tableStructure);
+                $("#clockedOffUserTableContainer").empty().append(table);
             }
         }
     });

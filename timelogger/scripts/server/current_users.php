@@ -124,6 +124,31 @@ function clockOffUser($DbConn, $ref)
     return $result;
 }
 
+function getClockedOffUsersList($DbConn){ 
+
+    $query = "CALL getClockedOffUsers()";
+    if(!($getUsersList = $DbConn->query($query)))
+            errorHandler("Error executing query: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+    
+    $clockOffuserList = array();
+    for($i = 0; $i < $getUsersList->num_rows; $i++)
+    {
+        $row = $getUsersList->fetch_assoc();
+        
+        $clockedOffUserList = array(
+			"userName" => $row["userName"],
+            "jobId" => $row["jobId"],
+            "stationId" => $row["stationId"],
+            "clockOffTime" => $row["clockOffTime"],
+            "recordDate" => $row["recordDate"]
+        );
+        
+        array_push($clockOffuserList, $clockedOffUserList);
+    }
+
+    return $clockOffuserList;
+}
+
 function GetUserStatus($DbConn, $userId) 
 {
 
@@ -170,6 +195,12 @@ function main()
             sendResponseToClient("success", $clockOnUserData);
             break;
 
+        case "getClockedOffUsersList":
+            printDebug("Fetching clocked off users");
+            $clockOffUserData = getClockedOffUsersList($dbConn);
+            sendResponseToClient("success", $clockOffUserData);
+            break;
+
 		case "clockOffUser":
 			printDebug("Clocking off User");
 			$ref = $_GET["ref"];
@@ -185,8 +216,6 @@ function main()
             $response = GetUserStatus($dbConn, $userId);
             if ($response == "clockedOff" || "clockedOn")
                 sendResponseToClient("success", $response);
-            else
-                sendResponseToClient("error", $response);
             break;
     }
 }

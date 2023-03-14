@@ -40,32 +40,56 @@
             <div id ="commonHeader"></div>
             <?php include "header.html" ?>
             <div class="pageMainBody">
+                <h1 id="pageTitle">Add New Problem Reason</h1>
                 <div id="addStoppageControls">
-                    <h1>Add New Problem Reason</h1>
                     <div id="newStoppageReasonArea">
                         <span id="newStoppageReasonLabel">New Problem Reason</span>
                         <input type="text" class="stoppageReasonInput" id="newStoppageReason" pattern="^[a-zA-Z0-9_ ]{1,20}$">
                         <span id="newStoppageReasonCounter"></span>
                         <input id="newStoppageButton" type="button" value="Add Reason"  onclick="addNewStoppageReason()">
-			<span id="addStoppageReasonResponseField"/>
+			                <span id="addStoppageReasonResponseField"/>
                     </div>
                 </div>
-                
                 <hr>
-                
-                <div id="existingStoppageDisplay">
-                    <h1>Existing Problem Reasons</h1>
-<!--
-                    <div id=currentStoppageDisplayControls>
-                        <input type="radio" id="sortByTimeAdded" name="tableOrdering" value="byTimeAdded" checked="true" onclick="updateStoppageTable()">
-                        <label for="sortByTimeAdded">Sort by when users were added</label>
-                        <input type="radio" id="sortAlphabetic" name="tableOrdering" value="byAlphabetic" onclick="updateStoppageTable()">
-                        <label for="sortAlphabetic">Sort alphabetically</label>
-                    </div>
--->
-                    <div id=existingStoppagesReasonContainer>
-                        <span id="tablePlaceholder">Loading...</span>
-                    </div>
+                <div>
+                    <div id="existingStoppageDisplay">
+                        <h1 id="exsistingProblemsLable">Existing Problem Reasons</h1>
+                        <br>
+                        <div id="existingStoppagesReasonContainer">
+                            <span id="tablePlaceholder">Loading...</span>
+                        </div>
+                        <div id="stoppagesLogTableController">
+                                <h1 id="stoppagesLogTableTitle">Recorded Problem Logs</h1>
+                                <div>
+                                    <label for="searchPhrase" id="searchPhraseLabel">Search with Job ID:</label>
+                                        <input type="text" id="searchPhrase" class="LogsControl" placeholder="enter search phrase" oninput="updateStoppageLogsTable()"/> 
+                                </div>
+                            <br>
+                            <div>
+                                <label for="checkbox" id="useStartDateLabel">Use Start Date</label>
+                                <input type="checkbox" id="startDateCheckbox" class="dateControls" onchange="onUseStartDateCheckbox()">
+                                <span id="startDateLabel">Start Date:</span>
+                                <input type="date" id="dateStartInput" disabled class="dateControls">
+                                <label for="checkbox" id="useEndDateLabel">Use End Date</label>
+                                <input type="checkbox" id="endDateCheckbox" class="dateControls" onchange="onUseEndDateCheckbox()">
+                                <span id="endDateLabel">End Date:</span>
+                                <input type="date" id="dateEndInput" disabled class="dateControls">
+                                <input id="fetchStoppagesLogButton" type="button" onclick="updateStoppageLogsTable()" value="Search Logs" class="dateControls">
+                                <br>
+                                <br>
+                                <a id="csvDownloadLink" href="" download type="text/css" class="control">Click here to download all the Problem Logs as a CSV file</a>
+                            </div>
+                            <br>
+                            <br>
+                            <div>
+                                <div id="stoppagesLogTableContainer"> 
+                                    <br>
+                                    <span id="stoppageLogsTablePlaceholder">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+                </div>  
                 </div>
             </div>
         </div>

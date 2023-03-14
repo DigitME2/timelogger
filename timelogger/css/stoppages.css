@@ -12,19 +12,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
+#addStoppageControls{
+	display: grid;
+	grid-template-columns: 165px 210px 50px;
+	align-items:start;
+}
+
+
+#newStoppageReasonLabel{
+	grid-column:1;
+	margin-right:3px;
+	
+}
+
 #newStoppageReasonArea{
+	grid-column: 1;
 	display: grid;
 	grid-template-columns: 165px 210px 50px;
 	align-items:center;
 	grid-row-gap:3px;	
 	grid-column-gap:7px;
 }
-
-
-#newStoppageReasonLabel{
-	grid-column:1;
-}
-
 #newStoppageReason{
 	grid-column:2;
 }
@@ -34,7 +42,7 @@ limitations under the License. */
 }
 
 #newStoppageButton{
-  	grid-column:2/4;
+  grid-column:2/4;
 	max-width:130px;
 	justify-self: right;
 }
@@ -42,3 +50,87 @@ limitations under the License. */
 #addStoppageReasonResponseField{
 	grid-column:2/5;
 }
+
+#existingStoppageDisplay{
+	display: grid;
+	grid: 200px 600px;
+	grid-column-gap:7px;
+	grid-row-gap: 3px;
+}
+
+#exsistingProblemsLable{
+	position: static;
+	align-self: start;
+	grid-column: 1;
+	grid-row: 1;
+}
+
+#existingStoppagesReasonContainer{
+	grid-column: 1;
+	grid-row:1;
+	margin-top: 50px;
+}
+
+#tablePlaceholder{
+	grid-column: 1;
+	grid-row:1;
+}
+
+#stoppagesLogTableController{
+	position: static;
+	grid-column: 2;
+	grid-row: 1;
+	column-gap:7px;
+	row-gap: 5px;
+}
+
+#stoppagesLogTableTitle{
+	position: static;
+	align-self: start;
+}
+
+#csvDownloadLink{
+	position: static;
+	margin-left: 5px;
+}
+
+#searchPhraseLabel{
+	margin-left:5px;
+}
+
+#searchPhrase{
+	margin-left:15px;
+}
+
+#useStartDateLabel{
+	margin-left:5px;
+}
+
+#useEndDateLabel{
+	margin-left:15px;
+}
+
+#fetchStoppagesLogButton{
+	margin-left: 15px;
+}
+
+#stoppagesLogTableTitle{
+	position: static;
+	grid-column: 2;
+	grid-row: 1;
+}
+
+#stoppagesLogTableContainer{
+	position: static;
+	grid-column: 2;
+	grid-row: 2;
+	margin-top: -10px;
+}
+
+#tablePlaceholder{
+	position: static;
+	grid-column: 2;
+	grid-row: 2;
+}
+
+

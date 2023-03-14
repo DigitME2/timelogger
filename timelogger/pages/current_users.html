@@ -43,17 +43,28 @@
 			});
 		</script>
         <link rel="stylesheet" href="../css/common.css" type="text/css">
+        <link rel="stylesheet" href="../css/current_users.css" type="text/css">
     </head>
     <body>
         <div class="pageContainer">
             <div id ="commonHeader"></div>
             <div class="pageMainBody">
-                <h1>Currently Clocked On Users</h1>
-                <div id="clockOnUserTableContainer">
-                    <span id="userTablePlaceholder">Loading...</span>
+                    <div id="currentUsersArea">
+                        <div id="clockedUsersArea">
+                            <h1 id="clockOnUsersTitle">Currently Clocked On Users</h1>
+                                <div id="clockOnUserTableContainer">
+                                    <span id="userTablePlaceholder">Loading...</span>
+                                </div>
+                        </div>
+                        <div id="clockedOffUsersArea">
+                            <h1 id="clockOffUsersTitle">Currently Clocked Off Users</h1>
+                                <div id="clockedOffUserTableContainer">
+                                    <span id="clockOffUsersTablePlaceholder">Loading...</span>
+                                </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 		<div id ="commonFooter"></div>
     </body>
 </html>

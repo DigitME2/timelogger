@@ -15,6 +15,7 @@ limitations under the License. */
 
 $(document).ready(function(){
     updateStoppageReasonTable();
+    updateStoppageLogsTable();
     $(".stoppageReasonInput").on('keyup', function(){
         var stoppageReasonId = $("#newStoppageReason").val();
         
@@ -96,6 +97,146 @@ function updateStoppageReasonTable(){
             }
         }
     });
+}
+
+function updateStoppageLogsTable(){
+    $("#stoppagesLogTableContainer").empty().html("Working. Please wait....");
+    SearchPhrase = $("#searchPhrase").val();
+    inputStartDate = $("#dateStartInput").val();
+    inputEndDate = $("#dateEndInput").val();
+    $.ajax({
+        url:"../scripts/server/stoppages.php",
+        type:"GET",
+        dataType:"text",
+        data:{
+            "request" : "getStoppagesLog",
+            "useStartDate" : $("#startDateCheckbox").is(':checked'),
+            "useEndDate" : $("#endDateCheckbox").is(':checked'),
+            "startDate" : inputStartDate,
+            "endDate" : inputEndDate,
+            "searchPhrase" : SearchPhrase
+        },
+        success:function(result){
+            console.log(result);
+            resultJson = $.parseJSON(result);
+            
+            if(resultJson["status"] != "success"){
+                console.log("Failed to load problems log table: " + resultJson["result"]);
+                $("#stoppagesLogTableContainer").html("");
+                $("#stoppagesLogTableContainer").empty().html(resultJson["result"]);
+            }
+            else{
+                var tableData = resultJson["result"];
+                            
+                var tableStructure = {
+                    "rows":{
+                            "linksToPage":true,
+                            "link":"job_details_client.php",
+                            "linkParamLabel":"jobId",
+                            "linkParamDataName":"jobId",
+                    },
+                    "columns":[
+                        {
+                            "headingName":"Job ID",
+                            "dataName":"jobId"
+                        },
+                        {
+                            "headingName":"Customer Name",
+                            "dataName":"customerId"
+                        },
+                        {
+                            "headingName":"Problem Name",
+                            "dataName":"stoppageReasonName"
+                        },
+                        {
+                            "headingName":"Location",
+                            "dataName":"stationId"
+                        },
+                        {
+                            "headingName":"Start Time",
+                            "dataName":"startTime"
+                        },
+                        {
+                            "headingName":"Start Date",
+                            "dataName":"startDate"
+                        },
+                        {
+                            "headingName":"End Time",
+                            "dataName":"endTime"
+                        },
+                        {
+                            "headingName":"End Date",
+                            "dataName":"endDate"
+                        },
+                        {
+                            "headingName":"Duration",
+                            "dataName":"duration"
+                        },
+                        {
+                            "headingName":"status",
+                            "dataName":"status"
+                        }
+                    ]
+                };
+                
+                
+                var table = generateTable("stoppagesLogTable", tableData, tableStructure);
+                $("#stoppagesLogTableContainer").empty().append(table);
+
+                urlParams = {
+                    "request":"getStoppagesLogCSV",
+                    "useStartDate" : $('#startDateCheckbox').is(':checked'),
+                    "useEndDate" : $('#endDateCheckbox').is(':checked'),
+                    "startDate" : inputStartDate,
+                    "endDate" : inputEndDate,
+                    "searchPhrase" : SearchPhrase
+                };
+                var csvUrl = "../scripts/server/stoppages.php?" + $.param(urlParams);
+                $("#csvDownloadLink").attr("href",csvUrl);
+            }
+        }
+    });
+}
+
+function validDates(startDate, endDate){
+    var isValidDate = true;
+    
+    if(startDate == ""){
+        $("#stoppagesLogTableContainer").empty().html("Invalid start date");
+        isValidDate = false;
+    }else if(endDate == ""){
+        $("#stoppagesLogTableContainer").empty().html("Invalid end date");
+        isValidDate = false;
+    }else{
+        
+        var startDateParts = startDate.split("-");
+        var endDateParts = endDate.split("-");
+        
+        var startYear = parseInt(startDateParts[0]);
+        var startMonth = parseInt(startDateParts[1]);
+        var startDay = parseInt(startDateParts[2]);
+        var endYear = parseInt(endDateParts[0]);
+        var endMonth = parseInt(endDateParts[1]);
+        var endDay = parseInt(endDateParts[2]);
+        
+        if(startYear > endYear){
+            $("#stoppagesLogTableContainer").empty().html("Start date must be before end date");
+			isValidDate = false;
+        }else if(startYear == endYear && startMonth > endMonth){
+            $("#stoppagesLogTableContainer").empty().html("Start date must be before end date");
+			isValidDate = false;            
+        }else if(startMonth == endMonth && startDay > endDay){
+            $("#stoppagesLogTableContainer").empty().html("Start date must be before end date");
+			isValidDate = false;
+        }
+
+		if(startYear <= 2016){
+			$("#stoppagesLogTableContainer").empty().html("Start date prior to system initialization");
+			isValidDate = false;
+		}
+    }
+    
+    return isValidDate;
 }
 
 function addNewStoppageReason(){
@@ -200,4 +341,28 @@ function deleteStoppageReason(stoppageReasonId){
 		}
 	    });
 	}
+}
+
+function onUseStartDateCheckbox(){
+    
+    if(!($("#startDateCheckbox").is(':checked')))
+    {
+        $('#dateStartInput').prop("disabled", true);
+    } 
+    else
+    {
+        $('#dateStartInput').prop("disabled", false);
+    }
+}
+
+function onUseEndDateCheckbox(){
+
+    if(!($("#endDateCheckbox").is(':checked')))
+    {
+        $('#dateEndInput').prop("disabled", true);
+    } 
+    else
+    {
+        $('#dateEndInput').prop("disabled", false);
+    }
 }
