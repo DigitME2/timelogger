@@ -22,8 +22,8 @@ $(document).ready(function(){
     
     $("#customerName").on('keyup', function(){
         var customerName = $("#customerName").val();
-        var custNameCharsRemaining = 50 - description.length;
-        $("#customerName").html(custNameCharsRemaining + "/50"); 
+        var custNameCharsRemaining = 120 - customerName.length;
+        $("#customerNameCounter").html(custNameCharsRemaining + "/120"); 
     });
     $("#customerName").trigger("keyup",null);
 });
@@ -139,10 +139,8 @@ function loadJobRecord(JobId){
                     $("#descriptionCounter").html(descCharsRemaining + "/200");
                     
                     $("#customerName").val(record.customerName);
-                    if(record.customerName != null){
-		                var custNameCharsRemaining = 50 - record.customerName.length;
-		                $("#customerNameCounter").html(custNameCharsRemaining + "/50");
-                    }
+					var custNameCharsRemaining = 120 - record.customerName.length;
+					$("#customerNameCounter").html(custNameCharsRemaining + "/120");
                     
 					$("#numUnits").val(record.numberOfUnits);
 					$("#totalParts").val(record.totalParts);
@@ -329,9 +327,9 @@ function saveRecord(JobId){
 	}
 	
 	customerName = $("#customerName").val();
-	if(customerName.length > 50){
-		console.log("customer Name length exceeds 50 characters. Stopping");
-		$("#saveChangesFeedback").empty().html("customer Name's length must not be greater than 50");
+	if(customerName.length > 120){
+		console.log("customer Name length exceeds 120 characters. Stopping");
+		$("#saveChangesFeedback").empty().html("customer Name's length must not be greater than 120");
 		setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
 		return;
 	}
@@ -850,7 +848,8 @@ function duplicateJob(JobId){
 	var jobTotalCharge = Math.round($("#chargeToCustomer").val() * 100); // get the value into pence
 	var unitCount = $("#numUnits").val();
 	var expHours = $("#expectedDuration").val();
-	var priority = $("#priority").val()
+	var priority = $("#priority").val();
+	var customerName = $("#customerName").val();
 
 	//check if user has attempted to change job ID with an invalid ID
 	//in which case change to ID would be lost if duplicte was caried out
@@ -903,10 +902,9 @@ function duplicateJob(JobId){
 		return;
 	}
 	
-	customerName = $("#customerName").val();
-	if(customerName.length > 50){
-		console.log("customer Name length exceeds 50 characters. Stopping");
-		$("#saveChangesFeedback").empty().html("customer Name's length must not be greater than 50");
+	if(customerName.length > 120){
+		console.log("customer Name length exceeds 120 characters. Stopping");
+		$("#saveChangesFeedback").empty().html("customer Name's length must not be greater than 120");
 		setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
 		return;
 	}
@@ -924,7 +922,8 @@ function duplicateJob(JobId){
 			"routeName":routeName,
 			"totalChargeToCustomer":jobTotalCharge,
 			"unitCount":unitCount,
-			"productId":$("#productId").html()
+			"productId":$("#productId").html(),
+			"customerName":customerName
 		},
 		success:function(result){
 			console.log(result);
@@ -989,7 +988,7 @@ function addStoppageBtnPress(jobId){
 	}		
 }
 
-function addStoppage(jobId, stoppageReasonId, stationId, stoppageDescription, status="unresolved"){
+function addStoppage(jobId, stoppageId, stationId, stoppageDescription, status="unresolved"){
 	$.ajax({
 		url:"../scripts/server/client_input.php",
 		type:"GET",
@@ -997,7 +996,7 @@ function addStoppage(jobId, stoppageReasonId, stationId, stoppageDescription, st
 		data:{
 			"request":"recordStoppage",
 			"jobId":jobId,
-			"stoppageId":stoppageReasonId,
+			"stoppageId":stoppageId,
 			"stationId":stationId,
 			"jobStatus":status,
 			"description":stoppageDescription

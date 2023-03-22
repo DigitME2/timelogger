@@ -82,7 +82,7 @@ else
 					<select id="routeStage" class="jobDetail"></select>
 					
 					<label for="customerName" class="jobDetailLabel">Customer Name</label>
-					<input id="customerName" type="text" class="jobDetail" pattern="^.{0,50}$"/>
+					<input id="customerName" type="text" class="jobDetail" pattern="^.{0,120}$"/>
 					<span id="customerNameCounter" class="inputWidthCounter"></span>
 					
 					<label for="description" class="jobDetailLabel">Description</label>
@@ -189,8 +189,9 @@ else
 
 			            <a id="csvDownloadLink" href="" download type="text/plain" class="tableControl" hidden>Click here to download the currently displayed table as CSV</a>
 						
-						<span id=addWorkLogLabel><h2>Add New Work Log Record</h2></span>
-						<input type="button" id="addWorkLogbtn" value="Add New Work Log" onclick="addWorkLog();">
+						<input type="button" id="addWorkLogbtn" value="Add new work log" onclick="addWorkLog();">
+
+							<button id=transferWorkLogbtn type="button" onclick="window.location.href='../pages/transfer_work_log_client.php?jobId=<?php echo($jobId); ?>'">Transfer work log</button>
 					
 						</div>
 

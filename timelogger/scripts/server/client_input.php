@@ -55,10 +55,11 @@ function clockUser($DbConn, $UserId, $JobId, $StationId, $JobStatus)
 		$res = $statement->get_result();
 		$row = $res->fetch_assoc();
 
-		if($row["currentJobId"] != null)
+		if($row != null)
 			$JobId = $row["currentJobId"];
 		else
-			return 'No Job';
+			return "No Job!";
+			
 
 	}
 
@@ -86,7 +87,7 @@ function clockUser($DbConn, $UserId, $JobId, $StationId, $JobStatus)
 }
 
 // Calls a stored procedure in the database to Record a stoppage.
-function recordStoppage($DbConn, $StoppageReasonId, $JobId, $StationId, $JobStatus, $description)
+function recordStoppage($DbConn, $StoppageId, $JobId, $StationId, $JobStatus, $description)
 {
 	global $productIDCodePrefix;
 
@@ -117,26 +118,28 @@ function recordStoppage($DbConn, $StoppageReasonId, $JobId, $StationId, $JobStat
 			$JobId = $row["currentJobId"];
 		else
 			return 'error';
-
 	}
 
     // call the stored procedure, putting the result into a session-local variable
-    $query = "CALL recordStoppage(?, ?, ?, ?, ?)";
+    $query = "CALL recordStoppage(-1, ?, ?, ?, ?, ?)";
     
     if(!($statement = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
-    if(!($statement->bind_param('sssss', $JobId, $StoppageReasonId, $StationId, $description, $JobStatus)))
+    if(!($statement->bind_param('sssss',  $JobId, $StoppageId, $StationId, $description, $JobStatus)))
         errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
     
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    if(!($statement->bind_result($result)))
-        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-    $statement->fetch();
 
+	$res = $statement->get_result();
+	$row = $res->fetch_assoc();
+    
+	if($row["result"] == "stoppageOn" || $row["result"] == "stoppageOff")
+		$result = array("state"=>$row["result"]);
+	else
+		$result = array("state"=>$row["result"]);
+	
     return $result;
 }
 
@@ -257,12 +260,12 @@ function main()
 					$description = '';
 
 		        $result = recordStoppage($dbConn, $stoppageId, $jobId, $stationId, $jobStatus, $description);
-				if ($result == "unknownId"){
+				if ($result["state"] == "unknownId"){
 					sendResponseToClient("error", "Unknown ID");
 				}
 				else{
 		        	sendResponseToClient("success", $result);
-					if($result == "stoppageOn")
+					if($result["state"] == "stoppageOn")
 						$stoppageActive = TRUE;
 					else
 						$stoppageActive = FALSE;

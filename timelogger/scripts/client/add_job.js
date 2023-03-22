@@ -21,10 +21,10 @@ $(document).ready(function(){
         
         var jobCharsRemaining = 20 - jobID.length;
         var descCharsRemaining = 200 - description.length;
-        var custCharsRemaining = 50 - customerName.length;
+        var custCharsRemaining = 120 - customerName.length;
         $("#jobIdCounter").html(jobCharsRemaining + "/20");
         $("#descriptionCounter").html(descCharsRemaining + "/200"); 
-        $("#customerNameCounter").html(custCharsRemaining + "/50"); 
+        $("#customerNameCounter").html(custCharsRemaining + "/120"); 
     });
     $(".jobDetailsInput").trigger("keyup",null);
 	
@@ -195,7 +195,7 @@ function handleNewJob(){
 			return;
 		}
 
-		var duration = (parseInt(timeParts[0],10) * 3600) + (parseInt(timeParts[1],10) * 60);
+		var duration = (parseInt(timeParts[0])) +":"+ (parseInt(timeParts[1]));
 	}
 	
 	if(jobTotalCharge < 0){
@@ -223,9 +223,9 @@ function handleNewJob(){
 		productId = '';
 	}
 	
-	if(customerName.length > 50){
-		console.log("Customer name length exceeds 50 characters. Stopping");
-		$("#saveJobResponseField").empty().html("Customer name's length must not be greater than 200");
+	if(customerName.length > 120){
+		console.log("Customer name length exceeds 120 characters. Stopping");
+		$("#saveJobResponseField").empty().html("Customer name's length must not be greater than 120");
 		setTimeout(function(){$("#saveJobResponseField").empty();},10000);
 		return;
 	}
@@ -283,7 +283,7 @@ function clearInputs(){
     $("#textboxRouteDesc").val("");
     $("#jobIdCounter").html("20/20");
     $("#descriptionCounter").html("200/200");
-    $("#customerNameCounter").html("50/50");
+    $("#customerNameCounter").html("120/120");
 	$("#productIdDropDown").val("");
 	$("#customerNameInput").val("");
 }
@@ -483,7 +483,7 @@ function displayCsvResultsTable(tableData){
             },
             {
                 "headingName":"QR Code",
-                "linkDataName":setCodeDownloadLink(jobId),
+                "linkDataName":setCodeDownloadLink(JobID),
                 "linkIsDownload":true,
                 "linkText":"QR code"
             }

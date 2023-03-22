@@ -214,15 +214,18 @@ limitations under the License. */
 	float: left;
 }
 
-#addWorkLogLabel{
-	grid-column:6;
-	grid-row: 1;
-	margin-left:40px;
-}
-
 #addWorkLogbtn{
 	grid-column:6;
 	grid-row:2;
-	margin-left:115px;
-	max-width: 155px;
+	margin-left:35px;
+	max-width: 175px;
+}
+
+#transferWorkLogbtn{
+	grid-column: 6;
+	grid-row: 4;
+	margin-left:35px;
+	max-width: 175px;
+	font-size: 15px;
+	padding: 3.5px;
 }

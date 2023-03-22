@@ -482,24 +482,33 @@ function getStoppagesLog($DbConn, $JobId)
 
 function resolveStoppage($DbConn, $stoppageRef)
 {
-	$query = "UPDATE `stoppagesLog` SET status='resolved' WHERE ref=?";
+	$JobId = "";
+	$StoppageReasonId = "";
+	$StationId = "";
+	$Description = "";
+	$Status = "resolved";
+
+	$query = "CALL recordStoppage(?, ?, ?, ?, ?, ?)";
     if(!($statement = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
 
-    if(!($statement->bind_param('s', $stoppageRef)))
+    if(!($statement->bind_param('isssss', $stoppageRef, $JobId, $StoppageReasonId, $StationId, $Description, $Status)))
         errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
 
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
 
-    $res = $statement->get_result();
-	
+	$res = $statement->get_result();
+	$row = $res->fetch_row();
+	$result = $row[0];
+	$statement->close();
+
 	// get the job ID stoppage type ID for kafka
 	$query = "SELECT `jobId`, `stoppageReasonId` FROM `stoppagesLog` WHERE ref=?";
     if(!($statement = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
 
-    if(!($statement->bind_param('s', $stoppageRef)))
+    if(!($statement->bind_param('i', $stoppageRef)))
         errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
 
     if(!$statement->execute())
@@ -834,8 +843,8 @@ function main()
 			case "resolveStoppage":
 				$stoppageRef = $_GET["stoppageRef"];
 				printDebug("resolving Stoppage $stoppageRef");
-				$responce = resolveStoppage($dbConn, $stoppageRef);
-				sendResponseToClient("success",$responce);
+				resolveStoppage($dbConn, $stoppageRef);
+				sendResponseToClient("success", "Stoppage resolved");
 				updateJobStoppagesFromStoppageRef($dbConn, $stoppageRef);
 				break;
 			case "markJobComplete":
