@@ -1,4 +1,3 @@
-
 /* Copyright 2022 DigitME2
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,6 +32,71 @@ $(document).ready(function(){
    
 	$("#newStoppageReason").focus();
 });
+
+function onUseStartDateCheckbox(){
+    
+    if(!($("#startDateCheckbox").is(':checked')))
+    {
+        $('#dateStartInput').prop("disabled", true);
+    } 
+    else
+    {
+        $('#dateStartInput').prop("disabled", false);
+    }
+}
+
+function onUseEndDateCheckbox(){
+
+    if(!($("#endDateCheckbox").is(':checked')))
+    {
+        $('#dateEndInput').prop("disabled", true);
+    } 
+    else
+    {
+        $('#dateEndInput').prop("disabled", false);
+    }
+}
+
+function validDates(startDate, endDate){
+    var isValidDate = true;
+    
+    if(startDate == ""){
+        $("#stoppagesLogTableContainer").empty().html("Invalid start date");
+        isValidDate = false;
+    }else if(endDate == ""){
+        $("#stoppagesLogTableContainer").empty().html("Invalid end date");
+        isValidDate = false;
+    }else{
+        
+        var startDateParts = startDate.split("-");
+        var endDateParts = endDate.split("-");
+        
+        var startYear = parseInt(startDateParts[0]);
+        var startMonth = parseInt(startDateParts[1]);
+        var startDay = parseInt(startDateParts[2]);
+        var endYear = parseInt(endDateParts[0]);
+        var endMonth = parseInt(endDateParts[1]);
+        var endDay = parseInt(endDateParts[2]);
+        
+        if(startYear > endYear){
+            $("#stoppagesLogTableContainer").empty().html("Start date must be before end date");
+			isValidDate = false;
+        }else if(startYear == endYear && startMonth > endMonth){
+            $("#stoppagesLogTableContainer").empty().html("Start date must be before end date");
+			isValidDate = false;            
+        }else if(startMonth == endMonth && startDay > endDay){
+            $("#stoppagesLogTableContainer").empty().html("Start date must be before end date");
+			isValidDate = false;
+        }
+
+		if(startYear <= 2016){
+			$("#stoppagesLogTableContainer").empty().html("Start date prior to system initialization");
+			isValidDate = false;
+		}
+    }
+    
+    return isValidDate;
+}
 
 function updateStoppageReasonTable(){
     // get Stoppage Reason data, ordered by selected option
@@ -100,10 +164,12 @@ function updateStoppageReasonTable(){
 }
 
 function updateStoppageLogsTable(){
-    $("#stoppagesLogTableContainer").empty().html("Working. Please wait....");
-    SearchPhrase = $("#searchPhrase").val();
+    var SearchPhrase = $("#searchPhrase").val();
     inputStartDate = $("#dateStartInput").val();
     inputEndDate = $("#dateEndInput").val();
+
+    $("#stoppagesLogTableContainer").empty().html("Working. Please wait....");
+
     $.ajax({
         url:"../scripts/server/stoppages.php",
         type:"GET",
@@ -149,6 +215,10 @@ function updateStoppageLogsTable(){
                             "dataName":"stoppageReasonName"
                         },
                         {
+                            "headingName":"Description",
+                            "dataName":"description"
+                        },
+                        {
                             "headingName":"Location",
                             "dataName":"stationId"
                         },
@@ -179,7 +249,6 @@ function updateStoppageLogsTable(){
                     ]
                 };
                 
-                
                 var table = generateTable("stoppagesLogTable", tableData, tableStructure);
                 $("#stoppagesLogTableContainer").empty().append(table);
 
@@ -192,51 +261,10 @@ function updateStoppageLogsTable(){
                     "searchPhrase" : SearchPhrase
                 };
                 var csvUrl = "../scripts/server/stoppages.php?" + $.param(urlParams);
-                $("#csvDownloadLink").attr("href",csvUrl);
+                $("#csvDownloadLink").attr("href",csvUrl).show();
             }
         }
     });
-}
-
-function validDates(startDate, endDate){
-    var isValidDate = true;
-    
-    if(startDate == ""){
-        $("#stoppagesLogTableContainer").empty().html("Invalid start date");
-        isValidDate = false;
-    }else if(endDate == ""){
-        $("#stoppagesLogTableContainer").empty().html("Invalid end date");
-        isValidDate = false;
-    }else{
-        
-        var startDateParts = startDate.split("-");
-        var endDateParts = endDate.split("-");
-        
-        var startYear = parseInt(startDateParts[0]);
-        var startMonth = parseInt(startDateParts[1]);
-        var startDay = parseInt(startDateParts[2]);
-        var endYear = parseInt(endDateParts[0]);
-        var endMonth = parseInt(endDateParts[1]);
-        var endDay = parseInt(endDateParts[2]);
-        
-        if(startYear > endYear){
-            $("#stoppagesLogTableContainer").empty().html("Start date must be before end date");
-			isValidDate = false;
-        }else if(startYear == endYear && startMonth > endMonth){
-            $("#stoppagesLogTableContainer").empty().html("Start date must be before end date");
-			isValidDate = false;            
-        }else if(startMonth == endMonth && startDay > endDay){
-            $("#stoppagesLogTableContainer").empty().html("Start date must be before end date");
-			isValidDate = false;
-        }
-
-		if(startYear <= 2016){
-			$("#stoppagesLogTableContainer").empty().html("Start date prior to system initialization");
-			isValidDate = false;
-		}
-    }
-    
-    return isValidDate;
 }
 
 function addNewStoppageReason(){
@@ -341,28 +369,4 @@ function deleteStoppageReason(stoppageReasonId){
 		}
 	    });
 	}
-}
-
-function onUseStartDateCheckbox(){
-    
-    if(!($("#startDateCheckbox").is(':checked')))
-    {
-        $('#dateStartInput').prop("disabled", true);
-    } 
-    else
-    {
-        $('#dateStartInput').prop("disabled", false);
-    }
-}
-
-function onUseEndDateCheckbox(){
-
-    if(!($("#endDateCheckbox").is(':checked')))
-    {
-        $('#dateEndInput').prop("disabled", true);
-    } 
-    else
-    {
-        $('#dateEndInput').prop("disabled", false);
-    }
 }

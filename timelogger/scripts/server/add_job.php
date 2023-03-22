@@ -91,7 +91,13 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 			$result = "System prefix present at start of ID";
 	}
 
-	if (isset($jobDetails["expectedDuration"]) && $jobDetails["expectedDuration"] != "") {
+	// This code extracts expected time from csv, there is a chunk of code bottom which converts this expected time into seconds.
+	if (str_contains($jobDetails["expectedDuration"], '.')){
+
+		$expectedDuration = $jobDetails["expectedDuration"];
+		
+	}
+	elseif (isset($jobDetails["expectedDuration"]) && $jobDetails["expectedDuration"] != "" ) {
 
 		$obtainedDuration = $jobDetails["expectedDuration"];
 		$splitObtainedDuration = explode(":", $obtainedDuration);
@@ -173,10 +179,28 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 	if($result === "")
 	{
 		//convert duration into seconds
-		$durationParts = explode(":", $expectedDuration);
-		if (count($durationParts) == 2)
-			$expectedDuration = (intval($durationParts[0]) * 3600) + (intval($durationParts[1] * 60));
-
+		if (str_contains($expectedDuration, ".")){
+			$durationParts = explode(".", $expectedDuration);
+			if (count($durationParts) == 2){
+				$convertingINTtoSTR = (intval($durationParts[1]));
+				if (strlen($durationParts[1]) == 1){
+					$addingZeroBesideNum = (str_pad($convertingINTtoSTR, 2, '0', STR_PAD_RIGHT));
+					$convertingPercentToMin = ($addingZeroBesideNum /100) * 60;
+				}
+				else{
+					$convertingPercentToMin = ((intval($durationParts[1])) /100) * 60;
+				}
+				if ($convertingPercentToMin < 1)
+					$convertingPercentToMin = 1;
+					
+				$expectedDuration = (intval($durationParts[0]) * 3600) + ($convertingPercentToMin * 60);
+			}
+		}
+		else{
+			$durationParts = explode(":", $expectedDuration);
+			if (count($durationParts) == 2)
+				$expectedDuration = (intval($durationParts[0]) * 3600) + (intval($durationParts[1] * 60));
+		}
 		//convert total charge into pence
 		$charge = round($charge * 100);
 
@@ -337,12 +361,6 @@ function main()
 					sendResponseToClient("error", $addJobResult);
 				}
 				break;
-
-			// case "getQrCode":
-			// 	$jobId = $_GET["jobId"];
-			// 	$downloadPath = generateJobQrCode($dbConn, $jobId);//should not generate QR code again
-			// 	sendResponseToClient("success",$downloadPath);
-			// 	break;
 
 			default:
 				sendResponseToClient("error", "Unknown request: " . $request);

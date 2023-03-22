@@ -12,11 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-$(document).ready(function(){
-    updateClockedOffUserTable();
-    // setInterval(function(){updateClockedOffUserTable()}, 3000);
-});
-
 function updateUserTable(){
     $.ajax({
         url:"../scripts/server/current_users.php",
@@ -158,8 +153,7 @@ function updateClockedOffUserTable(){
                         }
                     ]
                 };
-                
-                
+   
                 var table = generateTable("clockedOffUsersTable", tableData, tableStructure);
                 $("#clockedOffUserTableContainer").empty().append(table);
             }

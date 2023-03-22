@@ -143,7 +143,7 @@ else
 								<label for="useSearchPhrase">Display jobs containing the specified text</label>-->
 								<br>
 								<label for="searchPhrase">Search jobs:</label>
-								<input type="text" id="searchPhrase" class="tableControl" placeholder="enter search phrase" oninput="onTableDataOptionsChange()"/>
+								<input type="text" id="searchPhrase" class="tableControl" placeholder="enter search phrase" oninput="`onTableDataOptionsChange`()"/>
 							</div>
 							<br>
 							<input type="checkbox" id="showOnlyUrgentJobs" class="tableControl" onchange="onTableDataOptionsChange()">

@@ -132,7 +132,7 @@ function getStoppagesLog($DbConn, $useStartDate, $useEndDate, $startDate, $endDa
     $searchPhrase = "%".$searchPhrase."%";
 
     $query = "SELECT 
-    stoppagesLog.jobId, jobs.customerName, stoppageReasonName, 
+    stoppagesLog.jobId, jobs.customerName, stoppageReasonName, stoppagesLog.description,
     stationId, startTime, startDate, endTime, endDate, duration, status 
     FROM stoppagesLog 
     LEFT JOIN jobs on jobs.jobId = stoppagesLog.jobId 
@@ -140,7 +140,7 @@ function getStoppagesLog($DbConn, $useStartDate, $useEndDate, $startDate, $endDa
 
     if(!$useStartDate && !$useEndDate)
     {
-        $query = $query . "WHERE (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ?)
+        $query = $query . "WHERE (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ?) AND stoppageReasonName IS NOT NULL 
         ORDER BY stoppagesLog.startDate ASC";
 
         if(!($statement = $DbConn->prepare($query)))
@@ -154,7 +154,7 @@ function getStoppagesLog($DbConn, $useStartDate, $useEndDate, $startDate, $endDa
     }
     else if($useStartDate && !$useEndDate)
     {
-        $query = $query . "WHERE startDate >= ? AND (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ?) 
+        $query = $query . "WHERE startDate >= ? AND (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ?) AND stoppageReasonName IS NOT NULL
         ORDER BY stoppagesLog.startDate ASC";
 
         if(!($statement = $DbConn->prepare($query)))
@@ -168,7 +168,7 @@ function getStoppagesLog($DbConn, $useStartDate, $useEndDate, $startDate, $endDa
     }
     else if(!$useStartDate && $useEndDate)
     {
-        $query = $query . "WHERE endDate <= ? AND (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ?)
+        $query = $query . "WHERE endDate <= ? AND (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ?) AND stoppageReasonName IS NOT NULL
         ORDER BY stoppagesLog.startDate ASC";
 
         if(!($statement = $DbConn->prepare($query)))
@@ -182,7 +182,7 @@ function getStoppagesLog($DbConn, $useStartDate, $useEndDate, $startDate, $endDa
     }
     else if($useStartDate && $useEndDate)
     {
-        $query = $query . "WHERE (startDate >= ? AND endDate <= ?) AND (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ?)
+        $query = $query . "WHERE (startDate >= ? AND endDate <= ?) AND (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ?) AND stoppageReasonName IS NOT NULL
         ORDER BY stoppagesLog.startDate ASC";
 
         if(!($statement = $DbConn->prepare($query)))
@@ -207,7 +207,8 @@ function getStoppagesLog($DbConn, $useStartDate, $useEndDate, $startDate, $endDa
         $dataRow = array(
             "jobId" =>$row["jobId"],
             "customerId" => $row["customerName"],
-            "stoppageReasonName" =>$row["stoppageReasonName"],
+            "stoppageReasonName" => $row["stoppageReasonName"],
+            "description" => $row["description"],
             "stationId" => $row["stationId"],
             "startTime" => $row["startTime"],
             "startDate" => $row["startDate"],
@@ -376,7 +377,7 @@ function main()
             $stoppagesLogTable = getStoppagesLog($dbConn, $useStartDate, $useEndDate, $startDate, $endDate, $searchPhrase);
             if($request == "getStoppagesLog")
                 sendResponseToClient("success", $stoppagesLogTable);
-            else{
+            if($request == "getStoppagesLogCSV"){
                 $Object = new DateTime();
                 $currentDate = $Object->format("d-m-Y");
                 $fileName = $currentDate . "_Problem_Logs_records.csv";

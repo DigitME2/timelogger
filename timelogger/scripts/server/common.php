@@ -237,35 +237,6 @@ if(!function_exists("generateJobId")){
 
 }
 
-// generate a QR code, log the path to the database, and return said path for download
-
-// if(!function_exists("generateJobQrCode")){
-//     function generateJobQrCode($DbConn, $JobId)
-//     {
-//         global $JobQrCodeDirAbs;
-//         global $JobQrCodeDirRelativeToPage;
-        
-//         $webPath = $JobQrCodeDirRelativeToPage . $JobId . ".png";
-//         $actualpath = $JobQrCodeDirAbs . $JobId . ".png";
-    
-//         generateQrCode($JobId, $actualpath);
-//         printDebug("Generated QR code at $actualpath");
-    
-//         $query = "UPDATE jobs SET relativePathToQrCode=?, absolutePathToQrCode=? WHERE jobId=?";
-    
-//         if(!($statement = $DbConn->prepare($query)))
-//             errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
-    
-//         if(!($statement->bind_param('sss', $webPath, $actualpath, $JobId)))
-//             errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
-    
-//         if(!$statement->execute())
-//             errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
-    
-//         return $webPath;
-//     }
-// }
-
 if(!function_exists("updateJobStoppages")){
     function updateJobStoppages($DbConn, $JobId)
     {
@@ -444,7 +415,7 @@ if(!function_exists("validateJobDetails")){
         elseif (strlen($Description) > 200)
             $validationMessage = "Description more than 200 chars";
 
-        elseif ($ExpectedDuration != "" && $ExpectedDuration !== 0 && ! preg_match('/^((\d+:[0-5][0-9]?)|(\d+))$/', $ExpectedDuration))
+        elseif ($ExpectedDuration != "" && $ExpectedDuration !== 0 && ! preg_match('/^((\d+:[0-5][0-9]?)|(\d+))$/', $ExpectedDuration) && ! preg_match('/^((\d+.[0-9][0-9]?)|(\d+))$/', $ExpectedDuration))
             $validationMessage = "Expected Duration format incorrect";
 
         elseif ($RouteName != "" && (routeExists($DbConn, $RouteName) == false))
@@ -468,7 +439,7 @@ if(!function_exists("validateJobDetails")){
         elseif (! preg_match('/^[0-4]$/', $priority))
             $validationMessage = "Priority not 0-4";
             
-        elseif (strlen($customerName) > 50)
+        elseif (strlen($customerName) > 120)
             $validationMessage = "Customer name more than 50 chars";
 
         else
