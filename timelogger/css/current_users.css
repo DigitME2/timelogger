@@ -14,8 +14,9 @@ limitations under the License. */
 
 #currentUsersArea{
     display: grid;
-    grid-template-columns: 600px 350px;
+    grid-template-columns: 800px 800px;
     column-gap: 20px;
+    row-gap:20px;
     align-self: flex-start;
 }
 
@@ -26,4 +27,5 @@ limitations under the License. */
 
 #clockedOffUsersArea{
     grid-column: 2;
+    margin-left: 5px;
 }
