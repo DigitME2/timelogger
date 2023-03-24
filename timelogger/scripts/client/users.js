@@ -99,6 +99,7 @@ function updateUserTable(){
 
 function addNewUser(){
     var userName = $("#newUserName").val();
+    userName = userName.trim();
     
     if(userName.length == 0){
         $("#addUserResponseField").html("User Name must not be blank");

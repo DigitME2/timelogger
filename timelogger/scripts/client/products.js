@@ -16,6 +16,7 @@ $(document).ready(function(){
     updateProductTable();
     $(".productInput").on('keyup', function(){
         var productId = $("#newProductId").val();
+        productId = productId.trim();
         
         var productIdCharsRemaining = 20 - productId.length;
         $("#newProductIdCounter").html(productIdCharsRemaining + "/20");

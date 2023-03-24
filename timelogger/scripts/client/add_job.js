@@ -104,6 +104,7 @@ function handleNewJob(){
     // Present download link to allow the QR code to be
     // downloaded and printed.
     var jobID = $("#jobIdNumberInput").val();
+    jobID = jobID.trim();
     var description = $("#descriptionInput").val();
 	var routeName = $("#textboxRouteName").val();
     var dueDate = $("#jobDueDateInput").val();

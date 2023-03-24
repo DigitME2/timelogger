@@ -269,6 +269,7 @@ function updateStoppageLogsTable(){
 
 function addNewStoppageReason(){
     var stoppageReason = $("#newStoppageReason").val();
+    stoppageReason = stoppageReason.trim();
     
     if(stoppageReason.length == 0){
         $("#addStoppageReasonResponseField").html("Stoppage Reason must not be blank");

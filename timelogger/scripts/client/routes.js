@@ -76,7 +76,7 @@ function loadInitialRoutesData(){
 
 function loadRoute(){
 	var routeName = $("#selectExistingRoute").val();
-
+	routeName = routeName.trim();
 	if(routeName != "noSelection"){	
 		$.ajax({
 		url:"../scripts/server/routes.php",

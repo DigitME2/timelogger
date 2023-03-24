@@ -129,6 +129,7 @@ function loadExtraScannerNames(){
 
 function addNewExtraScannerName(){
 	var newName = $("#newExtraScannerName").val();
+	newName = newName.trim();
 
 	if(newName.length == 0){
         $("#addScannerResponseField").html("Scanner Location Name must not be blank");
@@ -305,6 +306,7 @@ function renameScanner(){
 	}
 	
 	scannerNewName = $("#scannerNewName").val();
+	scannerNewName = scannerNewName.trim(); 
 	if(scannerNewName == ""){
 		console.log("No new name entered, Stopping.");
 		$("#renameFeedback").html("No new name entered, unable to rename!!");
