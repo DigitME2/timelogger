@@ -14,7 +14,7 @@ limitations under the License. */
 
 #currentUsersArea{
     display: grid;
-    grid-template-columns: 800px 800px;
+    grid-template-columns: auto auto;
     column-gap: 20px;
     row-gap:20px;
     align-self: flex-start;
