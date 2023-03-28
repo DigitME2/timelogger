@@ -1,8 +1,8 @@
 #!/bin/bash
 # ******************************************
-# Program: Process Time Tracker - v.2.16
-# Developer: DigitME2# Date: 10-02-2023
-# Last Updated: 13-02-2023
+# Program: Process Time Tracker - v.2.17.2
+# Developer: DigitME2# Date: 28-03-2023
+# Last Updated: 28-03-2023
 # ******************************************
 
 #Copyright 2022 DigitME2
