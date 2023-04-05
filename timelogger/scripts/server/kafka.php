@@ -90,6 +90,7 @@ function kafkaOutputCreateJob($JobId, $CustomerName, $ExpectedDurationSec, $DueD
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "create-job",
         "job_id" => $JobId,
         "customer_name" => $CustomerName,
@@ -116,6 +117,7 @@ function kafkaOutputUpdateJobDetails($JobId, $CustomerName, $ExpectedDurationSec
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "update-job",
         "job_id" => $JobId,
         "customer_name" => $CustomerName,
@@ -143,6 +145,7 @@ function kafkaOutputChangeJobId($OldJobId, $NewJobId)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "update-job-id",
         "old_id" => $OldjobId,
         "new_id" => $NewJobId
@@ -160,6 +163,7 @@ function kafkaOutputDeleteJob($JobId)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "delete-job",
         "job_id" => $JobId
     );
@@ -176,6 +180,7 @@ function kafkaOutputSetJobProgressState($JobId, $JobState, $RouteId, $RouteStage
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "set-job-state",
         "job_id" => $JobId,
         "job_state" => $JobState,
@@ -195,6 +200,7 @@ function kafkaOutputClockUser($UserId, $UserState, $JobId, $StationId, $WorkStat
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "clock-user",
         "user_id" => $UserId,
         "user_state" => $UserState,
@@ -215,8 +221,10 @@ function kafkaOutputRecordWorkQuantityComplete($Quantity, $WorkLogRecordId)
     // make an early exit if we aren't using kafka
     if(!publishKafkaEvents())
         return;
+	
 
     $messageBodyParts = array(
+    	"ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "record-quantity-complete",
         "quantity" => $Quantity,
         "work_log_record_id" => $WorkLogRecordId
@@ -234,6 +242,7 @@ function kafkaOutputCreateProblemReason($ProblemTypeId, $ProblemTypeName)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "create-problem-reason",
         "problem_type_id" => $ProblemTypeId,
         "problem_type_name" => $ProblemTypeName
@@ -251,6 +260,7 @@ function kafkaOutputDeleteProblemReason($ProblemTypeId)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "delete-problem-reason",
         "problem_type_id" => $ProblemTypeId
     );
@@ -267,6 +277,7 @@ function kafkaOutputRecordProblemState($JobId, $ProblemTypeId, $ProblemIsCurrent
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "record-problem-state",
         "job_id" => $JobId,
         "problem_type_id" => $ProblemTypeId,
@@ -286,6 +297,7 @@ function kafkaOutputAddProductType($ProductTypeId)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "add-product-type",
         "product_type_id" => $ProductTypeId
     );
@@ -302,6 +314,7 @@ function kafkaOutputDeleteProductType($ProductTypeId)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "delete-product-type",
         "product_type_id" => $ProductTypeId
     );
@@ -318,6 +331,7 @@ function kafkaOutputSetRoute($RouteId, $RouteDescription)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "set-route",
         "route_id" => $RouteId,
         "route_description" => $RouteDescription
@@ -335,6 +349,7 @@ function kafkaOutputDeleteRoute($RouteId)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "delete-route",
         "route_id" => $RouteId
     );
@@ -351,6 +366,7 @@ function kafkaOutputCreateScannerLocation($LocationName)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "create-scanner-location",
         "location_name" => $LocationName
     );
@@ -367,6 +383,7 @@ function kafkaOutputDeleteScannerLocation($LocationName)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "delete-scanner-location",
         "location_name" => $LocationName
     );
@@ -383,6 +400,7 @@ function kafkaOutputCreateUser($UserId, $UserName)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "create-user",
         "user_id" => $UserId,
         "user_name" => $UserName
@@ -401,6 +419,7 @@ function kafkaOutputDeleteUser($UserId)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "delete-user",
         "user_id" => $UserId
     );
@@ -417,6 +436,7 @@ function kafkaOutputSetWorkHours($DayStartTimes, $DayEndTimes, $LunchStartTimes,
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "set-work-hours",
         "day_start_times" => $DayStartTimes,
         "lunch_start_times" => $LunchStartTimes,
@@ -436,6 +456,7 @@ function kafkaOutputAddEmptyWorkLog($WorkLogId)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "add-empty-work-log",
         "work_log_id" => $WorkLogId
     );
@@ -452,6 +473,7 @@ function kafkaOutputChangeWorkLogTopic($WorkLogId, $StationId, $UserId, $RecordD
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "change-work-log",
         "work_log_id" => $WorkLogId,
         "station_id" => $StationId,
@@ -475,6 +497,7 @@ function kafkaOutputDeleteWorkLog($WorkLogId)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "delete-work-log",
         "work_log_id" => $WorkLogId
     );
@@ -491,6 +514,7 @@ function kafkaOutputInsertWorkLogBreak($OriginalWorkLogId, $StartTime, $EndTime)
         return;
 
     $messageBodyParts = array(
+        "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "insert-work-log-break",
         "original_record_id" => $OriginalWorkLogId,
         "break_start_time" => $StartTime,
