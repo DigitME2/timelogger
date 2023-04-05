@@ -79,7 +79,7 @@ sudo cp apache2/php.ini /etc/php/8.1/apache2/
 sudo cp cli/php.ini /etc/php/8.1/cli/php.ini
 sudo systemctl restart apache2 && sudo systemctl restart mysql
 sudo echo -e "\e[42mProcess Time Tracker Software Installed Successfully.\e[0m"
-sudo echo -e "\e[33mTo change the server ports. Please read the readme.txt file for further information.[0m"
+sudo echo -e "\e[33mTo change the server ports. Please read the readme.txt file for further information.\e[0m"
 sleep 5
 xdg-open http://localhost/timelogger/pages/overview_client.php </dev/null >/dev/null 2>&1 
 exit
