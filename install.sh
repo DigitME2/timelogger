@@ -70,7 +70,8 @@ sudo systemctl restart apache2 && sudo systemctl restart mysql
 sudo systemctl restart ptt_discovery.service
 sudo apt -y install php-pear
 sudo apt-get install -y librdkafka-dev
-sudo pecl -y install rdkafka
+sudo apt-get install -y php-dev
+sudo pecl install rdkafka
 sudo rm /etc/php/8.1/apache2/php.ini
 sudo rm /etc/php/8.1/cli/php.ini
 cd ~/timelogger
