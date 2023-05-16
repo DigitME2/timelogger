@@ -5,7 +5,7 @@ This constitutes the main server application, which will receives live process s
 through our Android Application. Which can be accessed through our Main server web application.
 
 This software is accompanied by an Andriod App, which connects to the server and takes manual input to set the 
-state of its assigned machine. [The Android App APK can be downloaded from here.](https://github.com/DigitME2/timelogger/releases/tag/v2.14)
+state of its assigned machine. [The Android App APK can be downloaded from here.](https://github.com/DigitME2/timelogger/releases/tag/v2.17.2)
 
 # Installing with installer
 Ubuntu installer file for installing this software can also be found here. 
