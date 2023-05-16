@@ -9,7 +9,7 @@ state of its assigned machine. [The Android App APK can be downloaded from here.
 
 # Installing with installer
 Ubuntu installer file for installing this software can also be found here. 
-[The Main web app installer file can be downloaded from here.](https://github.com/DigitME2/timelogger/releases/tag/v2.14)
+[The Main web app installer file can be downloaded from here.](https://github.com/DigitME2/timelogger/releases/tag/v2.17.2)
 
 Download our ubuntu-installer.sh file by clicking on that, and go to your Downloads folder and open the terminal 
 by right clicking with your mouse and select "Open in Terminal" option from the right-click menu.
