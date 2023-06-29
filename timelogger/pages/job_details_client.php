@@ -2,7 +2,7 @@
 
 require "client_config.php";
 $jobId = $_GET["jobId"]; 
-
+ 
 //use config variables
 if($showChargeDisplayElements)
 {
@@ -53,6 +53,7 @@ else
 				updateJobLogTable(<?php echo("'$jobId'"); ?>);
 				updateStoppagesLogTable(<?php echo("'$jobId'"); ?>);
 				setUpKeyPress(<?php echo("'$jobId'"); ?>);
+
             });
         </script>
         <link rel="stylesheet" href="../css/common.css" type="text/css">
@@ -66,8 +67,13 @@ else
 			<h1>Job Record</h1>
 		    <div id="pageMainBody">                
 				<div id="jobDetails">
+					<label for="jobName" class="jobDetailLabel">Job Name</label>
+					<input id="jobName" type="text" class="jobDetail" pattern="^[a-zA-Z0-9_]{1,20}$"/>
+					<span id="jobNameCounter" class="inputWidthCounter"></span>
+
 					<label for="jobId" class="jobDetailLabel">Job ID</label>
 					<input id="jobId" class="jobDetail" pattern="^[a-zA-Z0-9_]{1,20}$" value=<?php echo($jobId); ?>></input>
+					<span id="jobIdCounter" class="inputWidthCounter"></span>
 					
 					<label for="currentStatusLabel" class="jobDetailLabel">Current Status</label>
 					<span id="currentStatus" class="jobDetail"></span>
@@ -135,7 +141,6 @@ else
 					<span id="adminControls">
 						<input type="button" id="btnMarkComplete" disabled="true" value="Mark Job Complete" onclick="markJobComplete(<?php echo("'$jobId'"); ?>)"/>
 						<input type="button" id="btnDelete" disabled="true" value="Delete Job" onclick="deleteJob(<?php echo(("'$jobId'"))?>)"/>
-						<input type="button" id="btnDuplicate" disabled="true" value="Duplicate Job" onclick="saveRecord(<?php echo(("'$jobId'"))?>); duplicateJob(<?php echo(("'$jobId'"))?>);"/>
 					</span>
 
 					<input id="btnSaveChanges" type="button" value="Save Changes" onclick=<?php echo('saveRecord("' . $jobId . '")'); ?> />

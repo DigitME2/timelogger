@@ -131,22 +131,17 @@ function getStoppagesLog($DbConn, $useStartDate, $useEndDate, $startDate, $endDa
 
     $searchPhrase = "%".$searchPhrase."%";
 
-    $query = "SELECT 
-    stoppagesLog.jobId, jobs.customerName, stoppageReasonName, stoppagesLog.description,
-    stationId, startTime, startDate, endTime, endDate, duration, status 
-    FROM stoppagesLog 
-    LEFT JOIN jobs on jobs.jobId = stoppagesLog.jobId 
-    LEFT JOIN stoppageReasons ON stoppagesLog.stoppageReasonId = stoppageReasons.stoppageReasonId ";
+    $query = "SELECT stoppagesLog.jobId, jobs.jobName, jobs.customerName, stoppageReasonName, stoppagesLog.description, stationId, startTime, startDate, endTime, endDate, duration, status FROM stoppagesLog LEFT JOIN jobs on jobs.jobId = stoppagesLog.jobId LEFT JOIN stoppageReasons ON stoppagesLog.stoppageReasonId = stoppageReasons.stoppageReasonId ";
 
     if(!$useStartDate && !$useEndDate)
     {
-        $query = $query . "WHERE (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ?) AND stoppageReasonName IS NOT NULL 
+        $query = $query . "WHERE (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ? OR jobs.jobName LIKE ?) AND stoppageReasonName IS NOT NULL 
         ORDER BY stoppagesLog.startDate ASC";
 
         if(!($statement = $DbConn->prepare($query)))
             errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
 
-        if(!($statement->bind_param('ss', $searchPhrase, $searchPhrase)))
+        if(!($statement->bind_param('sss', $searchPhrase, $searchPhrase, $searchPhrase)))
             errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
 
         if(!$statement->execute())
@@ -154,13 +149,13 @@ function getStoppagesLog($DbConn, $useStartDate, $useEndDate, $startDate, $endDa
     }
     else if($useStartDate && !$useEndDate)
     {
-        $query = $query . "WHERE startDate >= ? AND (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ?) AND stoppageReasonName IS NOT NULL
+        $query = $query . "WHERE startDate >= ? AND (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ? OR jobs.jobName LIKE ?) AND stoppageReasonName IS NOT NULL
         ORDER BY stoppagesLog.startDate ASC";
 
         if(!($statement = $DbConn->prepare($query)))
             errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
 
-        if(!($statement->bind_param('sss', $startDate, $searchPhrase, $searchPhrase)))
+        if(!($statement->bind_param('ssss', $startDate, $searchPhrase, $searchPhrase, $searchPhrase)))
             errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
 
         if(!$statement->execute())
@@ -168,13 +163,13 @@ function getStoppagesLog($DbConn, $useStartDate, $useEndDate, $startDate, $endDa
     }
     else if(!$useStartDate && $useEndDate)
     {
-        $query = $query . "WHERE endDate <= ? AND (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ?) AND stoppageReasonName IS NOT NULL
+        $query = $query . "WHERE endDate <= ? AND (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ? OR jobs.jobName LIKE ?) AND stoppageReasonName IS NOT NULL
         ORDER BY stoppagesLog.startDate ASC";
 
         if(!($statement = $DbConn->prepare($query)))
             errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
 
-        if(!($statement->bind_param('sss', $endDate, $searchPhrase, $searchPhrase)))
+        if(!($statement->bind_param('ssss', $endDate, $searchPhrase, $searchPhrase, $searchPhrase)))
             errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
 
         if(!$statement->execute())
@@ -182,13 +177,13 @@ function getStoppagesLog($DbConn, $useStartDate, $useEndDate, $startDate, $endDa
     }
     else if($useStartDate && $useEndDate)
     {
-        $query = $query . "WHERE (startDate >= ? AND endDate <= ?) AND (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ?) AND stoppageReasonName IS NOT NULL
+        $query = $query . "WHERE (startDate >= ? AND endDate <= ?) AND (stoppagesLog.jobId LIKE ? OR jobs.customerName LIKE ?  OR jobs.jobName LIKE ?) AND stoppageReasonName IS NOT NULL
         ORDER BY stoppagesLog.startDate ASC";
 
         if(!($statement = $DbConn->prepare($query)))
             errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
 
-        if(!($statement->bind_param('ssss', $startDate, $endDate, $searchPhrase, $searchPhrase)))
+        if(!($statement->bind_param('sssss', $startDate, $endDate, $searchPhrase, $searchPhrase, $searchPhrase)))
             errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
 
         if(!$statement->execute())
@@ -206,6 +201,7 @@ function getStoppagesLog($DbConn, $useStartDate, $useEndDate, $startDate, $endDa
         $row = $res->fetch_assoc();
         $dataRow = array(
             "jobId" =>$row["jobId"],
+            "jobName" =>$row["jobName"],
             "customerId" => $row["customerName"],
             "stoppageReasonName" => $row["stoppageReasonName"],
             "description" => $row["description"],
@@ -382,7 +378,7 @@ function main()
                 $currentDate = $Object->format("d-m-Y");
                 $fileName = $currentDate . "_Problem_Logs_records.csv";
                 $dataNames = array(
-                    "jobId",
+                    "jobName",
                     "customerId",
                     "stoppageReasonName",
                     "stationId",
@@ -394,7 +390,7 @@ function main()
                     "status"
                 );
                 $columnNames = array(
-                    "Job ID",
+                    "Job Name",
                     "Customer Name",
                     "Problem Name",
                     "Location",

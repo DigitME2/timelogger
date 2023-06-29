@@ -83,7 +83,7 @@ function deleteEventRecord($DbConn, $workLogRef)
 function getWorkLogRecord($DbConn, $workLogRef)
 {
     // call the stored procedure  
-	$query = "SELECT jobId, stationId, userId, clockOnTime, clockOffTime, recordDate, workedDuration, overtimeDuration, workStatus, quantityComplete FROM timeLog WHERE ref=?";
+	$query = "SELECT jobName, timeLog.jobId, stationId, userId, clockOnTime, clockOffTime, recordDate, workedDuration, overtimeDuration, workStatus, quantityComplete FROM timeLog LEFT JOIN jobs ON timeLog.jobId = jobs.jobId WHERE ref=?";
   
     if(!($statement = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
@@ -95,6 +95,7 @@ function getWorkLogRecord($DbConn, $workLogRef)
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
 	
     if(!($statement->bind_result(
+		$jobName,
 		$jobId,
 		$stationId,
 		$userId,
@@ -132,6 +133,7 @@ function getWorkLogRecord($DbConn, $workLogRef)
 	
 	//create array of values found to be retuned
     $workLogRecord = array(
+		"jobName" 				=> $jobName,
 		"jobId"					=> $jobId,
 		"stationId"				=> $stationId,
 		"userName"				=> $userName,

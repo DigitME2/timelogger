@@ -173,6 +173,7 @@ function loadWorkLogRecord(workLogRef){
 			disableControls(false);
 		
 			//Populate Page
+			$("#jobName").html(record.jobName);
 			$("#jobId").html(record.jobId);
 			$("#recordDate").val(record.recordDate);
 			$("#startTime").val(record.clockOnTime);

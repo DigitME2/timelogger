@@ -25,7 +25,7 @@ $Debug = false;
 
 function getClockedOnUsers($DbConn)
 {
-    $query = "SELECT ref, jobId, userName, stationId, clockOnTime FROM timeLog LEFT JOIN users ON timeLog.userId = users.userId WHERE clockOffTime IS NULL AND userName IS NOT NULL AND stationId IS NOT NULL ORDER BY timeLog.clockOnTime ASC";
+    $query = "SELECT ref, jobName, jobs.jobId, userName, stationId, clockOnTime FROM timeLog LEFT JOIN users ON timeLog.userId = users.userId LEFT JOIN jobs ON timeLog.jobId = jobs.jobId WHERE clockOffTime IS NULL AND userName IS NOT NULL AND stationId IS NOT NULL ORDER BY timeLog.clockOnTime ASC";
     if(!($getUsersRes = $DbConn->query($query)))
             errorHandler("Error executing query: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
@@ -39,6 +39,7 @@ function getClockedOnUsers($DbConn)
         $userLog = array(
 			"ref" => $row["ref"],
             "jobId" => $row["jobId"],
+            "jobName" => $row["jobName"],
 			"productId" => $productId,
             "userName" => $row["userName"],
 			"stationId" => $row["stationId"],
@@ -138,6 +139,7 @@ function getClockedOffUsersList($DbConn){
         $clockedOffUserList = array(
 			"userName" => $row["userName"],
             "jobId" => $row["jobId"],
+            "jobName" => $row["jobName"],
             "stationId" => $row["stationId"],
             "clockOffTime" => $row["clockOffTime"],
             "recordDate" => $row["recordDate"]
@@ -152,7 +154,7 @@ function getClockedOffUsersList($DbConn){
 function GetUserStatus($DbConn, $userId) 
 {
 
-    $query = "SELECT jobId, stationId FROM `timeLog` WHERE clockOffTime IS NULL AND userId=?;";
+    $query = "SELECT jobName, timeLog.jobId, stationId FROM `timeLog` LEFT JOIN jobs ON timeLog.jobId = jobs.jobId WHERE clockOffTime IS NULL AND userId=?;";
     $statement =  $DbConn->prepare($query);
     $statement->bind_param('s', $userId);
     $statement->execute();
@@ -162,11 +164,13 @@ function GetUserStatus($DbConn, $userId)
     else
     {
         $row = $res->fetch_assoc();
+        $jobName = $row["jobName"];
         $jobId = $row["jobId"];
         $productId = getProductID($DbConn, $row["jobId"]);
         $stationId = $row["stationId"];
         $response = array(
             "status"=>"clockedOn",
+            "jobName"=>$jobName,
             "jobId"=>$jobId,
             "productId"=>$productId,
             "stationId"=>$stationId
@@ -214,8 +218,7 @@ function main()
             printDebug("Getting the user status..");
             $userId = $_GET["userId"];
             $response = GetUserStatus($dbConn, $userId);
-            if ($response == "clockedOff" || "clockedOn")
-                sendResponseToClient("success", $response);
+            sendResponseToClient("success", $response);
             break;
     }
 }

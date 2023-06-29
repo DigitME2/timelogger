@@ -40,16 +40,16 @@ function updateUserTable(){
                     },
                     "columns":[
                         {
-                            "headingName":"Job ID",
-                            "dataName":"jobId"
+                            "headingName":"User Name",
+                            "dataName":"userName"
+                        },
+                        {
+                            "headingName":"Job Name",
+                            "dataName":"jobName"
                         },
                         {
                             "headingName":"Product ID",
                             "dataName":"productId"
-                        },
-                        {
-                            "headingName":"User Name",
-                            "dataName":"userName"
                         },
                         {
                             "headingName":"Location",
@@ -136,8 +136,8 @@ function updateClockedOffUserTable(){
                             "dataName":"userName"
                         },
                         {
-                            "headingName":"Job ID",
-                            "dataName":"jobId"
+                            "headingName":"Job Name",
+                            "dataName":"jobName"
                         },
                         {
                             "headingName":"Location",

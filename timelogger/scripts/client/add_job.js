@@ -14,15 +14,18 @@ limitations under the License. */
 
 $(document).ready(function(){
     $(".jobDetailsInput").on('keyup', function(){
+		var jobName = $("#jobNameInput").val();
         var jobID = $("#jobIdNumberInput").val();
         var expHours = $("#expectedHoursInput").val();
         var description = $("#descriptionInput").val();
         var customerName = $("#customerNameInput").val();
         
-        var jobCharsRemaining = 20 - jobID.length;
+		var jobNameCharsRemaining = 20 - jobName.length;
+        var jobIdCharsRemaining = 20 - jobID.length;
         var descCharsRemaining = 200 - description.length;
         var custCharsRemaining = 120 - customerName.length;
-        $("#jobIdCounter").html(jobCharsRemaining + "/20");
+        $("#jobIdCounter").html(jobIdCharsRemaining + "/20");
+		$("#jobNameCounter").html(jobNameCharsRemaining + "/20");
         $("#descriptionCounter").html(descCharsRemaining + "/200"); 
         $("#customerNameCounter").html(custCharsRemaining + "/120"); 
     });
@@ -43,7 +46,7 @@ $(document).ready(function(){
 		}
 	});	
    
-	$("#jobIdNumberInput").focus();
+	$("#jobNameInput").focus();
 
 	$("#searchPhrase").keypress(function(e) {
 		var keycode = (e.keycode ? e.keycode : e.which)
@@ -105,6 +108,8 @@ function handleNewJob(){
     // downloaded and printed.
     var jobID = $("#jobIdNumberInput").val();
     jobID = jobID.trim();
+	var jobName = $("#jobNameInput").val();
+    jobName = jobName.trim();
     var description = $("#descriptionInput").val();
 	var routeName = $("#textboxRouteName").val();
     var dueDate = $("#jobDueDateInput").val();
@@ -120,6 +125,21 @@ function handleNewJob(){
 	if(dueDate == "")
 		dueDate = "9999-12-31";
 
+	
+	regexp = /^[a-z0-9_]*$/i;
+	if(jobName != "" && (! regexp.test(jobName))){
+		console.log("Job Name entered contains invalid chars. Stopping");
+		$("#saveJobResponseField").empty().html("Job Name must only contain letters (a-z, A-Z), numbers (0-9) and underscores (_)");
+		setTimeout(function(){$("#saveJobResponseField").empty();},10000);
+		return;
+	}
+	
+	if(jobName.length > 20){
+		console.log("Job Name length exceeds 20 characters. Stopping");
+		$("#saveJobResponseField").empty().html("Job Name's length must not be greater than 20");
+		setTimeout(function(){$("#saveJobResponseField").empty();},10000);
+		return;
+	}
 	
 	regexp = /^[a-z0-9_]*$/i;
 	if(jobID != "" && (! regexp.test(jobID))){
@@ -247,7 +267,8 @@ function handleNewJob(){
 			"totalParts":totalParts,
 			"productId":productId,
 			"priority":priority,
-			"customerName":customerName
+			"customerName":customerName,
+			"jobName":jobName
 		},
 		success:function(result){
 			console.log(result);
@@ -260,7 +281,7 @@ function handleNewJob(){
 
 				jobID = res["result"]["jobId"];
 
-				setCodeDownloadLink(jobID)
+				setCodeDownloadLink(jobID, jobName)
 
                 $("#jobIdNumberInput").empty().val(jobID);
 			}
@@ -274,7 +295,8 @@ function handleNewJob(){
 
 function clearInputs(){
 	//return inputs to defualt to enable user to add new job
-    $("#jobIdNumberInput").val("");
+    $("#jobNameInput").val("");
+	$("#jobIdNumberInput").val("");
     $("#descriptionInput").val("");
     $("#expectedHoursInput").val("");
     $("#textboxRouteName").val("");
@@ -289,12 +311,13 @@ function clearInputs(){
 	$("#customerNameInput").val("");
 }
 
-function setCodeDownloadLink(JobID)
+function setCodeDownloadLink(JobID, JobName)
 {
+
 	var url = new URL(window.location.origin + "/timelogger/scripts/server/getQrCode.php?request=getDownloadJobIdQrCode&jobId=" + JobID);
                 var a = $('<a/>')
                     .attr('href', url)
-                    .html('Click here to download - ' + JobID + ' - ID - QR Code');
+                    .html('Click here to download - ' + JobName + ' - ID - QR Code');
                 $("#saveJobResponseField").empty().append(a);
 }
 
@@ -341,6 +364,10 @@ function searchJobs(){
                     },
                     "columns":[
                         {
+                            "headingName":"Job Name",
+                            "dataName":"jobName"
+                        },
+						{
                             "headingName":"Job ID",
                             "dataName":"jobId"
                         },
@@ -424,7 +451,6 @@ function uploadCsv(){
 	// disabled the submit button
 	$("#btnUploadCsv").prop("disabled", true);
 	$("#csvResponseField").html("Processing. Please wait...");
-
 	//for (var pair of data.entries())
 	//	console.log(pair[0]+', '+pair[1]);
 
@@ -456,7 +482,6 @@ function uploadCsv(){
 			console.log("ERROR : ", e);
 			$("#btnUploadCsv").prop("disabled", false);
 			$("#csvResponseField").html("Error");
-
 		}
 	});
 }
@@ -484,7 +509,7 @@ function displayCsvResultsTable(tableData){
             },
             {
                 "headingName":"QR Code",
-                "linkDataName":setCodeDownloadLink(JobID),
+                "linkDataName":setCodeDownloadLink(JobID, JobName),
                 "linkIsDownload":true,
                 "linkText":"QR code"
             }

@@ -180,6 +180,8 @@ function getTimesheet(){
             ({"background-color":"#be0f34", "color":"white"}); //"#be0f34" - Column Red
             $('#currentUsersTable').find('tbody').children('tr:nth-child(2)').css
             ({"background-color":"#be0f34", "color":"white"}); //"#be0f34" - Column Red
+            $('#currentUsersTable').find('tbody').children('tr:nth-child(3)').css
+            ({"background-color":"#be0f34", "color":"white"}); //"#be0f34" - Column Red
             data ={
 				"request":"getTimesheetCSV",
 				"userId": userId,
@@ -197,16 +199,16 @@ function getTimesheet(){
 
 function excludeProductIdColumn(table_id){
     if($("#excludeProductIdColumn").prop("checked")){
-        $(table_id).find('tbody').children('tr:nth-child(1)').hide();
+        $(table_id).find('tbody').children('tr:nth-child(2)').hide();
     }else{
-        $(table_id).find('tbody').children('tr:nth-child(1)').show();
+        $(table_id).find('tbody').children('tr:nth-child(2)').show();
     }
 }
 
 function excludeAggregateColumn(table_id){
     if($("#excludeAggregateColumn").prop("checked")){
-        $(table_id).find('tbody').children('tr:nth-child(2)').hide();
+        $(table_id).find('tbody').children('tr:nth-child(3)').hide();
     }else{
-        $(table_id).find('tbody').children('tr:nth-child(2)').show();
+        $(table_id).find('tbody').children('tr:nth-child(3)').show();
     }
    }

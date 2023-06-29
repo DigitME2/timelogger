@@ -56,7 +56,7 @@ BEGIN
 
     END LOOP get_user_data_loop;
 
-    SELECT userName, jobId, stationId, clockOffTime, recordDate FROM clockedOffUsersInfo WHERE clockedOffUsersInfo.userName IS NOT NULL ORDER BY userName ASC;
+    SELECT userName, jobs.jobId, jobName, stationId, clockOffTime, recordDate FROM clockedOffUsersInfo LEFT JOIN jobs ON clockedOffUsersInfo.jobId = jobs.jobId WHERE clockedOffUsersInfo.userName IS NOT NULL ORDER BY userName ASC;
     
 	END$$
 

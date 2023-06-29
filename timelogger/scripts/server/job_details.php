@@ -32,6 +32,9 @@ require "./../../pages/client_config.php";
 
 $debug = false;
 
+
+
+
 function markJobIncomplete($DbConn, $JobId)
 {
     // Updates current status of job record for job
@@ -186,7 +189,6 @@ function changeJobId($DbConn, $NewJobId, $OriginalJobId)
 	return $NewJobId;
 }
 
-
 function getJobRecord($DbConn, $JobId)
 {
     // call the stored procedure    
@@ -217,7 +219,8 @@ function getJobRecord($DbConn, $JobId)
 		$totalParts,
 		$totalCharge,
 		$productId,
-		$customerName
+		$customerName,
+		$jobName
 	)))
         errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
     
@@ -276,7 +279,8 @@ function getJobRecord($DbConn, $JobId)
 		"chargeToCustomer"		=> $totalCharge,
 		"chargePerMinute"		=> $chargePerMinStr,
 		"productId"				=> $productId,
-		"customerName"			=> $customerName
+		"customerName"			=> $customerName,
+		"jobName"				=> $jobName
     );
 	
 	return $jobRecord;
@@ -528,16 +532,9 @@ function saveRecordDetails($DbConn, $DetailsArray)
 
 	$returnVal = "";
 
-	if($DetailsArray["jobId"] != $DetailsArray["inputjobId"])
+	if($DetailsArray["jobId"] != $DetailsArray["newJobId"])
 	{
-		$newJobId = $DetailsArray["inputjobId"];
-
-		//blank JobId generating a new ID was removed as this caused issues as the job ID
-		// was not changed so any further generated ID had already had there name taken		
-/*	    if($newJobId == "")
-		{
-			$newJobId = generateJobId($DbConn);
-		}*/
+		$newJobId = $DetailsArray["newJobId"];
 
 		//Set any products which have original jobID as their current job, current job to  new jobID
 		$query = "UPDATE products SET currentJobId=? WHERE currentJobId=?";
@@ -580,6 +577,30 @@ function saveRecordDetails($DbConn, $DetailsArray)
 		    errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
 	}
 
+	if($DetailsArray["jobName"] != "")
+	{
+		$query = "SELECT COUNT(jobName) FROM jobs WHERE jobName=? AND jobId != ?";
+
+		if(!($statement = $DbConn->prepare($query)))
+		    errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+
+		if(!($statement->bind_param(
+			'ss',
+			$DetailsArray["jobName"],
+			$DetailsArray["jobId"]					
+		)))
+        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
+    
+		if(!$statement->execute())
+		    errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+		
+		$res = $statement->get_result();
+		$row = $res->fetch_row();
+		if($row[0] != 0) {
+			return false;
+		}
+	}
+
 	$query = "
 	UPDATE jobs SET
 	expectedDuration = ?, 
@@ -593,7 +614,8 @@ function saveRecordDetails($DbConn, $DetailsArray)
 	numberOfUnits = ?,
 	totalParts = ?,
 	totalChargeToCustomer = ?,
-	customerName = ?
+	customerName = ?,
+	jobName = ?
 	WHERE jobId = ?
 	";
 	
@@ -608,7 +630,7 @@ function saveRecordDetails($DbConn, $DetailsArray)
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
     if(!($statement->bind_param(
-			'issssiisiiiss',
+			'issssiisiiisss',
 			$DetailsArray["expectedDuration"],
 			$DetailsArray["description"],
 			$DetailsArray["notes"],
@@ -621,7 +643,8 @@ function saveRecordDetails($DbConn, $DetailsArray)
 			$DetailsArray["totalParts"],
 			$DetailsArray["totalChargeToCustomer"],
 			$DetailsArray["customerName"],
-			$DetailsArray["jobId"]		
+			$DetailsArray["jobName"],
+			$DetailsArray["jobId"]	
 		)))
         errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
     
@@ -640,7 +663,8 @@ function saveRecordDetails($DbConn, $DetailsArray)
 		$DetailsArray["routeName"],
 		$DetailsArray["routeCurrentStageIndex"],
 		$DetailsArray["priority"],
-		$DetailsArray["notes"]
+		$DetailsArray["notes"],
+		$DetailsArray["jobName"]
 	);
 
 	return $returnVal;
@@ -652,7 +676,7 @@ function getSaveRecordDetailsParameters($DbConn)
 	$result = "";
 
 	$requiredParameters = array("jobId",
-								"inputjobId",
+								"newJobId",
 								"routeName",
 								"routeCurrentStageName",
 								"routeCurrentStageIndex",
@@ -664,7 +688,8 @@ function getSaveRecordDetailsParameters($DbConn)
 								"numberOfUnits",
 								"totalParts",
 								"totalChargeToCustomer",
-								"customerName"
+								"customerName",
+								"jobName"
 							);
 
 	$jobDetails = array();
@@ -692,11 +717,88 @@ function getSaveRecordDetailsParameters($DbConn)
 								 	$jobDetails["totalParts"], 
 									null, 
 									$jobDetails["priority"],
-									$jobDetails["customerName"]
+									$jobDetails["customerName"],
+									$jobDetails["jobName"]
 									);
 	}
 
 	return array($jobDetails, $result);
+}
+
+function getJobName($DbConn, $jobId)
+{
+	//to get Job Name for job ID.
+	$query = "SELECT jobName FROM jobs WHERE jobId=?";
+    
+    if(!($statement = $DbConn->prepare($query)))
+        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+    
+    if(!($statement->bind_param('s', $jobId)))
+        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    if(!$statement->execute())
+        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    $res = $statement->get_result();
+    $row = $res->fetch_row();
+
+	return $row[0];
+}
+
+function getJobList($DbConn) 
+{
+	//to get Job Name for job ID.
+	$query = "SELECT jobId, jobName FROM jobs ORDER BY jobName ASC";
+    
+    if(!($statement = $DbConn->prepare($query)))
+        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+    
+    if(!$statement->execute())
+        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    $res = $statement->get_result();
+    
+    $tableData = array();
+    
+    for($i = 0; $i < $res->num_rows; $i++)
+    {
+        $row = $res->fetch_assoc();
+        $dataRow = array(
+            "jobId"        =>$row["jobId"],
+            "jobName"      =>$row["jobName"]
+        );
+        array_push($tableData, $dataRow);
+    }
+    
+    return $tableData;
+}
+
+function getNewJobName($DbConn, $JobName){
+	$indexOfUnderscore = strpos($JobName, "_");
+	if($indexOfUnderscore != false)
+		$trimmedJobName = substr($JobName, 0, $indexOfUnderscore);
+	else
+		$trimmedJobName = $JobName;
+		
+	$searchTerm = $trimmedJobName."%";
+
+	$query = "SELECT COUNT(jobName) FROM jobs WHERE jobName LIKE ? ORDER BY jobName ASC ";
+    
+    if(!($statement = $DbConn->prepare($query)))
+        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+    
+    if(!($statement->bind_param('s', $searchTerm)))
+        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    if(!$statement->execute())
+        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    $res = $statement->get_result();
+    $row = $res->fetch_row();
+	
+	$newJobName = $trimmedJobName . "_" . strval($row[0] + 1);
+
+	return $newJobName;
 }
 
 
@@ -716,7 +818,12 @@ function main()
 		$request = $_GET["request"]; 
 
 		switch($request)
-		{
+		{ 		
+			case "getJobList":
+				$jobs = getJobList($dbConn);
+				sendResponseToClient("success", $jobs);
+				break;
+
 			case "getJobRecord":
 				// fetch details from the jobs table. Only expected to be called once per page load.
 				$jobId = $_GET["jobId"];
@@ -738,6 +845,7 @@ function main()
 			case "getTimeLog":
 			case "getTimeLogCSV":
 				$jobId = $_GET["jobId"];
+				$jobName = getJobName($dbConn, $jobId);
 				$isCollapsed = (isset($_GET["collapseRecords"]) && $_GET["collapseRecords"] == "true");
 				$useDateRange = (isset($_GET["useDateRange"]) && $_GET["useDateRange"] == "true");
 				$showSeconds = (isset($_GET["showSeconds"]) && $_GET["showSeconds"] == "true");
@@ -790,9 +898,9 @@ function main()
 						}
 
 						if($useDateRange)
-							$fileName = $jobId . "_records_" . $_GET["startDate"] . "_to_" . $_GET["endDate"] . ".csv";
+							$fileName = $jobName . "__'" . $jobId . "'_records_" . $_GET["startDate"] . "_to_" . $_GET["endDate"] . ".csv";
 						else
-							$fileName = $jobId . "_records.csv";
+							$fileName = $jobName . "__'" . $jobId . "'_records.csv";
 					}
 					else
 					{
@@ -826,9 +934,9 @@ function main()
 						array_push($columnNames,"Route Index");
 
 						if($useDateRange)
-							$fileName = $jobId . "_records_" . $_GET["startDate"] . "_to_" . $_GET["endDate"] . "_collapsed.csv";
+							$fileName = $jobName . "__'" . $jobId . "'_records_" . $_GET["startDate"] . "_to_" . $_GET["endDate"] . "_collapsed.csv";
 						else
-							$fileName = $jobId . "_records_collapsed.csv";
+							$fileName = $jobName . "__'" . $jobId . "'_records_collapsed.csv";
 					}
 
 					sendCsvToClient($records["timeLogTableData"], $dataNames, $columnNames, $fileName);
@@ -883,6 +991,12 @@ function main()
 				sendResponseToClient("success", $result);
 				break;
 
+			case "getNewJobName":
+				$jobName = $_GET["jobName"];
+				$newJobName = getNewJobName($dbConn, $jobName);
+				sendResponseToClient("success", $newJobName);
+				break;
+
 			default:
 				sendResponseToClient("error", "Unknown command: $request");
 		}
@@ -890,7 +1004,7 @@ function main()
 	elseif($_SERVER["REQUEST_METHOD"] === "POST")
 	{
 		$request = $_REQUEST["request"];
-		printDebug("request: $request");
+		printDebug("request: $request"); 
 		
 		switch($request)
 		{
@@ -906,7 +1020,7 @@ function main()
 						sendResponseToClient("success", $jobId);
 					}
 					else
-						sendResponseToClient("error","job ID already exists");
+						sendResponseToClient("error","Job ID already exists or new Job ID is not starting with 'job_' at start !");
 				}
 				else
 				{
@@ -917,15 +1031,17 @@ function main()
 
 			case "changeJobId":
 				printDebug("Changing Job ID");
-				$newID = changeJobId($dbConn, $_REQUEST["newJobId"], $_REQUEST["orgJobId"]);
-				if($newID)
-				{
+				$newJobId = $_REQUEST["newJobId"];
+				echo(checkStartsWithPrefix($newJobId));
+				if((checkStartsWithPrefix($newJobId))){
+					$newID = changeJobId($dbConn, $newJobId, $_REQUEST["orgJobId"]);
 					printDebug("Done");
 					sendResponseToClient("success", $newID);
 				}
 				else
-					sendResponseToClient("error","job ID already exists");
-
+				{
+					sendResponseToClient("error","Job ID already exists or new Job ID is not starting with 'job_' at start !");
+				}
 				break;
 
 			default:

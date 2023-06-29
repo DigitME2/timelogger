@@ -93,6 +93,7 @@ function initDisplayOptions(){
 		$('#showDeadlineWarningHighlight').prop("checked",localStorage.getItem("showDeadlineWarningHighlight") == "true");
 		$('#highlightPriority').prop("checked",localStorage.getItem("highlightPriority") == "true");
 		$('#showCustomerName').prop("checked",localStorage.getItem("showCustomerName") == "true");
+		$('#showJobId').prop("checked",localStorage.getItem("showJobId") == "true");
 		$('#showProductId').prop("checked",localStorage.getItem("showProductId") == "true");
 		$('#showDescription').prop("checked",localStorage.getItem("showDescription") == "true");
 		$('#showNumberOfUnits').prop("checked",localStorage.getItem("showNumberOfUnits") == "true");
@@ -164,6 +165,7 @@ function initDisplayOptions(){
 		$('#showDeadlineWarningHighlight').prop("checked", true);
 		$('#highlightPriority').prop("checked", true);
 		$('#showCustomerName').prop("checked", true);
+		$('#showJobId').prop("checked", true);
 		$('#showProductId').prop("checked", true);
 		$('#showDescription').prop("checked", true);
 		$('#showNumberOfUnits').prop("checked", true);
@@ -302,6 +304,7 @@ function onDisplayOptionsChange(){
 	localStorage.setItem("showDeadlineWarningHighlight", $('#showDeadlineWarningHighlight').is(":checked"));
 	localStorage.setItem("highlightPriority", $("#highlightPriority").is(":checked"));
 	localStorage.setItem("showCustomerName", $("#showCustomerName").is(":checked"));
+	localStorage.setItem("showJobId", $("#showJobId").is(":checked"));
 	localStorage.setItem("showProductId", $("#showProductId").is(":checked"));
 	localStorage.setItem("showDescription", $("#showDescription").is(":checked"));
 	localStorage.setItem("showNumberOfUnits", $("#showNumberOfUnits").is(":checked"));
@@ -557,11 +560,20 @@ function updateTableDisplay(){
 		},
 		"columns":[
 			{
-				"headingName":"Job ID",
-				"dataName":"jobId"
+				"headingName":"Job Name",
+				"dataName":"jobName"
 			}
 		]
 	};
+
+	if($("#showJobId").is(":checked")){
+		tableStructure.columns.push(
+			{
+				"headingName":"Job ID",
+				"dataName":"jobId"
+			}
+		);
+	}
 
 	if($("#showProductId").is(":checked")){
 		tableStructure.columns.push(

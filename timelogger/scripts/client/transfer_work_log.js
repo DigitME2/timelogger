@@ -18,6 +18,25 @@ $(document).ready(function(){
 	searchJobs();
 });
 
+function getJobName(jobId){
+	$.ajax({
+		url:"../scripts/server/transfer_work_log.php",
+		type:"GET",
+		dataType:"text",
+		data:{
+			"request":"getJobName",
+			"jobId":jobId
+		},
+		success:function(result){
+			console.log(result);
+			var resultJson = $.parseJSON(result);
+		if(resultJson.status == "success") {
+				$("#jobNameField").html(resultJson.result);
+		}
+	}
+	})
+}
+
 function loadJobs(){
 	$.ajax({
 		url:"../scripts/server/transfer_work_log.php",
@@ -38,13 +57,13 @@ function loadJobs(){
 				var jobsList = resultJson["result"];
 				$("#jobIdDropDown").empty();
 				var placeHolder = $("<option>")
-						.text("Select a Job Id...")
+						.text("Select a Job Name...")
 						.attr("value", "");
 				$("#jobIdDropDown").append(placeHolder);
 				for(var i = 0; i < jobsList.length; i++){
 					var newOption = $("<option>")
-						.text(jobsList[i])
-						.attr("value", jobsList[i]);
+						.text(jobsList[i]['jobName'])
+						.attr("value", jobsList[i]['jobId']);
 					$("#jobIdDropDown").append(newOption);
 				}
 			}
@@ -59,7 +78,7 @@ function updateJobIdsList(){
 	if(searchPhrase == ""){
 		$("#jobIdDropDown").empty();
 		var placeHolder = $("<option>")
-				.text("Select a Job Id...")
+				.text("Select a Job Name...")
 				.attr("value", "");
 		$("#jobIdDropDown").append(placeHolder);
 		loadJobs();
@@ -92,14 +111,14 @@ function updateJobIdsList(){
 					if(!(result_len == "")){
 						for (let l = 0; l<result_len; l++)
 						{
-							jobIdList.push(resultJson["result"][l]['jobId']);
+							jobIdList.push(resultJson["result"][l]);
 						}
 						console.log(jobIdList);
 						$("#jobIdDropDown").empty();
 						for(var i = 0; i < jobIdList.length; i++){
 							let newOption = $("<option>")
-								.text(jobIdList[i])
-								.attr("value", jobIdList[i]);
+								.text(jobIdList[i]['jobName'])
+								.attr("value", jobIdList[i]['jobId']);
 							$("#jobIdDropDown").append(newOption);
 						}
 					}

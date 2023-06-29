@@ -75,6 +75,24 @@ function getActualNamesforIds($DbConn, $UserInputId)
         $stoppageReasonName = $row["stoppageReasonName"];
         return $stoppageReasonName;
     }
+    if(str_starts_with($UserInputId, "job_"))
+    {
+        $query = "SELECT jobName from jobs WHERE jobId = ? "; 
+        
+        if(!($statement = $DbConn->prepare($query)))
+            errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+    
+        if(!($statement->bind_param('s', $UserInputId)))
+            errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
+    
+        if(!$statement->execute())
+            errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+		
+	    $res = $statement->get_result();
+	    $row = $res->fetch_assoc();
+        $jobName = $row["jobName"];
+        return $jobName;
+    }
 }
 
 function main() 
@@ -100,7 +118,8 @@ function main()
 
         case "getDownloadJobIdQrCode":
             $DataToEncode = $_GET["jobId"];
-            getDownloadQrCode($DataToEncode, $DataToEncode.'-ID-QRCode.png');
+            $jobName = getActualNamesforIds($dbConn, $DataToEncode);
+            getDownloadQrCode($DataToEncode, $jobName.'-ID-QRCode.png');
             sendResponseToClient("success");
             break;
 

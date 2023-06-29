@@ -254,7 +254,7 @@ BEGIN
 					ORDER BY stageIndex DESC
 					LIMIT 1;
 
-					select @stageIndex;
+					-- select @stageIndex;
 
 					-- Set route stage index for work log record if new record
 					IF @stageIndex IS NOT NULL AND newlyOpenRecordRef != -1 THEN

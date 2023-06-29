@@ -68,7 +68,7 @@ function getProductTabledata($DbConn, $searchPhrase){
     
     if($searchPhrase == "")
 	{
-        $query = "SELECT productId, currentJobId FROM products ORDER BY productId ASC";
+        $query = "SELECT products.productId, currentJobId, jobName FROM products LEFT JOIN jobs ON products.currentJobId = jobs.jobId ORDER BY productId ASC";
 
 		if(!($statement = $DbConn->prepare($query)))
         	errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
@@ -76,12 +76,12 @@ function getProductTabledata($DbConn, $searchPhrase){
     else
 	{
 		$searchPhrase = "%".$searchPhrase."%";
-        $query = "SELECT productId, currentJobId FROM products WHERE productId LIKE ? OR currentJobId LIKE ? ORDER BY productId ASC";
+        $query = "SELECT products.productId, currentJobId, jobs.jobName FROM products LEFT JOIN jobs ON products.currentJobId = jobs.jobId WHERE products.productId LIKE ? OR products.currentJobId LIKE ? OR jobs.jobName LIKE ? ORDER BY productId ASC";
 
 		if(!($statement = $DbConn->prepare($query)))
 			errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
-		if(!($statement->bind_param('ss', $searchPhrase, $searchPhrase)))
+		if(!($statement->bind_param('sss', $searchPhrase, $searchPhrase, $searchPhrase)))
 		    errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
     }
     
@@ -98,7 +98,8 @@ function getProductTabledata($DbConn, $searchPhrase){
         $row = $res->fetch_assoc();
         $dataRow = array(
             "productId"     =>$row["productId"],
-            "currentJobId"  =>$row["currentJobId"]
+            "currentJobId"  =>$row["currentJobId"],
+            "jobName"  =>$row["jobName"]
         );
         array_push($tableData, $dataRow);
     }
@@ -166,13 +167,6 @@ function main()
 				sendResponseToClient("error","Product already exists");
             
             break;
-            
-        // case "getQrCode":
-        //     $ProductId = $_GET["ProductId"];
-
-		// 	$downloadPath = generateProductQrCode($dbConn, $ProductId);
-        //     sendResponseToClient("success",$downloadPath);
-        //     break;
             
         case "getProductTableData":
             // get an array of data to send to the client.

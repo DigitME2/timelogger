@@ -22,7 +22,7 @@ require_once "paths.php";
 $productIDCodePrefix = 'pdrt_';
 $stoppageReasonIDCodePrefix = 'stpg_';
 $userIDPrefix = 'user_';
-$jobAutoGeneratePrefix = 'Job_';
+$jobAutoGeneratePrefix = 'job_';
 
 $systemPrefixes = ['user'=>$userIDPrefix, 'product'=>$productIDCodePrefix, 'stoppage'=>$stoppageReasonIDCodePrefix, 'job'=>$jobAutoGeneratePrefix];
 
@@ -228,7 +228,7 @@ if(!function_exists("generateJobId")){
             $index = ((int)$row[0]) + 1;
         }
 
-	    $formatString = $jobAutoGeneratePrefix."%015u";
+	    $formatString = $jobAutoGeneratePrefix."%0u";
 
 	    $id = sprintf($formatString, $index);
 
@@ -404,9 +404,18 @@ if(!function_exists("checkStartsWithPrefix")){
 }
 
 if(!function_exists("validateJobDetails")){
-    function validateJobDetails($DbConn, $JobId, $Description, $ExpectedDuration, $RouteName, $DueDate, $TotalJobCharge, $NumberOfUnits, $TotalParts, $productId, $priority, $customerName)
+    function validateJobDetails($DbConn, $JobId, $Description, $ExpectedDuration, $RouteName, $DueDate, $TotalJobCharge, $NumberOfUnits, $TotalParts, $productId, $priority, $customerName, $JobName)
     {
-        if(! preg_match('/^[a-z0-9_]+$/i', $JobId))
+        if ($JobName == "")
+            $validationMessage = "Job Name must be filled";
+
+        elseif (! preg_match('/^[a-z0-9_]+$/i', $JobName))
+            $validationMessage = "Job Name is empty (or) it contains invalid chars";
+
+        elseif (strlen($JobName) > 20)
+            $validationMessage = "Job Name greater than 20 chars";
+
+        elseif(! preg_match('/^[a-z0-9_]+$/i', $JobId))
             $validationMessage = "Job ID contains invalid chars";
 
         elseif (strlen($JobId) > 20)

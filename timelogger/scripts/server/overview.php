@@ -145,7 +145,8 @@ function getOverviewData($DbConn, $TableOrdering = "createdNewestFirst", $showPe
 		$productId			= $row['productId'];
 		
 		$resultRow = array(
-			"jobId" 			=> $row["jobId"],
+			"jobName" 			=> $row["jobName"],
+			"jobId"				=> $row["jobId"],
 			"description"		=> $row["description"],
 			"currentStatus"		=> $currentStatus,
 			"recordAdded"		=> $row["recordAdded"],
@@ -370,6 +371,7 @@ function main()
             if($request == "getOverviewDataCSV")
             {
                 $dataNames = array(
+					"jobName",
                     "jobId",
 					"productId",
 					"customerName",
@@ -392,6 +394,7 @@ function main()
 					array_push($dataNames, "quantityComplete");
 				}
                 $columnNames = array(
+					"Job Name",
                     "Job ID",
 					"Product ID",
 					"Customer Name",

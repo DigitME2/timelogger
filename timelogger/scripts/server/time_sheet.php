@@ -70,6 +70,22 @@ function getTimeSheet($DbConn, $UserId, $StartDate, $EndDate, $showSeconds = fal
 	//check box can be enabled and disabled for choosing whether the productId & aggregate worked time 
 	// to be displayed or not in the Timesheet.
 
+	//get the Job Names from the DB
+	$DbConn->next_result();
+	$res = $DbConn->store_result();
+	$jobNamesRow = array();
+	$jobNamesRow = $blankTimesheetRow;
+
+	for($i=0; $i < $res->num_rows; $i++)
+	{
+		$row = $res->fetch_row();
+		$jobNamesRow["Job IDs"] = "Job Names";
+		$jobNamesRow[$row[0]] = $row[1];
+	}
+	array_push($timesheet, $jobNamesRow);
+
+	$res->free();
+
 	//get the productIds from the DB
 	$DbConn->next_result();
 	$res = $DbConn->store_result();
@@ -123,6 +139,8 @@ function getTimeSheet($DbConn, $UserId, $StartDate, $EndDate, $showSeconds = fal
 		array_push($timesheet, $timesheetRow);
 
 	}
+
+
 	
 	$res->free();
 	

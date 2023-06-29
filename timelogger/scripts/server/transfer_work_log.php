@@ -24,7 +24,7 @@ require_once "kafka.php";
 function getJobsList($DbConn)
 {
 	// fetch current list of ProductIds
-    $query = "SELECT jobId FROM jobs ORDER BY jobId ASC";
+    $query = "SELECT jobName, jobId FROM jobs ORDER BY jobName ASC";
     
 	if(!($queryResult = $DbConn->query($query)))
             errorHandler("Error executing query: ($DbConn->errno) $DbConn->error, line " . __LINE__);
@@ -32,8 +32,12 @@ function getJobsList($DbConn)
 	$jobs = array();
     for($i = 0; $i < $queryResult->num_rows; $i++)
     {
-        $row = $queryResult->fetch_row();
-        array_push($jobs,$row[0]);
+        $row = $queryResult->fetch_assoc();
+        $dataRow = array(
+            "jobName"      =>$row["jobName"],
+            "jobId"        =>$row["jobId"]
+        );
+        array_push($jobs,$dataRow);
     }
 	
 	return $jobs;
@@ -45,7 +49,7 @@ function getJobId($DbConn, $searchPhrase){
     
     
     $searchPhrase = "%".$searchPhrase."%";
-    $query = "SELECT jobId FROM jobs WHERE jobId LIKE ? ORDER BY jobId ASC";
+    $query = "SELECT jobName, jobId FROM jobs WHERE jobName LIKE ? ORDER BY jobName ASC";
 
     if(!($statement = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
@@ -59,28 +63,31 @@ function getJobId($DbConn, $searchPhrase){
     
     $res = $statement->get_result();
     
-    $JobIdData = array();
+    $JobsData = array();
     
     for($i = 0; $i < $res->num_rows; $i++)
     {
         $row = $res->fetch_assoc();
         if ($row != ""){
-            $dataRow = array("jobId" =>$row["jobId"]);
+            $dataRow = array(
+                "jobName"   =>$row["jobName"],
+                "jobId"     =>$row["jobId"]
+            );
         }
         else {
            $jobIdNotFound = "Search is invalid";
-           $dataRow = array("jobId" => $jobIdNotFound); 
+           $dataRow = array("jobName" => $jobIdNotFound); 
         }
-        array_push($JobIdData, $dataRow);
+        array_push($JobsData, $dataRow);
     }
     
-    return $JobIdData;
+    return $JobsData;
 }
 
-function checkJobIdExists($DbConn, $searchPhrase){
+function checkJobExists($DbConn, $searchPhrase){
 
     $searchPhrase = "%".$searchPhrase."%";
-    $query = "SELECT jobId FROM jobs WHERE jobId LIKE ? ORDER BY jobId ASC";
+    $query = "SELECT jobName FROM jobs WHERE jobName LIKE ? ORDER BY jobName ASC";
 
     if(!($statement = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
@@ -98,12 +105,12 @@ function checkJobIdExists($DbConn, $searchPhrase){
 
     if($row != "")
     {
-        printDebug("Success: jobId exists");
+        printDebug("Success: job exists");
         return true;
     }
     else
     {
-        printDebug("Error: jobId not exists");
+        printDebug("Error: job not exists");
         return false;
     }
 }
@@ -124,6 +131,26 @@ function transfersWorkLogNewJob($DbConn, $requiredJobId, $timeLogRefs) {
         $result = "Transfer Successfull";
     }
     return $result;
+}
+
+function getJobName($DbConn, $jobId)
+{
+	//to get Job Name for job ID.
+	$query = "SELECT jobName FROM jobs WHERE jobId=?";
+    
+    if(!($statement = $DbConn->prepare($query)))
+        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+    
+    if(!($statement->bind_param('s', $jobId)))
+        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    if(!$statement->execute())
+        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    $res = $statement->get_result();
+    $row = $res->fetch_row();
+
+	return $row[0];
 }
 
 function main()
@@ -148,13 +175,19 @@ function main()
                 break;
             case "getJobId":
                 $SearchPhrase = $_GET["searchPhrase"];
-                if(checkJobIdExists($dbConn, $SearchPhrase)){
+                if(checkJobExists($dbConn, $SearchPhrase)){
                     $dataArray = getJobId($dbConn, $SearchPhrase);        
                     sendResponseToClient("success",$dataArray);
                 }
                 else{
-                    sendResponseToClient("Error", "Job ID Not Found!");
+                    sendResponseToClient("Error", "Job Not Found!");
                 }
+                break;
+        
+            case "getJobName":
+                $jobId = $_GET["jobId"];
+                $jobName = getJobName($dbConn, $jobId);
+                sendResponseToClient("success", $jobName);
                 break;
         }
     }

@@ -65,39 +65,6 @@ function updateProductTable(){
             }
             else{
                 var tableData = resultJson["result"];
-                /*
-                var tableStructure = {
-                    "rows":{
-			"linksToPage":true,
-			"link":"job_details_client.php",
-			"linkParamLabel":"jobId",
-			"linkParamDataName":"currentJobId"
-                    },
-                    "columns":[
-                        {
-                            "headingName":"Product ID",
-                            "dataName":"productId"
-                        },
-			{
-                            "headingName":"Current Job",
-                            "dataName": "currentJobId"
-                        },
-                        {
-                            "headingName":"QR Code",
-                            "linkDataName":"pathToQrCode",
-                            "linkIsDownload":true,
-                            "linkText":"Download QR code"
-                        },
-                        {
-                            "headingName":"Delete Product",
-                            "functionToRun":deleteProduct,
-                            "functionParamDataName":"productId",
-                            "functionParamDataLabel":"productId",
-                            "functionButtonText":"Delete Product"
-                        }
-                    ]
-                };
-                */
                 
                 var tableStructure = {
                     "rows":{
@@ -114,7 +81,7 @@ function updateProductTable(){
                         },
 						{
                             "headingName":"Current Job",
-                            "dataName": "currentJobId",
+                            "dataName": "jobName",
                             "generatePlainLinkCells": true,
 							"link":"job_details_client.php",
 							"linkParamLabel":"jobId",

@@ -172,6 +172,9 @@ else
 								<label for="highlightPriority">Highlight Priority</label>
 								<input type="checkbox" id="highlightPriority"  onchange="onDisplayOptionsChange()"/>
 								
+								<label for="showJobId">Show job ID</label>
+								<input type="checkbox" id="showJobId" onchange="onDisplayOptionsChange()"/>
+
 								<label for="showProductId">Show product ID</label>
 								<input type="checkbox" id="showProductId" onchange="onDisplayOptionsChange()"/>
 

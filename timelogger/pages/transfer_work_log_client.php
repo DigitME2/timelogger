@@ -41,6 +41,7 @@ else
             var includeQuantity = <?php echo("'$showQuantityDisplayElements'"); ?>;
             $(document).ready(function(){
 				GenerateJobLogTable(<?php echo("'$jobId'"); ?>);
+                var JobName = getJobName(<?php echo("'$jobId'"); ?>);
             });
             var JobId = <?php echo("'$jobId'");  ?>
         </script>
@@ -59,11 +60,11 @@ else
                 <h2>Select New Job ID for work log transfer:</h2>
                 <div>
 
-                    <label for="jobSearchLabel">Search for a New Job Id:</label>
-                    <input type="text" id="searchPhrase" class="jobSearchLabel" placeholder="enter a Job Id" oninput="searchJobs()">
+                    <label for="jobSearchLabel">Search for a New Job Name</label>
+                    <input type="text" id="searchPhrase" class="jobSearchLabel" placeholder="enter a Job Name" oninput="searchJobs()">
                     <br>
                     <br>
-                    <label id="jobIdLabel" for="jobIdDropDown"  class="jobSearchLabel">Select a New Job Id</label>
+                    <label id="jobIdLabel" for="jobIdDropDown"  class="jobSearchLabel">Select a New Job Name</label>
                     <select class="jobSearchInput" id="jobIdDropDown"></select>
                     <br>
                     <br>
@@ -72,7 +73,9 @@ else
                 </div>
                 <hr>
                 <div>
-                    <h2 id="workLogHeader">The work log of jobId:  <?php echo($jobId); ?></h2>
+                    <h2 id="workLogHeader">The work log of job</h2>
+                    <h4 id="jobNameDisplay">Job Name: <span id="jobNameField"/></h4>
+                    <h4 id="jobIdDisplay">Job ID:  <?php echo($jobId); ?></h4>
                     <div id=tableDisplay>
 		            	<div id=workLogRecordContainer></div>
                         <div id=recordsTableContainer></div>

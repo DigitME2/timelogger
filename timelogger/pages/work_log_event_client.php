@@ -59,6 +59,10 @@ else
                 	<div id=recordsTableContainer></div>
                 </div>
                 <div id="logEventDetails">
+
+					<label for="jobName" class="logEventLabel">Job Name</label>
+					<span id="jobName" class="logEventInfo"></span>
+
 					<label for="jobId" class="logEventLabel">Job ID</label>
 					<span id="jobId" class="logEventInfo"></span>
 

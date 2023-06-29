@@ -203,8 +203,8 @@ function updateStoppageLogsTable(){
                     },
                     "columns":[
                         {
-                            "headingName":"Job ID",
-                            "dataName":"jobId"
+                            "headingName":"Job Name",
+                            "dataName":"jobName"
                         },
                         {
                             "headingName":"Customer Name",

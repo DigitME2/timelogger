@@ -26,6 +26,20 @@ $(document).ready(function(){
         $("#customerNameCounter").html(custNameCharsRemaining + "/120"); 
     });
     $("#customerName").trigger("keyup",null);
+
+	$("#jobName").on('keyup', function(){
+        var JobName = $("#jobName").val();
+        var JobNameCharsRemaining = 20 - JobName.length;
+        $("#jobNameCounter").html(JobNameCharsRemaining + "/20"); 
+    });
+    $("#jobName").trigger("keyup",null);
+
+	$("#jobId").on('keyup', function(){
+        var jobID = $("#jobId").val();
+        var jobIDCharsRemaining = 20 - jobID.length;
+        $("#jobIdCounter").html(jobIDCharsRemaining + "/20"); 
+    });
+    $("#jobId").trigger("keyup",null);
 });
 
 function setUpKeyPress(JobId){
@@ -49,6 +63,32 @@ function enableTimePeriod(name="")
 		$("#date" + name + "StartInput").prop("disabled",true)
 		$("#date" + name + "EndInput").prop("disabled",true)
 	}
+}
+
+function getJobName(JobId){
+	// loads the job name for the given job Id.
+	$.ajax({
+		url:"../scripts/server/transfer_work_log.php",
+		type:"GET",
+		dataType:"text",
+		data:{
+			"request":"getJobName",
+			"jobId":JobId
+		},
+		success:function(result){
+			console.log(result);
+			var resultJson = $.parseJSON(result);
+
+			if(resultJson["status"] != "success"){
+				console.log("Failed to fetch job record: " + resultJson["result"]);
+				return;
+			}
+			else {
+				var jobName = resultJson.result;
+				return jobName;
+			}
+		}
+	})
 }
 
 function loadJobRecord(JobId){
@@ -134,6 +174,14 @@ function loadJobRecord(JobId){
 					$("#routeName").val(record.routeName);
 					$("#routeStage")[0].selectedIndex = record.routeCurrentStageIndex-1;
 					
+					$("#jobId").val(JobId);
+					var jobIdCount = 20 - JobId.length;
+					$("#jobIdCounter").html(jobIdCount + "/20");
+
+					$("#jobName").val(record.jobName);
+					var jobNameCount = 20 - record.jobName.length;
+					$("#jobNameCounter").html(jobNameCount + "/20");
+
 					$("#description").val(record.description);
                     var descCharsRemaining = 200 - record.description.length;
                     $("#descriptionCounter").html(descCharsRemaining + "/200");
@@ -177,10 +225,12 @@ function loadJobRecord(JobId){
 					$("#btnDuplicate").attr("disabled",false);
 					$("#btnAddStoppage").attr("disabled",false);
 
+					jobName = record.jobName;
+
 					var url = new URL(window.location.origin + "/timelogger/scripts/server/getQrCode.php?request=getDownloadJobIdQrCode&jobId=" + JobId);
                 	var a = $('<a/>')
                     	.attr('href', url)
-                    	.html('Click here to download - ' + JobId + ' - ID - QR Code');
+                    	.html('Click here to download - ' + jobName + ' - ID - QR Code');
                 	$("#downloadLinkContainer").empty().append(a);
 					
 					$("#notesField").val(record.notes);
@@ -228,33 +278,66 @@ function updateRouteDescription(){
 }
 
 function saveRecord(JobId){
-	inputJobId = $("#jobId").val();
-	if(inputJobId != JobId)
+	newJobId = $("#jobId").val();
+	if(newJobId != JobId)
 	{
 		console.log("Change of Job ID");
 
-		if(inputJobId.length == 0){
+		if(newJobId.length == 0){
 			console.log("Job ID cannot be blank. Stopping");
 			$("#saveChangesFeedback").empty().html("Job ID cannot be blank.");
 			setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
 			return;
 		}
 
-		if(inputJobId.length > 20){
+		if(newJobId.length > 20){
 			console.log("Job ID length exceeds 20 characters. Stopping");
 			$("#saveChangesFeedback").empty().html("Job ID's length must not be greater than 20");
 			setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
 			return;
 		}
-		
+
+		if(!(newJobId.startsWith("job_"))){
+			console.log("Job ID must start with 'job_'!!");
+			$("#saveChangesFeedback").empty().html("Job ID must start with 'job_'!!");
+			setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
+			return;
+		}
+
 		regexp = /^[a-z0-9_]+$/i;
-		if(! regexp.test(inputJobId)){
+		if(! regexp.test(newJobId)){
 			console.log("Job ID entered contains invalid chars. Stopping");
 			$("#saveChangesFeedback").empty().html("Job ID must only contain letters (a-z, A-Z), numbers (0-9) and underscores (_)");
 			setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
 			return;
 		}		
 	}
+
+
+	jobName = $("#jobName").val();
+
+	if(jobName.length == 0){
+		console.log("Job Name cannot be blank. Stopping");
+		$("#saveChangesFeedback").empty().html("Job Name cannot be blank.");
+		setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
+		return;
+	}
+
+	if(jobName.length > 20){
+		console.log("Job Name length exceeds 20 characters. Stopping");
+		$("#saveChangesFeedback").empty().html("Job Name's length must not be greater than 20");
+		setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
+		return;
+	}
+	
+	regexp = /^[a-z0-9_]+$/i;
+	if(! regexp.test(jobName)){
+		console.log("Job Name entered contains invalid chars. Stopping");
+		$("#saveChangesFeedback").empty().html("Job Name must only contain letters (a-z, A-Z), numbers (0-9) and underscores (_)");
+		setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
+		return;
+	}		
+
 
 	var priority = $("#priority").val()
 	
@@ -342,7 +425,7 @@ function saveRecord(JobId){
 	}
 	else
 	{
-		routeCurrentStageIndex = $("#routeStage")[0].selectedIndex + 1
+		routeCurrentStageIndex = $("#routeStage")[0].selectedIndex + 1;
 	}
 
 	$.ajax({
@@ -352,7 +435,7 @@ function saveRecord(JobId){
         data:{
 			"request":"saveRecordDetails",
 			"jobId":JobId,
-			"inputjobId":inputJobId,
+			"newJobId":newJobId,
 			"routeName":$("#routeName").val(),
 			"routeCurrentStageName":routeCurrentStageName,
 			"routeCurrentStageIndex":routeCurrentStageIndex,
@@ -364,16 +447,17 @@ function saveRecord(JobId){
 			"totalChargeToCustomer":jobTotalCharge,
 			"numberOfUnits":unitCount,
 			"totalParts":totalParts,
-			"customerName":customerName
-        },
-        success:function(result, inputJobId){
-            console.log(result);
-            resultJson = $.parseJSON(result);
-            
-            if(resultJson["status"] != "success"){
-                console.log("Failed to fetch job record: " + resultJson["result"]);
-                $("#saveChangesFeedback").empty().html(resultJson["result"]);
-                setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
+			"customerName":customerName,
+			"jobName":jobName
+		},
+		success:function(result, newJobId){
+			console.log(result);
+			resultJson = $.parseJSON(result);
+			
+			if(resultJson["status"] != "success"){
+				console.log("Failed to fetch job record: " + resultJson["result"]);
+				$("#saveChangesFeedback").empty().html(resultJson["result"]);
+				setTimeout(function(){$("#saveChangesFeedback").empty();},10000);
 				return;
 			}
 			else{			
@@ -810,7 +894,8 @@ function markJobComplete(JobId){
 
 
 function deleteJob(JobId){
-	if(confirm("Are you sure you want to permantly delete job '" + JobId + "' and all associated logs?")){
+	let JobName = $("#jobName").val();
+	if(confirm("Are you sure you want to permantly delete job '" + JobName + "' and all associated logs?")){
 		$.ajax({
 			url:"../scripts/server/job_details.php",
 			type:"GET",
@@ -839,9 +924,29 @@ function deleteJob(JobId){
 	}
 }
 
+function generateNewJobName(jobName){
+	$.ajax({
+		url:"../scripts/server/job_details.php",
+		type:"GET",
+		dataType:"text",
+		data:{
+			"request":"getNewJobName",
+			"jobName":jobName
+		},
+		success:function(result){
+			console.log(result);
+			let resultJson = $.parseJSON(result);
+		if(resultJson.status == "success") {
+				var newJobName = resultJson['result']
+				return newJobName;
+		}
+	}
+	})
+}
+
 function duplicateJob(JobId){
 	// Save the new job to the database via a server script.
-    var requestjobID = ""
+    var requestjobID = "";
     var description = $("#description").val();
 	var routeName = $("#routeName").val();
     var dueDate = $("#dueDate").val();
@@ -850,14 +955,24 @@ function duplicateJob(JobId){
 	var expHours = $("#expectedDuration").val();
 	var priority = $("#priority").val();
 	var customerName = $("#customerName").val();
+	var JobName = $("#jobName").val();
+
+	var newJobName = "";
+	if (JobName != ""){
+		newJobName = generateNewJobName(JobName);
+	} else {
+		alert("JobName must not be blank");
+		return;
+	}
+
 
 	//check if user has attempted to change job ID with an invalid ID
 	//in which case change to ID would be lost if duplicte was caried out
-	inputJobId = $("#jobId").val();
-	if(inputJobId != JobId)
+	newJobId = $("#jobId").val();
+	if(newJobId != JobId)
 	{		
 		regexp = /^[a-z0-9_]+$/i;
-		if(! regexp.test(inputJobId)){
+		if(! regexp.test(newJobId)){
 			return;
 		}		
 	}
@@ -915,6 +1030,7 @@ function duplicateJob(JobId){
 		dataType:"text",
 		data:{
 			"request":"addJob",
+			"jobName":newJobName,
 			"jobId":requestjobID,
 			"expectedDuration":duration,
 			"description":description,

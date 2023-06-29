@@ -42,7 +42,7 @@ userNames = ["Alice","Bob","Charlotte","David","Emily","Felix"]
 # note all times on jobs are in hours. This is converted to seconds as required
 jobs = [
 			{
-				"id":"WO33652",
+				"id":"job_1",
 				"custName":"ABC Construction",		
 				"desc":"Modular frame assemblies",	
 				"numUnits":10,	
@@ -52,6 +52,7 @@ jobs = [
 				"route":"No Paint",				
 				"cost":90000, 
 				"priority":2,
+				"jobName":"WO33652",
 				"times":{
 					"Cutting":18,
 					"Welding":12,
@@ -62,7 +63,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33653", 
+				"id":"job_2",
 				"custName":"Willson Logistics",	
 				"desc":"Packing noodles",			
 				"numUnits":1,	
@@ -72,6 +73,7 @@ jobs = [
 				"route":"Main Production Route",
 				"cost":3000,
 				"priority":1,
+				"jobName":"WO33653",
 				"times":{
 					"Cutting":12,
 					"Welding":1.5,
@@ -82,7 +84,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33654", 
+				"id":"job_3",
 				"custName":"Bakewell Cakes", 		
 				"desc":"Racking",					
 				"numUnits":3,	
@@ -92,6 +94,7 @@ jobs = [
 				"route":"No Paint",
 				"cost":65000, 
 				"priority":3,
+				"jobName":"WO33654",
 				"times":{
 					"Cutting":1.5,
 					"Welding":2.5,
@@ -102,7 +105,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33655", 
+				"id":"job_4", 
 				"custName":"Greendale",		 	
 				"desc":"Tables x 10",				
 				"numUnits":10,	
@@ -112,6 +115,7 @@ jobs = [
 				"route":"Main Production Route",	
 				"cost":45000, 
 				"priority":2,
+				"jobName":"WO33655",
 				"times":{
 					"Cutting":1,
 					"Welding":6,
@@ -122,7 +126,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33656",
+				"id":"job_5",
 				"custName":"Purple Boxes",
 				"desc":"Warehouse shelving",
 				"numUnits":50,  
@@ -132,6 +136,7 @@ jobs = [
 				"route":"No Paint",
 				"cost":23000, 
 				"priority":2,
+				"jobName":"WO33656",
 				"times":{
 					"Cutting":2,
 					"Welding":5,
@@ -142,7 +147,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33657", 
+				"id":"job_6", 
 				"custName":"Smith and Johnson",	
 				"desc":"Bespoke metalwork parts",	
 				"numUnits":2,  	
@@ -152,6 +157,7 @@ jobs = [
 				"route":"Short Route",				
 				"cost":72000, 
 				"priority":3,
+				"jobName":"WO33657",
 				"times":{
 					"Cutting":3,
 					"Welding":8.5,
@@ -162,7 +168,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33658", 
+				"id":"job_7", 
 				"custName":"P4 Computer Supplies", 
 				"desc":"Detector system",			
 				"numUnits":1, 	
@@ -172,6 +178,7 @@ jobs = [
 				"route":"Main Production Route",	
 				"cost":83000, 
 				"priority":1,
+				"jobName":"WO33658",
 				"times":{
 					"Cutting":4,
 					"Welding":2,
@@ -182,7 +189,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33659", 
+				"id":"job_8", 
 				"custName":"Proton Fire Systems", 	
 				"desc":"Case assemblies",			
 				"numUnits":10,  
@@ -192,6 +199,7 @@ jobs = [
 				"route":"Main Production Route",
 				"cost":79000, 
 				"priority":3,
+				"jobName":"WO33659",
 				"times":{
 					"Cutting":2,
 					"Welding":1.5,
@@ -202,7 +210,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33660", 
+				"id":"job_9", 
 				"custName":"Paris & Co.", 			
 				"desc":"Jetpack harness parts",		
 				"numUnits":1,  	
@@ -212,6 +220,7 @@ jobs = [
 				"route":"Main Production Route",	
 				"cost":10000, 
 				"priority":2,
+				"jobName":"WO33660",
 				"times":{
 					"Cutting":1.5,
 					"Welding":2.5,
@@ -222,7 +231,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33661",
+				"id":"job_19",
 				"custName":"Empire Supplies", 		
 				"desc":"Bottling machine",			
 				"numUnits":1,  	
@@ -232,6 +241,7 @@ jobs = [
 				"route":"Main Production Route",	
 				"cost":50000, 
 				"priority":4,
+				"jobName":"WO33661",
 				"times":{
 					"Cutting":3,
 					"Welding":7,
@@ -242,7 +252,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33662", 
+				"id":"job_11", 
 				"custName":"Ransom, Willis and Co",
 				"desc":"Desk chairs",				
 				"numUnits":5,  	
@@ -252,6 +262,7 @@ jobs = [
 				"route":"Main Production Route",	
 				"cost":70000, 
 				"priority":3,
+				"jobName":"WO33662",
 				"times":{
 					"Cutting":2.5,
 					"Welding":8,
@@ -262,7 +273,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33663", 
+				"id":"job_12", 
 				"custName":"Burns Farm", 			
 				"desc":"Custom wheel mountings",	
 				"numUnits":4, 	
@@ -272,6 +283,7 @@ jobs = [
 				"route":"Main Production Route",	
 				"cost":20000, 
 				"priority":2,
+				"jobName":"WO33663",
 				"times":{
 					"Cutting":0.75,
 					"Welding":2,
@@ -282,7 +294,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33664", 
+				"id":"job_13",
 				"custName":"Hall Detectors", 		
 				"desc":"Sensor casings",
 				"numUnits":10,  
@@ -292,6 +304,7 @@ jobs = [
 				"route":"Main Production Route",	
 				"cost":70000, 
 				"priority":4,
+				"jobName":"WO33664",
 				"times":{
 					"Cutting":2,
 					"Welding":2,
@@ -302,7 +315,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33665", 
+				"id":"job_14", 
 				"custName":"Wandas Wonders", 		
 				"desc":"Custom moulds",				
 				"numUnits":5,  	
@@ -312,6 +325,7 @@ jobs = [
 				"route":"Main Production Route",	
 				"cost":24000, 
 				"priority":4,
+				"jobName":"WO33665",
 				"times":{
 					"Cutting":7.5,
 					"Welding":18,
@@ -322,7 +336,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33666",
+				"id":"job_15",
 				"custName":"Hearthstone Windows", 	
 				"desc":"Doors - steel",				
 				"numUnits":16,  
@@ -332,6 +346,7 @@ jobs = [
 				"route":"Main Production Route",	
 				"cost":22000, 
 				"priority":2,
+				"jobName":"WO33666",
 				"times":{
 					"Cutting":2.5,
 					"Welding":20,
@@ -342,7 +357,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33667", 
+				"id":"job_16", 
 				"custName":"Joes pharmacy", 		
 				"desc":"Projectors",				
 				"numUnits":3,  	
@@ -352,6 +367,7 @@ jobs = [
 				"route":"Main Production Route",	
 				"cost":53000, 
 				"priority":3,
+				"jobName":"WO33667",
 				"times":{
 					"Cutting":2.5,
 					"Welding":20,
@@ -362,7 +378,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33668",
+				"id":"job_17",
 				"custName":"BTB Construction",
 				"desc":"Bespoke metalwork parts",
 				"numUnits":17,
@@ -372,6 +388,7 @@ jobs = [
 				"route":"Short Route",
 				"cost":12000,
 				"priority":1,
+				"jobName":"WO33668",
 				"times":{
 					"Cutting":3,
 					"Welding":6,
@@ -382,7 +399,7 @@ jobs = [
 				}
 			},
 			{
-				"id":"WO33669",
+				"id":"job_18",
 				"custName":"Freeman Shipping",
 				"desc":"Mount",
 				"numUnits":1,
@@ -392,6 +409,7 @@ jobs = [
 				"route":"Main Production Route",
 				"cost":6000,
 				"priority":1,
+				"jobName":"WO33669",
 				"times":{
 					"Cutting":1,
 					"Welding":1,
@@ -495,7 +513,7 @@ for productName in productNames:
 	requests.get("http://{}:{}/timelogger/scripts/server/products.php".format(hostname,serverPort),params=params)
 
 for job in jobs:
-	params = {"request":"addJob","jobId":job['id']}
+	params = {"request":"addJob","jobName":job['jobName'],"jobId":job['id']}
 	print("Create job {}".format(job['id']))
 	requests.get("http://{}:{}/timelogger/scripts/server/add_job.php".format(hostname,serverPort),params=params)
 	expectedDuration = job["times"]["Cutting"] + job["times"]["Welding"] + job["times"]["Painting"] + job["times"]["Assembly"] + job["times"]["QC"] + job["times"]["Shipping"]
@@ -503,7 +521,7 @@ for job in jobs:
 					dueDate=CURRENT_DATE + INTERVAL {} DAY, expectedDuration={}, routeName='{}', totalChargeToCustomer={}, priority={}\
 					WHERE jobId='{}'".format(
 						job['custName'],job['desc'],job['numUnits'],job['totalParts'],job['creationOffset'],job['dueOffset'],
-						expectedDuration,job['route'],job['cost'],job['priority'],job['id']
+						expectedDuration,job['route'],job['cost'],job['priority'], job['id']
 					)
 					
 	cursor.execute(updateQuery)

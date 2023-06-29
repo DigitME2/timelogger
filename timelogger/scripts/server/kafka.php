@@ -81,7 +81,7 @@ function publishKafkaMessage($TopicName, $MsgBody)
     }
 }
 
-function kafkaOutputCreateJob($JobId, $CustomerName, $ExpectedDurationSec, $DueDate, $Description, $ChargeForJob, $NumberOfUnits, $TotalParts, $ProductId, $RouteId, $Priority)
+function kafkaOutputCreateJob($JobId, $CustomerName, $ExpectedDurationSec, $DueDate, $Description, $ChargeForJob, $NumberOfUnits, $TotalParts, $ProductId, $RouteId, $Priority, $JobName)
 {
     global $CreateJobTopic;
 
@@ -102,13 +102,14 @@ function kafkaOutputCreateJob($JobId, $CustomerName, $ExpectedDurationSec, $DueD
         "total_parts" => $TotalParts,
         "product_id" => $ProductId,
         "route_id" => $RouteId,
-        "priority" => $Priority
+        "priority" => $Priority,
+        "job_name" => $JobName
     );
 
     publishKafkaMessage($CreateJobTopic, json_encode($messageBodyParts));
 }
 
-function kafkaOutputUpdateJobDetails($JobId, $CustomerName, $ExpectedDurationSec, $DueDate, $Description, $ChargeForJob, $NumberOfUnits, $TotalParts, $RouteId, $RouteStageIndex, $Priority, $Notes)
+function kafkaOutputUpdateJobDetails($JobId, $CustomerName, $ExpectedDurationSec, $DueDate, $Description, $ChargeForJob, $NumberOfUnits, $TotalParts, $RouteId, $RouteStageIndex, $Priority, $Notes, $JobName)
 {
     global $UpdateJobTopic;
 
@@ -130,13 +131,14 @@ function kafkaOutputUpdateJobDetails($JobId, $CustomerName, $ExpectedDurationSec
         "route_id" => $RouteId,
         "route_stage_index" => $RouteStageIndex,
         "priority" => $Priority,
-        "notes" => $Notes
+        "notes" => $Notes,
+        "job_name" => $JobName
     );
 
     publishKafkaMessage($UpdateJobTopic, json_encode($messageBodyParts));
 }
 
-function kafkaOutputChangeJobId($OldJobId, $NewJobId)
+function kafkaOutputChangeJobId($OldJobId = "", $NewJobId="")
 {
     global $ChangeJobIdTopic;
 
@@ -147,7 +149,7 @@ function kafkaOutputChangeJobId($OldJobId, $NewJobId)
     $messageBodyParts = array(
         "ptt_server_timestamp" => date_timestamp_get(date_create()),
         "action" => "update-job-id",
-        "old_id" => $OldjobId,
+        "old_id" => $OldJobId,
         "new_id" => $NewJobId
     );
 

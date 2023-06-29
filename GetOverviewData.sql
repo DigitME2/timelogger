@@ -9,10 +9,7 @@ BEGIN
     CREATE TEMPORARY TABLE selectedJobIds (counter INT PRIMARY KEY AUTO_INCREMENT, jobId VARCHAR(20));
 	CREATE TEMPORARY TABLE closedRecords (jobId VARCHAR(20), closedDuration INT, closedOvertimeDuration INT, quantityComplete INT);
 	CREATE TEMPORARY TABLE totalDurations (jobId VARCHAR(20), totalWorkedDuration INT, totalOvertimeDuration INT);
-	CREATE TEMPORARY TABLE quantities(jobId VARCHAR(20), quantityComplete INT);
-
-
-	-- Construct a query to select the job IDs meeting the required selection criteria (completed or not, date range, etc)...
+	CREATE TEMPORARY TABLE quantities(jobId VARCHAR(20), quantityComplete INT); -- Construct a query to select the job IDs meeting the required selection criteria (completed or not, date range, etc)...
 	SET @selectionQuery = "INSERT INTO selectedJobIds (jobId) SELECT jobId FROM jobs ";
 	
 	IF UseSearchKey THEN
@@ -23,7 +20,7 @@ BEGIN
 
 	-- ...appending the relevant selection options...
 	IF UseSearchKey IS TRUE THEN
-		SET @selectionQuery = CONCAT(@selectionQuery, " WHERE (description LIKE '", @searchPattern, "' OR jobId LIKE '", @searchPattern, "' OR customerName LIKE '", @searchPattern, "' or  productId LIKE '", @searchPattern, "')");
+		SET @selectionQuery = CONCAT(@selectionQuery, " WHERE (description LIKE '", @searchPattern, "' OR jobName LIKE '", @searchPattern, "' OR jobId LIKE '", @searchPattern, "' OR customerName LIKE '", @searchPattern, "' or  productId LIKE '", @searchPattern, "')");
 		
 		-- this is set to " WHERE ", then changed to " AND " after the first condition is set.
 		SET @conditionPrecederTerm = " AND "; 
@@ -82,7 +79,7 @@ BEGIN
 			SET @selectionQuery = CONCAT(@selectionQuery, @conditionPrecederTerm,
 				 "priority<>4"
 			);
-	END IF; 
+	END IF;
 
 	-- test
 	-- SELECT @selectionQuery;
@@ -180,7 +177,7 @@ BEGIN
 
 	-- ...appending the relevant selection options...
 	IF UseSearchKey IS TRUE THEN
-		SET @selectionQuery = CONCAT(@selectionQuery, " WHERE (description LIKE '", @searchPattern, "' OR jobId LIKE '", @searchPattern, "' OR customerName LIKE '", @searchPattern, "' or  productId LIKE '", @searchPattern, "')");
+		SET @selectionQuery = CONCAT(@selectionQuery, " WHERE (description LIKE '", @searchPattern, "' OR jobName LIKE '", @searchPattern, "' OR jobId LIKE '", @searchPattern, "' OR customerName LIKE '", @searchPattern, "' or  productId LIKE '", @searchPattern, "')");
 		
 		-- this is set to " WHERE ", then changed to " AND " after the first condition is set.
 		SET @conditionPrecederTerm = " AND "; 
@@ -203,12 +200,13 @@ BEGIN
 	SET @finalSelectorQuery = 
     "SELECT
     jobs.jobId AS jobId,
+	jobs.jobName AS jobName,
     description,
     currentStatus,
     recordAdded,
     SUM(totalDurations.totalWorkedDuration) AS totalWorkedDuration,
     SUM(totalDurations.totalOvertimeDuration) AS totalOvertimeDuration,
-	quantities.quantityComplete AS quantityComplete,
+	SUM(quantities.quantityComplete) AS quantityComplete,
     LEAST((expectedDuration/(SUM(totalDurations.totalWorkedDuration))),1) AS efficiency,
     expectedDuration,
     routeCurrentStageName,
@@ -258,7 +256,9 @@ BEGIN
     DROP TABLE openTimes;
 	DROP TABLE closedRecords;
     DROP TABLE selectedJobIds;
+	DROP TABLE quantities;
+	DROP TABLE totalDurations;
 	
-    END$$
+	END$$
 
 DELIMITER ;;

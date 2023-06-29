@@ -24,9 +24,9 @@ require_once "kafka.php";
 
 $debug = false;
 
-function addJob($DbConn, $JobId, $Description, $ExpectedDuration, $RouteName, $DueDate, $TotalJobCharge, $NumberOfUnits, $TotalParts, $productId, $priority, $customerName)
+function addJob($DbConn, $JobId, $Description, $ExpectedDuration, $RouteName, $DueDate, $TotalJobCharge, $NumberOfUnits, $TotalParts, $productId, $priority, $customerName, $jobName)
 {
-    printDebug("Adding new job $JobId");
+	printDebug("Adding new job $JobId");
 	   
     $query = "SELECT COUNT(jobId) FROM jobs WHERE jobs.jobId=?";
     
@@ -46,19 +46,40 @@ function addJob($DbConn, $JobId, $Description, $ExpectedDuration, $RouteName, $D
         printDebug("Error: Job ID already exists");
         return "Job ID already exists";
     }
-    
-    $query = "INSERT INTO jobs (jobId, expectedDuration, description, routeName, dueDate, numberOfUnits, totalParts, totalChargeToCustomer, productId, priority, customerName, currentStatus, recordAdded) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)";
+
+	printDebug("Adding new job $jobName");
+	   
+    $query = "SELECT COUNT(jobName) FROM jobs WHERE jobs.jobName=?";
     
     if(!($statement = $DbConn->prepare($query)))
         errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
     
-    if(!($statement->bind_param('sssssssssss', $JobId, $ExpectedDuration, $Description, $RouteName, $DueDate, $NumberOfUnits, $TotalParts, $TotalJobCharge, $productId, $priority, $customerName)))
+    if(!($statement->bind_param('s', $jobName)))
+        errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    if(!$statement->execute())
+        errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
+    
+    $res = $statement->get_result();
+    $row = $res->fetch_row();
+    if($row[0] != 0)
+    {
+        printDebug("Error: Job Name already exists");
+        return "Job Name already exists";
+    }
+    
+    $query = "INSERT INTO jobs (jobId, expectedDuration, description, routeName, dueDate, numberOfUnits, totalParts, totalChargeToCustomer, productId, priority, customerName, currentStatus, recordAdded, jobName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP, ?)";
+    
+    if(!($statement = $DbConn->prepare($query)))
+        errorHandler("Error preparing statement: ($DbConn->errno) $DbConn->error, line " . __LINE__);
+    
+    if(!($statement->bind_param('ssssssssssss', $JobId, $ExpectedDuration, $Description, $RouteName, $DueDate, $NumberOfUnits, $TotalParts, $TotalJobCharge, $productId, $priority, $customerName, $jobName)))
         errorHandler("Error binding parameters: ($statement->errno) $statement->error, line " . __LINE__);
     
     if(!$statement->execute())
         errorHandler("Error executing statement: ($statement->errno) $statement->error, line " . __LINE__);
 
-	kafkaOutputCreateJob($JobId, $customerName, $ExpectedDuration, $DueDate, $Description, $TotalJobCharge, $NumberOfUnits, $TotalParts, $productId, $RouteName, $priority);
+	kafkaOutputCreateJob($JobId, $customerName, $ExpectedDuration, $DueDate, $Description, $TotalJobCharge, $NumberOfUnits, $TotalParts, $productId, $RouteName, $priority, $jobName);
     
     return "Added";
 }
@@ -69,6 +90,7 @@ function addJob($DbConn, $JobId, $Description, $ExpectedDuration, $RouteName, $D
 function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 {
 	$result = "";
+	
 	$generatedIdFlag = false;
 
 	if(!isset($jobDetails["jobId"]))
@@ -78,6 +100,7 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 	}
 	
 	$jobId = $jobDetails["jobId"];
+	
 
     if($jobId == "")
 	{
@@ -87,8 +110,18 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 	else
 	{
 		$generatedIdFlag = false;
-		if(checkStartsWithPrefix($jobId))
-			$result = "System prefix present at start of ID";
+		if(!(checkStartsWithPrefix($jobId)))
+			$result = "Job ID should start with 'job_' !!";
+	}
+	if (!isset($jobDetails["jobName"]))
+	{
+		$generatedIdFlag = false;
+		$result = "Job Name must be present!!";
+	}
+	else 
+	{
+		$jobName = $jobDetails["jobName"];
+		$generatedIdFlag = true;
 	}
 
 	// This code extracts expected time from csv, there is a chunk of code bottom which converts this expected time into seconds.
@@ -170,8 +203,7 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 		$result = validateJobDetails(
 			$DbConn, $jobId, $description, $expectedDuration, $routeValidateVal, 
 			$dueDate, $charge, $unitCount, $totalParts, $productId, $priority, 
-			$customerName
-			);
+			$customerName, $jobName);
 	}
 	
 	
@@ -206,7 +238,7 @@ function attemptToAddJob($DbConn, $jobDetails, $routePending=false)
 
 		//attempt to add job
 		try{
-			$result = addJob($DbConn, $jobId, $description, $expectedDuration, $routeName, $dueDate, $charge, $unitCount, $totalParts, $productId, $priority, $customerName);
+			$result = addJob($DbConn, $jobId, $description, $expectedDuration, $routeName, $dueDate, $charge, $unitCount, $totalParts, $productId, $priority, $customerName, $jobName);
 
 			if($result === "Added" && $productId != '')
 				setProductCurrentJob($DbConn, $jobId, $productId); //set this job as the current job for the product
@@ -233,6 +265,7 @@ function checkCSVFields($csvRow)
 	$productId = $csvRow["productId"];
 	$priority = $csvRow["priority"];
 	$customerName = $csvRow["customerName"];
+	$jobName = $csvRow["jobName"];
 	if (
 		$jobId === "" && 
 		$expectedDuration === "" && 
@@ -244,7 +277,8 @@ function checkCSVFields($csvRow)
 		$totalParts === "" && 
 		$productId === "" && 
 		$priority === "" && 
-		$customerName === ""
+		$customerName === "" &&
+		$jobName === ""
 	)
 		return false;
 	else
@@ -352,6 +386,7 @@ function main()
 
 				if($addJobResult === "Added")
 				{
+					
 					// $qrWebPath = generateJobQrCode($dbConn, $jobId);
 					sendResponseToClient("success", array("jobId"=>$jobId));
 					
