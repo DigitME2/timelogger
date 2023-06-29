@@ -20,26 +20,9 @@ And run the installer by using the following command.
 sh ubuntu-installer.sh
 ```
 
-# Quick Installation
-The software can be automatically set up by running these commands in a terminal in Ubuntu 22.04.
+``` Installer will get paused with text '...[autodetect] :' Then please press enter to resume installation. ```
 
-Press Ctrl + Alt + T to open a terminal. To paste into a terminal, use Ctrl + Shift + V
-
-Install curl (Enter your password if prompted):
-
-```
-sudo apt-get -y install curl
-```
-
-Run the installation script:
-
-```
-bash <(curl -sL https://raw.githubusercontent.com/DigitME2/timelogger/main/install.sh)
-```
-
-This will download the software and set it to run on startup. The software can be reached by opening a browser and entering "localhost" into the address bar. 
-
-#Manual Installation
+# Manual Installation
 (Tested on Ubuntu 22.04)
 
 Install Git in your computer with the following command:
@@ -63,4 +46,4 @@ And run the installer file by using the following command and give your system p
 sh install.sh
 ```
 
-Please read ReadMe.txt for any other requirements. Thank you.
+``` Installer will get paused with text '...[autodetect] :' Then please press enter to resume installation. ```
