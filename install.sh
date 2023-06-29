@@ -1,11 +1,11 @@
 #!/bin/bash
 # ******************************************
-# Program: Process Time Tracker - v.2.17.2
-# Developer: DigitME2# Date: 28-03-2023
-# Last Updated: 28-03-2023
+# Program: Process Time Tracker - v.3.0
+# Developer: DigitME2# Date: 28-06-2023
+# Last Updated: 28-06-2023
 # ******************************************
 
-#Copyright 2022 DigitME2
+#Copyright 2023 DigitME2
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -47,10 +47,6 @@ sudo mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GR
 sudo echo -e "\e[33mInstalling PHP & Other requirements for PHP.\e[0m"
 sudo apt -y -qqq install php libapache2-mod-php php-mysql
 sudo apt -y -qqq install php-mbstring php-zip php-gd php-curl php-json
-sudo echo -e "Downloading latest version of Process Time Tracker from github...."
-sudo apt-get -y install git
-git clone https://github.com/DigitME2/timelogger.git ~/timelogger --quiet
-cd ~/timelogger
 sudo cp -rf timelogger /var/www/html/
 sudo rm /var/www/html/index.html
 sudo cp index.php /var/www/html/
@@ -63,9 +59,8 @@ sudo mysql -u root -e "SET GLOBAL log_bin_trust_function_creators = 1;"
 sudo mysql -u root -e "CREATE DATABASE work_tracking" -S /var/run/mysqld/mysqld.sock  && \
 sudo mysql -u root -S /var/run/mysqld/mysqld.sock work_tracking < work_tracking_db_setup.sql && \
 sudo mysql -u root -S /var/run/mysqld/mysqld.sock mysql < user.sql
-cd /var/www/html
-sudo chmod 777 -R timelogger
-sudo chmod 777 index.php
+sudo chmod 777 -R /var/www/html/timelogger
+sudo chmod 777 /var/www/html/index.php
 sudo systemctl restart apache2 && sudo systemctl restart mysql
 sudo systemctl restart ptt_discovery.service
 sudo apt -y install php-pear
@@ -74,7 +69,6 @@ sudo apt-get install -y php-dev
 sudo pecl install rdkafka
 sudo rm /etc/php/8.1/apache2/php.ini
 sudo rm /etc/php/8.1/cli/php.ini
-cd ~/timelogger
 sudo cp apache2/php.ini /etc/php/8.1/apache2/
 sudo cp cli/php.ini /etc/php/8.1/cli/php.ini
 sudo systemctl restart apache2 && sudo systemctl restart mysql
