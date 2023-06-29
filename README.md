@@ -20,7 +20,7 @@ And run the installer by using the following command.
 sh ubuntu-installer.sh
 ```
 
-``` Installer will get paused with text '...[autodetect] :' Then please press enter to resume installation. ```
+``` Installer will get paused with text 'librdkafka installation path? [autodetect] :' Then please press enter to resume installation. ```
 
 # Manual Installation
 (Tested on Ubuntu 22.04)
@@ -46,4 +46,4 @@ And run the installer file by using the following command and give your system p
 sh install.sh
 ```
 
-``` Installer will get paused with text '...[autodetect] :' Then please press enter to resume installation. ```
+``` Installer will get paused with text 'librdkafka installation path? [autodetect] :' Then please press enter to resume installation. ```
