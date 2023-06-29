@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+    <head>
+		<!-- -- '''
+		Copyright 2022 DigitME2
+
+		Licensed under the Apache License, Version 2.0 (the "License");
+		you may not use this file except in compliance with the License.
+		You may obtain a copy of the License at
+
+			http://www.apache.org/licenses/LICENSE-2.0
+
+		Unless required by applicable law or agreed to in writing, software
+		distributed under the License is distributed on an "AS IS" BASIS,
+		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+		See the License for the specific language governing permissions and
+		limitations under the License.
+		''' -->
+		<title>DigitME2 - PTT</title>
+		<link rel="icon" type="image/x-icon" href="favicon.ico">
+        <script src="../scripts/client/jquery.js"></script>
+        <script src="../scripts/client/user_clocking.js"></script>
+        <link rel="stylesheet" href="../css/common.css" type="text/css">
+		<link rel="stylesheet" href="../css/user_clocking.css" type="text/css">
+		<link rel="stylesheet" href="../css/routes.css" type="text/css">
+		<script>
+			$(function(){
+				$("#commonHeader").load("header.html", function activePage(){
+					var pageName = window.location.pathname.split("/").pop().split(".")[0];
+					$("#" + pageName + "_nav_link").addClass("navActive");
+				});
+				$("#commonFooter").load("footer.html");
+				$("#add_job_nav_link").addClass("navActive");
+			});
+		</script>
+    </head>
+    <body>
+		<div class="pageContainer">
+		    <div id ="commonHeader"></div>
+            <div id="controls">
+                <div id="clocking_controls_container">
+                    <h1>Clock On/Off</h1>
+                    <label class="col1">Location:</label>
+                    <select class="col2" id="location_select" onchange="onLocationSelectChanged()">
+					</select>
+                    
+					<label class="col1">User Name:</label>
+					<input class="col2" type="text" id="user_name_search" placeholder="start typing to search..." oninput="onUserNameSearchInput()">
+					<select class="col2" id="user_name_select" onchange="onUserNameSelectChanged()">
+					</select>
+                    
+					<label class="col1">Job Name:</label>
+					<input class="col2" type="text" id="job_name_search" placeholder="start typing to search..." oninput="onJobNameSearchInput()">
+					<select class="col2" id="job_name_select" onchange="onJobNameSelectChanged()">
+					</select>
+
+					<label class="col1">Work Status:</label>
+					<select class="col2" id="work_status_select" onchange="onWorkStatusSelectChanged()">
+						<option value="workInProgress">Work In Progress</option>
+						<option value="stageComplete">Stage Complete</option>
+						<option value="complete">Job complete</option>
+					</select>
+
+					<input id="clock_user_button" type="button" onclick="clockUser()" value="Clock On/Off">
+                </div>
+                <div id="user_status_container">
+                    <h1>Current User Status</h1>
+					<div id="user_status_display">
+						<label>Username: </label><span id="user_status_current_username">Select a username...</span>
+						<label>Status: </label><span id="user_status_current_state">No Data</span>
+						<label>Job Name: </label><span id="user_status_job_name">No Data</span>
+						<label>Product ID: </label><span id="user_status_product_name">No Data</span>
+						<label>Location ID: </label><span id="user_status_location_name">No Data</span>
+					</div>
+                </div>
+            </div>
+		</div>
+		<div id ="commonFooter"></div>
+    </body>
+</html>

@@ -44,8 +44,13 @@
 			<div id="addJobArea">
 				<div id="detailsInputArea">
 					<h3>Details</h3>
+
+					<label id="jobNameLabel" for="jobNameInput" class="jobDetailsLabel">Job Name</label>
+					<input type="text" class="jobDetailsInput" id="jobNameInput" pattern="^[a-zA-Z0-9_]{1,20}$" required/>
+					<span id="jobNameCounter" class="inputWidthCounter"></span>
+
 					<label id="jobIdLabel" for="jobIdNumberInput" class="jobDetailsLabel">Job ID</label>
-					<input type="text" class="jobDetailsInput" id="jobIdNumberInput" pattern="^[a-zA-Z0-9_]{1,20}$" required/>
+					<input type="text" class="jobDetailsInput" placeholder="Enter ID or leave blank for auto generated" id="jobIdNumberInput" pattern="^[a-zA-Z0-9_]{1,20}$" required/>
 					<span id="jobIdCounter" class="inputWidthCounter"></span>
 					
 					<label id="customerNameLabel" for="customerNameInput" class="jobDetailsLabel">Customer Name</label>
@@ -127,6 +132,17 @@
 					</form>
 					<span id="csvResponseField"></span>
 					<div id="csvResults"></div>
+				</div>
+
+				<div id="tableChecklist">
+					<h2 id="csvChecklistTitle">CSV Checklist</h2>
+					<p id="tableChecklistBody">Please check the following, in your csv</p>
+					<li id="tableChecklistBody">'jobName' must be filled</li>
+					<li id="tableChecklistBody">except 'jobName', rest is optional</li>
+					<p id="tableChecklistBody">If adding other rows too, check remaining</p>
+					<li id="tableChecklistBody">'jobId' must start with 'job_'</li>
+					<li id="tableChecklistBody">'expectedDate' format 'yyyy-mm-dd'</li>
+					<li id="tableChecklistBody">check 'route' exists in system</li>
 				</div>
 			</div>
 

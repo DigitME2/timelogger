@@ -589,7 +589,7 @@ BEGIN
 					ORDER BY stageIndex DESC
 					LIMIT 1;
 
-					select @stageIndex;
+					-- select @stageIndex;
 
 					-- Set route stage index for work log record if new record
 					IF @stageIndex IS NOT NULL AND newlyOpenRecordRef != -1 THEN
@@ -752,7 +752,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetJobRecord` (IN `JobId` VARCHAR(2
 BEGIN
 	-- get the total worked time and overtime from a procedure,
 	-- then reads the rest of the data directly from the table
-	CALL CalcWorkedTimes(JobId, 0, "", "", @totalWorkedTime, @totalOvertime);
+	CALL CalcWorkedTimes(JobId, 0, "2000-01-01", "3000-01-01", @totalWorkedTime, @totalOvertime);
 	
 	SELECT routes.routeDescription INTO @routeDescription FROM routes WHERE routes.routeName = (SELECT jobs.routeName FROM jobs WHERE jobs.jobId = JobId) LIMIT 1;
 	
@@ -776,14 +776,14 @@ BEGIN
     jobs.totalParts,
 	jobs.totalChargeToCustomer,
 	jobs.productId,
-    jobs.customerName
+    jobs.customerName,
+    jobs.jobName
 	FROM jobs
 	WHERE jobs.jobId = JobId
 	LIMIT 1;
 	
-	
-	
 END$$
+
 
 CREATE PROCEDURE `GetOverviewData` (IN `UseSearchKey` TINYINT(1), IN `SearchKey` VARCHAR(200), IN `ShowPendingJobs` TINYINT(1), IN `ShowWorkInProgressJobs` TINYINT(1), IN `ShowCompletedJobs` TINYINT(1), IN `LimitDateCreatedRange` TINYINT(1), IN `DateCreatedStart` DATE, IN `DateCreatedEnd` DATE, IN `LimitDateDueRange` TINYINT(1), IN `DateDueStart` DATE, IN `DateDueEnd` DATE, IN `LimitDateTimeWorkedRange` TINYINT(1), IN `DateTimeWorkStart` DATE, IN `DateTimeWorkEnd` DATE, IN `ExcludeUnworkedJobs` TINYINT(1), IN `ShowOnlyUrgentJobs` TINYINT(1), IN `ShowOnlyNonurgentJobs` TINYINT(1), IN `OrderByCreatedAsc` TINYINT(1), IN `OrderByCreatedDesc` TINYINT(1), IN `OrderByDueAsc` TINYINT(1), IN `OrderByDueDesc` TINYINT(1), IN `OrderByJobId` TINYINT(1), IN `OrderBypriority` TINYINT(1), IN `SubOrderByPriority` TINYINT(1)) MODIFIES SQL DATA 
 BEGIN
@@ -791,10 +791,7 @@ BEGIN
     CREATE TEMPORARY TABLE selectedJobIds (counter INT PRIMARY KEY AUTO_INCREMENT, jobId VARCHAR(20));
 	CREATE TEMPORARY TABLE closedRecords (jobId VARCHAR(20), closedDuration INT, closedOvertimeDuration INT, quantityComplete INT);
 	CREATE TEMPORARY TABLE totalDurations (jobId VARCHAR(20), totalWorkedDuration INT, totalOvertimeDuration INT);
-	CREATE TEMPORARY TABLE quantities(jobId VARCHAR(20), quantityComplete INT);
-
-
-	-- Construct a query to select the job IDs meeting the required selection criteria (completed or not, date range, etc)...
+	CREATE TEMPORARY TABLE quantities(jobId VARCHAR(20), quantityComplete INT); -- Construct a query to select the job IDs meeting the required selection criteria (completed or not, date range, etc)...
 	SET @selectionQuery = "INSERT INTO selectedJobIds (jobId) SELECT jobId FROM jobs ";
 	
 	IF UseSearchKey THEN
@@ -805,7 +802,7 @@ BEGIN
 
 	-- ...appending the relevant selection options...
 	IF UseSearchKey IS TRUE THEN
-		SET @selectionQuery = CONCAT(@selectionQuery, " WHERE (description LIKE '", @searchPattern, "' OR jobId LIKE '", @searchPattern, "' OR customerName LIKE '", @searchPattern, "' or  productId LIKE '", @searchPattern, "')");
+		SET @selectionQuery = CONCAT(@selectionQuery, " WHERE (description LIKE '", @searchPattern, "' OR jobName LIKE '", @searchPattern, "' OR jobId LIKE '", @searchPattern, "' OR customerName LIKE '", @searchPattern, "' or  productId LIKE '", @searchPattern, "')");
 		
 		-- this is set to " WHERE ", then changed to " AND " after the first condition is set.
 		SET @conditionPrecederTerm = " AND "; 
@@ -962,7 +959,7 @@ BEGIN
 
 	-- ...appending the relevant selection options...
 	IF UseSearchKey IS TRUE THEN
-		SET @selectionQuery = CONCAT(@selectionQuery, " WHERE (description LIKE '", @searchPattern, "' OR jobId LIKE '", @searchPattern, "' OR customerName LIKE '", @searchPattern, "' or  productId LIKE '", @searchPattern, "')");
+		SET @selectionQuery = CONCAT(@selectionQuery, " WHERE (description LIKE '", @searchPattern, "' OR jobName LIKE '", @searchPattern, "' OR jobId LIKE '", @searchPattern, "' OR customerName LIKE '", @searchPattern, "' or  productId LIKE '", @searchPattern, "')");
 		
 		-- this is set to " WHERE ", then changed to " AND " after the first condition is set.
 		SET @conditionPrecederTerm = " AND "; 
@@ -985,12 +982,13 @@ BEGIN
 	SET @finalSelectorQuery = 
     "SELECT
     jobs.jobId AS jobId,
+	jobs.jobName AS jobName,
     description,
     currentStatus,
     recordAdded,
     SUM(totalDurations.totalWorkedDuration) AS totalWorkedDuration,
     SUM(totalDurations.totalOvertimeDuration) AS totalOvertimeDuration,
-	quantities.quantityComplete AS quantityComplete,
+	SUM(quantities.quantityComplete) AS quantityComplete,
     LEAST((expectedDuration/(SUM(totalDurations.totalWorkedDuration))),1) AS efficiency,
     expectedDuration,
     routeCurrentStageName,
@@ -1040,6 +1038,8 @@ BEGIN
     DROP TABLE openTimes;
 	DROP TABLE closedRecords;
     DROP TABLE selectedJobIds;
+	DROP TABLE quantities;
+	DROP TABLE totalDurations;
 	
 END$$
 
@@ -1097,7 +1097,7 @@ BEGIN
 
     END LOOP get_user_data_loop;
 
-    SELECT userName, jobId, stationId, clockOffTime, recordDate FROM clockedOffUsersInfo WHERE clockedOffUsersInfo.userName IS NOT NULL ORDER BY userName ASC;
+    SELECT userName, jobs.jobId, jobName, stationId, clockOffTime, recordDate FROM clockedOffUsersInfo LEFT JOIN jobs ON clockedOffUsersInfo.jobId = jobs.jobId WHERE clockedOffUsersInfo.userName IS NOT NULL ORDER BY userName ASC;
     
 END$$
 
@@ -1158,9 +1158,21 @@ BEGIN
         SELECT SUM(duration) INTO @totalDuration FROM jobDurations;
         SELECT SUM(overtimeDuration) INTO @totalOvertimeDuration FROM jobDurations;
     END IF;
+
+   
 	
 	-- Create a list of unique IDs. This is returned as the first of two results sets.
-    SELECT DISTINCT jobId FROM jobDurations ORDER BY jobId ASC;
+    SELECT DISTINCT jobDurations.jobId FROM jobDurations ORDER BY jobId ASC;
+
+     -- This is for getting Job Names 
+
+    SELECT 
+        jobDurations.jobId,
+        jobs.jobName
+    FROM jobDurations
+    LEFT JOIN jobs
+    ON jobDurations.jobId = jobs.jobId
+    GROUP BY jobDurations.jobId;
 
      -- This is for getting Product Ids
 
@@ -1181,8 +1193,7 @@ BEGIN
 	SELECT recordDate, jobId, SUM(duration) AS workedDuration, SUM(overtimeDuration) AS overtimeDuration FROM jobDurations GROUP BY recordDate, jobId ORDER BY recordDate;
 	
 	SELECT @totalDuration, @totalOvertimeDuration;
-
-    	
+	
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetWorkedTimes` (IN `JobId` VARCHAR(20), IN `LimitDateRange` TINYINT(1), IN `StartDate` DATE, IN `EndDate` DATE)  MODIFIES SQL DATA
@@ -1613,7 +1624,8 @@ CREATE TABLE `jobs` (
   `stageQuantityComplete` int(11) DEFAULT NULL,
   `stageOutstandingUnits` int(11) DEFAULT NULL,
   `totalParts` int(11) DEFAULT NULL,
-  `customerName` varchar(120) DEFAULT NULL
+  `customerName` varchar(120) DEFAULT NULL,
+  `jobName` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
